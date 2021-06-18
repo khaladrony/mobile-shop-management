@@ -1,0 +1,127 @@
+<div class="row" ng-init="getDetails()">
+    <div class="col-sm-12 col-md-12 col-lg-12" ng-if="current_state===JCOMPONENT.user_profile_view">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Details</h4>
+
+                <span class="widget-toolbar">
+
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <div class="row">
+                        
+                        <div class="col-sm-6 col-md-6">
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <h5>User Code:</h5>
+                                    {{module.user_code}}
+                                </div>
+
+                                <div class="col-md-12">&nbsp;</div>
+                                
+                                <div class="col-md-12">
+                                    <h5>Full Name:</h5>
+                                    {{module.first_name}} {{module.last_name}}
+                                </div>
+
+                                <div class="col-md-12">&nbsp;</div>
+                                
+                                <div class="col-md-12">
+                                    <h5>Email:</h5>
+                                    {{module.email}}
+                                </div>
+
+                                <div class="col-md-12">
+                                    <h5>Phone:</h5>
+                                    {{module.phone}}
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Address:</h5>
+                                    {{module.address}}
+                                </div>
+                                <div class="col-md-12">
+                                    <h5>Country:</h5>
+                                    Bangladesh
+                                </div>
+                                <div class="col-md-12">&nbsp;</div>
+                                <div class="col-md-12">
+                                    <h5>Role:</h5>
+                                    {{module.role_name}}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="col-sm-12 col-md-12 col-lg-12" ng-if="current_state===JCOMPONENT.change_pwd_view">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Change Password</h4>
+
+                <span class="widget-toolbar">
+
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="changePassword(current_pawrd, new_pawrd, confirm_new_pawrd)">
+                        <div class="row">
+
+                            <!--<div class="col-md-12"><p class="alert alert-info"><b>Note:</b> Password should contain at least one Uppercase letter (<b>A-Z</b>), one lowercase letter (<b>a-z</b>), one numeric (<b>0-9</b>), one Special character(<b>!@#$%^&()_<>[]{}.+</b>) and length should be <b>8 characters</b>.</p></div>-->
+                            
+                            <div class="col-md-3">&nbsp;</div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label>Current password</label>
+                                    <input class="form-control" type="password" autocomplete="new-password" id="current_pawrd" ng-model="current_pawrd" placeholder="Current password" />
+                                </div>
+
+                                <div class="col-md-12">&nbsp;</div>
+
+                                <div class="col-md-12">
+                                    <label>New password</label>
+                                    <input class="form-control" type="password" autocomplete="new-password" id="new_pawrd" ng-model="new_pawrd" placeholder="New password" />
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label>Confirm new password</label>
+                                    <input class="form-control" type="password" autocomplete="new-password" id="confirm_new_pawrd" ng-model="confirm_new_pawrd" placeholder="Confirm new password" />
+                                </div>
+
+                                <div class="col-md-12">&nbsp;</div>
+
+                                <div class="col-md-12">
+
+                                    <button type="submit" class="btn btn-sm btn-warning pull-right">
+                                        <i class="ace-icon fa fa-key"></i> Change password
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div class="col-md-3">&nbsp;</div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

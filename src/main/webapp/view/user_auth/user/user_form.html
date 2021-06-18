@@ -1,0 +1,170 @@
+<div class="row">
+    
+    <div class="col-sm-3 col-md-3 col-lg-3" ng-if="current_state===JCOMPONENT.user_add_view" >&nbsp;</div>
+    
+    <div class="col-sm-6 col-md-6 col-lg-6">
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">{{page_name}}</h4>
+                <span class="widget-toolbar"> </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row  ">
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>User Id <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="lan_id" ng-model="module.lan_id" ng-pattern-restrict="^[0-9A-Za-z._-]*$" ng-blur="checkLanId(module.lan_id)" placeholder="User Id" required ng-readonly="isReadonly" />
+                                <div ng-if="module.lan_id">
+                                    <span ng-show="lan_id_cnt === 0" class="text-success"><i class="fa fa-check"> User id is available</i></span>
+                                    <span ng-show="lan_id_cnt > 0" class="text-danger"><i class="fa fa-close"> User id is already in used</i></span>
+                                    <span ng-show="valid_lan_id === 0" class="text-danger"><i class="fa fa-close"> Enter valid user id</i></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Email <span class="required">*</span></label>
+                                <input class="form-control" type="email" id="usremail" ng-model="module.usremail" ng-blur="checkEmail(module.usremail)" placeholder="User Email" required autocomplete="username email"/>
+                                <div ng-if="module.usremail">
+                                    <span ng-show="email_cnt === 0" class="text-success"><i class="fa fa-check"> Email is available</i></span>
+                                    <span ng-show="email_cnt > 0" class="text-danger"><i class="fa fa-close"> Email is already in used</i></span>
+                                    <span ng-show="valid_email === 0" class="text-danger"><i class="fa fa-close"> Enter valid email</i></span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>First Name <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="first_name" ng-model="module.first_name" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="First Name" required />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="last_name" ng-model="module.last_name" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Last Name" required />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Phone <span class="required">*</span></label>
+                                <input class="form-control" type="tel" id="phone" ng-model="module.phone" ng-pattern-restrict="^[0-9]*$" placeholder="Phone" required />
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6" ng-init="getRoleList()">
+                                <label>User Role <span class="required">*</span></label>
+                                <select class="chosen-select form-control" id="role_id" ng-model="module.role_id" ng-change="selectRole(module.role_id)" required>
+                                    <option value="">Choose Role</option>
+                                    <option ng-repeat="obj in roleList track by $index" ng-value="obj.role_id">
+                                        {{obj.role_name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Employee PIN</label>
+                                <input class="form-control" type="text" id="role_code" ng-model="module.user_code" ng-pattern-restrict="^[0-9A-Za-z]*$" placeholder="Employee PIN" ng-readonly="isReadonly"/>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Department</label>
+                                <input class="form-control" type="text" id="department" ng-model="module.department" placeholder="Department" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>Address</label>
+                                <textarea class="form-control" ng-model="module.address" placeholder="Address"></textarea>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.user_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.user_add_view" class="btn btn-sm btn-warning" ng-click="reset()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <button type="button" ng-if="current_state === JCOMPONENT.user_edit_view" ng-show="module.account_non_locked === false" class="btn btn-sm btn-warning" ng-click="unlockUserAccount()">
+                                        <i class="ace-icon fa fa-recycle"></i>Unlock
+                                    </button>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.user_add_view" >Save</span> 
+                                        <span ng-if="current_state === JCOMPONENT.user_edit_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+    <div class="col-sm-3 col-md-3 col-lg-3" ng-if="current_state===JCOMPONENT.user_add_view" >&nbsp;</div>
+    
+    <div class="col-sm-6 col-md-6 col-lg-6" ng-if="current_state===JCOMPONENT.user_edit_view">
+        
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">Reset Password</h4>
+                <span class="widget-toolbar"> </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="resetPaword(reset_npwrd, reset_cpwrd, form_reset_radio)">
+                        <div class="row  ">
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>New Password <span class="required">*</span></label>
+                                <input class="form-control" type="password" id="reset_npwrd" ng-model="reset_npwrd" placeholder="Password" ng-readonly="form_reset_radio==1" required autocomplete="new-password"/>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Retype Password <span class="required">*</span></label>
+                                <input class="form-control" type="password" id="reset_cpwrd" ng-model="reset_cpwrd" placeholder="Retype Password" ng-readonly="form_reset_radio==1" required autocomplete="new-password"/>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                
+                                <div class="radio">
+                                    <label>
+                                        <input name="form-reset-radio" ng-model="form_reset_radio" ng-value="1" type="radio" class="ace input-lg">
+                                        <span class="lbl bigger-120"> Default password</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="radio">
+                                    <label>
+                                        <input name="form-reset-radio" ng-model="form_reset_radio" ng-value="2" type="radio" class="ace input-lg">
+                                        <span class="lbl bigger-120"> Custom password</span>
+                                    </label>
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <button type="submit" class="btn btn-sm btn-info pull-right" ng-if="current_state === JCOMPONENT.user_edit_view" style="margin-top: 40px;">
+                                    <i class="ace-icon fa fa-retweet"></i>
+                                    <span>Reset password</span>
+                                </button>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    
+    <!--<div class="col-md-12"  ng-if="current_state===JCOMPONENT.user_edit_view"><p class="alert alert-info"><b>Note:</b> Password should contain at least one Uppercase letter (<b>A-Z</b>), one lowercase letter (<b>a-z</b>), one numeric (<b>0-9</b>), one Special character(<b>!@#$%^&()_<>[]{}.+</b>) and length should be <b>8 characters</b>.</p></div>-->
+
+</div>

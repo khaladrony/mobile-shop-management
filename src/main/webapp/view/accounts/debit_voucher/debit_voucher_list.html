@@ -1,0 +1,100 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<style type="text/css">
+    table>tbody>tr>td{
+        padding: 3px !important;
+    }
+</style>
+<div class="row" ng-init="doFilter(1, itemPerPage)">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="filter-area">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10">
+
+                    <div class="input-group width170" id="from_date" style="float: left; margin-right: 8px;">
+                        <input data-date-picker class="form-control" type="text" placeholder="From Date"  ng-model="search.from_date" />
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                        </span>
+                    </div>
+
+                    <div class="input-group width170" id="to_date" style="float: left; margin-right: 8px;">
+                        <input data-date-picker class="form-control" type="text" placeholder="To Date"  ng-model="search.to_date" />
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                        </span>
+                    </div>
+
+                    <div class="input-group width275" ng-init="getVoucherNoList()" style="float: left; margin-right: 8px;">
+                        <span class="input-group-addon">Voucher No</span>
+                        <select class="chosen-select form-control" id="voucher_no" ng-model="search.voucher_no">
+                            <option value="">Choose Voucher No</option>
+                            <option ng-repeat="obj in voucherNoList track by $index" ng-value="obj.voucherNo">
+                                {{obj.voucherNo}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-group width110"  style="float: left; margin-right: 8px;">
+                        <select class="chosen-select form-control" id="status" ng-model="search.status">
+                            <option value="">Choose status</option>
+                            <option ng-repeat="obj in voucherStatusList track by $index" ng-value="obj">
+                                {{obj}}</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group width110" style="float: left; margin-right: 8px;">
+                        <div class="btn-group" style="float: right;">
+                            <button ng-click="doFilter(1, itemPerPage)" class="btn btn-warning btn-sm" title="Filter now">
+                                <i class="icon fa fa-search"></i> Filter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.acc_debit_voucher_add_view}}">
+                        <i class="ace-icon fa fa-credit-card"></i> Voucher Create
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Voucher No <button class="btn btn-sort pull-right" ng-click="orderByField = 'voucher_no'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th>Voucher Date <button class="btn btn-sort pull-right" ng-click="orderByField = 'voucher_date'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th>Particulars</th>
+                        <th>Amount</th>
+                        <th>Payment Type</th>
+                        <th class="text-center">Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="obj in data.items track by $index">
+                        <td width="150" align="center">{{obj.voucher_no}}</td>
+                        <td width="150" align="center">{{obj.voucher_date | date: 'dd-MM-yyyy'}}</td>
+                        <td>{{obj.particulars}}</td>
+                        <td width="140" align="right">{{obj.amount}}</td>
+                        <td width="140" align="center">{{obj.payment_type}}</td>
+                        <td width="140" align="center">{{obj.status}}</td>
+                        <td width="170" align="center">
+                            <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(obj)" ng-if="obj.status===voucher_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="voucherPreview(obj.id)"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
+                        </td>
+                    </tr>
+                    <tr ng-if="data.items.length===0">
+                        <td colspan="7" class="text-center"><h3>No vouchers found!!!</h3></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<style type="text/css">
+    table>tbody>tr>td{
+        padding: 3px !important;
+    }
+</style>
+<div class="row" ng-init="doFilter(1, itemPerPage)">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="filter-area">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10" >&nbsp;</div>
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                    <button type="button" class="btn btn-sm btn-warning" ng-click="reportView()">
+                        <i class="ace-icon fa fa-recycle"></i> Preview
+                    </button>
+
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.acc_chart_of_accounts_add_view}}">
+                        <i class="ace-icon fa fa-credit-card"></i>  Create
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <table id="simple-table" class="table  table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>Account Code </th>
+                            <th>Name</th>
+                            <th>Account Type</th>
+                            <th>Account Usage</th>
+                            <th>Account Source</th>
+                            <th class="text-center">Status</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="obj in data.items track by $index">
+                            <td>{{obj.accounts_code}}</td>
+                            <td>{{obj.accounts_name}}</td>
+                            <td>{{obj.accounts_type}}</td>
+                            <td>{{obj.accounts_usage}}</td>
+                            <td>{{obj.accounts_source}}</td>
+                            <td class="text-center">
+                                <span class="label label-info label-white" ng-if="obj.is_active==1">Active</span>
+                                <span class="label label-warning label-white" ng-if="obj.is_active==0">InActive</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.acc_chart_of_accounts_update_view)"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

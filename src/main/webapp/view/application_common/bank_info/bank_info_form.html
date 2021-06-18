@@ -1,0 +1,89 @@
+<div class="row">
+    
+    <div class="col-sm-3 col-md-3 col-lg-3" >&nbsp;</div>
+    
+    <div class="col-sm-6 col-md-6 col-lg-6">
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">{{page_name}}</h4>
+                <span class="widget-toolbar"> </span>
+
+                <label style="padding-left: 23em; font-size: medium; color:lightcoral; ">
+                </label>
+                <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.bank_info_list_view}}">
+                    <i class="ace-icon fa fa-backward"></i> Back
+                </a>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row  ">
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Bank Account Code <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="bankAccountCode" ng-model="module.bankAccountCode" placeholder="Bank Account Code" ng-readonly="true" />
+
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Bank A/C Name <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="bankAccountName" ng-model="module.bankAccountName" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Bank A/C Name"/>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Bank A/C No <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="bankAccountNo" ng-model="module.bankAccountNo" placeholder="Bank A/C No"/>
+
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Bank Name </label>
+                                <input class="form-control" type="text" id="bankName" ng-model="module.bankName" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Bank Name" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Branch Name </label>
+                                <input class="form-control" type="text" id="branchName" ng-model="module.branchName" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Branch Name " />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Phone </label>
+                                <input class="form-control" type="tel" id="phone" ng-model="module.phone" ng-pattern-restrict="^[0-9]*$" placeholder="Phone" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>Address</label>
+                                <textarea class="form-control" ng-model="module.address" placeholder="Address"></textarea>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.bank_info_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.bank_info_add_view" class="btn btn-sm btn-warning" ng-click="reset()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.bank_info_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.bank_info_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+
+</div>

@@ -1,0 +1,69 @@
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+
+                <span class="widget-toolbar">
+                    
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <form ng-submit="saveModule()">
+                        <div class="row">
+                            <div class="col-md-3">&nbsp;</div>
+                            <div class="col-md-6">
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <label>Role Code</label>
+                                        <input class="form-control" type="text" id="role_code" ng-model="module.role_code" placeholder="Role Code" readonly/>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Role Name</label>
+                                        <input class="form-control" type="text" id="role_name" ng-model="module.role_name" ng-pattern-restrict="^[0-9A-Za-z _]*$" placeholder="Role Name" required />
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label for="note">Note</label>
+                                        <textarea class="form-control" id="note" ng-model="module.note" placeholder="Note"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-3">&nbsp;</div>
+
+
+                            <div class="col-md-3">&nbsp;</div>
+                            <div class="col-md-6">
+                                <div class="form-actions pull-right">
+                                    <button type="button" ui-sref="{{JCOMPONENT.role_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i> Cancel
+                                    </button>
+                                    
+                                    <button type="reset" ng-show="current_state===JCOMPONENT.role_add_view" class="btn btn-sm btn-warning">
+                                        <i class="ace-icon fa fa-recycle"></i> Reset
+                                    </button>
+
+                                    <button type="submit" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_add_view) || hasPermission(JMODULE_NAME, JCOMPONENT.role_update)" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i> 
+                                        <span ng-if="current_state===JCOMPONENT.role_add_view" >Save</span> 
+                                        <span ng-if="current_state===JCOMPONENT.role_update" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">&nbsp;</div>
+
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

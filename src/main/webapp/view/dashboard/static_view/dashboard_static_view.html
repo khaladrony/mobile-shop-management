@@ -1,0 +1,60 @@
+<div class="row">
+
+    <div class="col-sm-4 col-md-4 col-lg-4">&nbsp;</div>
+    <div class="col-sm-8 col-md-8 col-lg-8">
+        <img src="{{_STATIC_RES_}}/images/accounts-01.jpg" />
+    </div>
+    
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.atm_list_detail_component)" >
+        <img ng-if="stat.atmListMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
+        <div ng-if="stat.atmListMode===1" id="atmStatPieChart"></div>
+    </div>
+    
+    
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.system_statistics_component)">
+        <img ng-if="stat.sysStatMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
+        <div ng-if="stat.sysStatMode===1" class="widget-box widget-color-blue" id="widget-box-2" style="opacity: 1;">
+            <div class="widget-header">
+                <h5 class="widget-title bigger lighter">
+                    <i class="ace-icon fa fa-line-chart"></i>
+                    Application statistics
+                </h5>
+                <div class="widget-toolbar widget-toolbar-light no-border"></div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main no-padding">
+                    
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead class="thin-border-bottom">
+                            <tr>
+                                <th>Component</th>
+                                <th>Active</th>
+                                <th class="hidden-480">Inactive</th>
+                                <th class="hidden-480">Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="obj in sysStatistics track by $index">
+                                <td class="">{{obj.component}}</td>
+                                <td><span class="label label-success arrowed-in-left arrowed-in-right">{{obj.active}}</span></td>
+                                <td class="hidden-480"><span class="label label-warning arrowed">{{obj.inactive}}</span></td>
+                                <td class="hidden-480"><span class="label label-info">{{obj.active+obj.inactive}}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.atm_file_stats_component)">
+        <img ng-if="stat.fileStatMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
+        <div ng-if="stat.fileStatMode===1" id="atmFileStatChart"></div>
+    </div>
+    
+</div>

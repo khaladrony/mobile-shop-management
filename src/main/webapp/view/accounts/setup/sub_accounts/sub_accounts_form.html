@@ -1,0 +1,103 @@
+<div class="row" ng-init="getCoaList()">
+
+
+    <div class="col-sm-2 col-md-2 col-lg-2" >&nbsp;</div>
+
+    <div class="col-sm-4 col-md-4 col-lg-4">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Sub-account Add</h4>
+                <span class="widget-toolbar"></span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveSubAccounts()">
+                        <div class="row  ">
+
+                            <div class="col-xs-12 col-md-12">
+                                <input type="hidden" class="form-control" id="chartOfAccountsCode" name="chartOfAccountsCode" />
+                                <label>Chart of Accounts <span class="required">*</span></label>
+                                <select class="chosen-select form-control" id="chartOfAccountsId" ng-model="module.chartOfAccountsId" ng-change="selectChartOfAccounts(module.chartOfAccountsId)" required>
+                                    <option value="">Choose Chart of Accounts</option>
+                                    <option ng-repeat="obj in coaList track by $index" ng-value="obj.id">
+                                        {{obj.coa_code_name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-12" ng-show="current_state===JCOMPONENT.acc_sub_accounts_update_view">
+                                <label>Sub-account code <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="subAccountsCode" ng-model="module.subAccountsCode" placeholder="Code" ng-readonly="true"/>
+                            </div>
+
+                            <div class="col-xs-12 col-md-12">
+                                <label>Sub-account name <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="subAccountsName" ng-model="module.subAccountsName" ng-pattern-restrict="^[0-9A-Za-z _]*$" placeholder="Name" required />
+                            </div>
+                            <br>
+
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+                                    <button type="button" ui-sref="{{JCOMPONENT.acc_chart_of_accounts_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i> Cancel
+                                    </button>
+
+                                    <button type="reset" ng-click="reset('')" class="btn btn-sm btn-warning">
+                                        <i class="ace-icon fa fa-recycle"></i> Reset
+                                    </button>
+
+                                    <button type="submit" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.acc_sub_accounts_add_view) || hasPermission(JMODULE_NAME, JCOMPONENT.acc_sub_accounts_update_view)" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state===JCOMPONENT.acc_sub_accounts_add_view" >Save</span>
+                                        <span ng-if="current_state===JCOMPONENT.acc_sub_accounts_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-sm-4 col-md-4 col-lg-4">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Sub-account List</h4>
+                <span class="widget-toolbar"></span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <table id="sub-account-table" class="table  table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>Sub Code</th>
+                            <th>Name</th>
+                            <th></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="obj in list track by $index" style="padding: 2px 20px;">
+                            <td>{{obj.subAccountsCode}}</td>
+                            <td>{{obj.subAccountsName}}</td>
+
+                            <td>
+                                <button class="btn btn-sm btn-warning" style="padding: 2px 20px;" ng-click="showEditForm(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.acc_sub_accounts_add_view)"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

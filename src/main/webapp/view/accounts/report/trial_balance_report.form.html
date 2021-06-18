@@ -1,0 +1,56 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row" ng-init="">
+
+    <div class="col-sm-4 col-md-4 col-lg-4">&nbsp;</div>
+    <div class="col-sm-4 col-md-4 col-lg-4">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+
+                <span class="widget-toolbar">
+
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <form ng-submit="">
+                        <div class="row">
+                            <div class="col-md-4">&nbsp;</div>
+                            <div class="col-md-6">
+                                <div class="row">
+
+                                    <div class="input-group width150" id="as_on_date" style="float: left; margin-right: 8px;">
+                                        <input data-date-picker class="form-control" type="text" placeholder="As On Date"  ng-model="search.asOnDate" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!--<div class="col-md-3">&nbsp;</div>-->
+
+
+                            <div class="col-md-12">
+                                <div class="form-actions" align="center">
+
+                                    <button type="button" class="btn btn-sm btn-warning" ng-click="trialBalancePreview()">
+                                        <i class="ace-icon fa fa-recycle"></i> Preview
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,61 @@
+<div class="row" ng-init="getSettigsData()">
+    
+    <div class="col-sm-3 col-md-3 col-lg-3">&nbsp;</div>
+    
+    <div class="col-sm-6 col-md-6 col-lg-6">
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">App Settings</h4>
+                <span class="widget-toolbar"> </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveSettings()">
+                        <div class="row  ">
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Password expiry (in days)</label>
+                                <input class="form-control" type="text" id="pass_exp" ng-model="module.pass_exp" maxlength="3" ng-pattern-restrict="^[0-9]*$" placeholder="Password expiry (in days)"/>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Pass. exp. alert (in days)</label>
+                                <input class="form-control" type="text" id="pass_exp_alert" ng-model="module.pass_exp_alert" maxlength="1" ng-pattern-restrict="^[0-9]*$" placeholder="Pass. exp. alert (in days)"/>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Session timeout (in minutes)</label>
+                                <input class="form-control" type="text" id="sess_timeout" ng-model="module.sess_timeout" maxlength="2" ng-pattern-restrict="^[0-9]*$" placeholder="Session timeout (in minutes)"/>
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Default password</label>
+                                <input class="form-control" type="password" id="default_pkey" ng-model="module.default_pkey" maxlength="20" placeholder="Default pass"/>
+                            </div>
+
+                            
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+                                    <button type="button" ng-show="true" ng-click="clicked()" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <button type="submit" class="btn btn-sm btn-info">
+                                        <i class="ace-icon fa fa-check-circle"></i> Save Settings
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+    <div class="col-sm-3 col-md-3 col-lg-3" >&nbsp;</div>
+    
+</div>

@@ -1,0 +1,39 @@
+<div class="row" ng-init="getDataList()">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <table id="simple-table" class="table  table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Role Name</th>
+                    <th>Code</th>
+                    <th class="text-center">Created On</th>
+                    <th class="text-center">Updated On</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Download</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="obj in list track by $index">
+                    <td>{{obj.role_name}}</td>
+                    <td>{{obj.role_code}}</td>
+                    <td class="text-center">{{obj.created_on | date:'dd-MMM-yyyy'}}</td>
+                    <td class="text-center">{{obj.updated_on | date:'dd-MMM-yyyy'}}</td>
+                    <td class="text-center">
+                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
+                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-info" ng-click="downloadRoleWisePermission(obj, 'Role_Wise_Permission')" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_list_view)" title="Download role wise permission" > <i class="ace-icon fa fa-file-excel-o"></i> Permissions</button>
+                        <button class="btn btn-sm btn-primary" ng-click="downloadRoleWiseUser(obj, 'Role_Wise_Users')" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_list_view)" title="Download role wise users" > <i class="ace-icon fa fa-file-excel-o"></i> Users</button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning" ng-click="showEditForm(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_update)"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="activeInactive(obj, false)" ng-show="obj.active === true" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_add_view)" > <i class="ace-icon fa fa-trash"></i> Deactivate</button>
+                        <button class="btn btn-sm btn-success" ng-click="activeInactive(obj, true)" ng-show="obj.active === false" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.role_add_view)" > <i class="ace-icon fa fa-check-circle"></i> Activate</button>
+                    </td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
+</div>

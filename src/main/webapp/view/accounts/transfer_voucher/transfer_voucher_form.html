@@ -1,0 +1,227 @@
+
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row" ng-init="getCoaList()">
+
+    <div class="col-sm-2 col-md-2 col-lg-2">&nbsp;</div>
+
+    <div class="col-sm-9 col-md-9 col-lg-9">
+
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">{{page_name}}</h4>
+                <span class="widget-toolbar"> </span>
+
+                <label style="padding-left: 8em; font-size: medium; color:lightcoral; " ng-if="current_state===JCOMPONENT.acc_transfer_voucher_update_view">
+                    Voucher No:
+                    <input type="text" style="border: none; border-color: transparent; font-weight: bold" ng-model="module.voucherNo" readonly/>
+                    Voucher Date:
+                    <input type="text" style="border: none; border-color: transparent; font-weight: bold" ng-model="module.voucherDate | date: 'dd-MM-yyyy'" readonly/>
+                </label>
+
+                <label style="padding-left: 43em; font-size: medium; color:lightcoral; " ng-if="current_state===JCOMPONENT.acc_transfer_voucher_add_view">
+                </label>
+
+                <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.acc_transfer_voucher_list_view}}">
+                    <i class="ace-icon fa fa-backward"></i> Back
+                </a>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row  ">
+
+                            <div class="col-xs-12 col-md-3">
+                                <label>Payment Type <span class="required">*</span></label>
+                                <select class="chosen-select form-control" id="paymentType" ng-model="module.paymentType" ng-change="selectPaymentType(module.paymentType)">
+                                    <option value="">Choose Payment Type</option>
+                                    <option value="Bank">Bank</option>
+                                    <option value="Cash">Cash</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-9">
+                                <label>Particulars <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                <label>Bank A/C </label>
+                                <select class="chosen-select form-control" id="bankAccountId" ng-model="module.bankAccountId">
+                                    <option value="">Choose Bank A/C</option>
+                                    <option ng-repeat="obj in bankAccountList track by $index" ng-value="obj.id">
+                                        {{obj.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                <label>Cheque No </label>
+                                <input class="form-control" type="text" id="chequeNo" ng-model="module.chequeNo" placeholder="Cheque No" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                <label>Cheque Date </label>
+                                <div class="input-group date" style="float: left; margin-right: 8px;">
+                                    <input data-date-picker class="form-control" type="text" id="chequeDate" ng-model="module.chequeDate" placeholder="Cheque Date" ng-model-options="{timezone: 'utc'}" />
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <br>
+
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title">Transaction</h4>
+                            <span class="widget-toolbar"> </span>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="row  ">
+
+                                    <div class="col-xs-12 col-md-3">
+                                        <label>Chart of Accounts <span class="required">*</span></label>
+                                        <select class="chosen-select form-control" id="chartOfAccountsId"
+                                                ng-model="voucher_details.chartOfAccountsId"
+                                                ng-change="selectChartOfAccounts(voucher_details.chartOfAccountsId)">
+                                            <option value="">Choose Chart of Accounts</option>
+                                            <option ng-repeat="obj in coaList track by $index" ng-value="obj.id">
+                                                {{obj.coa_code_name}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-3" ng-hide="isSubAccHide">
+                                        <label>Sub-account </label>
+                                        <select class="chosen-select form-control" id="subAccountsId"
+                                                ng-model="voucher_details.subAccountsId">
+                                            <option value="">Choose Sub Accounts</option>
+                                            <option ng-repeat="obj in subaccountList track by $index" ng-value="obj.id">
+                                                {{obj.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div ng-class="particularsDivClassVar">
+                                        <label>Particulars <span class="required">*</span></label>
+                                        <input class="form-control" type="text" id="particulars" ng-model="voucher_details.particulars" placeholder="Particulars" />
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-2">
+                                        <label>Amount <span class="required">*</span></label>
+                                        <input class="form-control pastedString" type="text" id="amount" ng-model="voucher_details.amount" placeholder="Amount" maxlength="17" onkeypress="return validateFloatKeyPress(this, event);" />
+                                    </div>
+
+                                    <br>
+
+                                    <div class="col-xs-12 col-md-1">
+                                        <button type="button" class="btn btn-sm btn-primary btn-round" ng-hide="detailsAddBtnHide"  ng-click="addToGrid()" style="padding: 5px 5px;top: 4px">
+                                            <i class="ace-icon fa fa-check-circle"></i>Add
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-yellow btn-round" ng-hide="detailsEditBtnHide" ng-click="editToGrid()" style="padding: 5px 5px;top: 4px">
+                                            <i class="ace-icon fa fa-check-circle"></i>Edit
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title">Voucher Details</h4>
+                            <span class="widget-toolbar"> </span>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="row  ">
+                                    <div class="col-md-12">
+                                        <table id="voucher-details-table" class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>SL</th>
+                                                <th ng-hide="true">ID</th>
+                                                <th ng-hide="true">COA Id</th>
+                                                <th ng-hide="true"></th>
+                                                <th>A/C Code & Name</th>
+                                                <th>Particulars</th>
+                                                <th>Debit</th>
+                                                <th>Credit</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="details in voucher_details_list">
+                                                    <td><label>{{$index + 1}}</label></td>
+                                                    <td ng-hide="true"><label>{{details.id}}</label></td>
+                                                    <td ng-hide="true"><label>{{details.chartOfAccountsId}}</label></td>
+                                                    <td ng-hide="true"><label>{{details.chartOfAccountsCodeName}}</label></td>
+                                                    <td><label>{{details.subAccountsId>0 ?
+                                                        details.chartOfAccountsCodeName + " -> " + details.subAccountsCodeName :
+                                                        details.chartOfAccountsCodeName}}</label>
+                                                    </td>
+                                                    <td><label>{{details.particulars}}</label></td>
+                                                    <td align='right'><label>{{details.primeAmount>0? details.amount: 0}}</label></td>
+                                                    <td align='right'><label>{{details.primeAmount<0? details.amount: 0}}</label></td>
+                                                    <td style="width:130px">
+                                                        <input style='font-size:12px' type="button" ng-if="$index > 0" value="Edit" class="btn btn-no-border btn-yellow btn-round" data-ng-click='rowDataPopulate(details, $index)' />
+                                                        <input style='font-size:12px' type="button" ng-if="$index > 0" value="Delete" class="btn btn-no-border btn-danger btn-round" data-ng-click='deleteRow($index)' />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr style="font-weight:bold">
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>Total</td>
+                                                    <td align='right'></td>
+                                                    <td align='right'></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row  ">
+                            <div class="col-xs-12 col-md-8">
+                                <label>Amount(In words): </label>
+                                <input style="font-weight:bold" class="form-control" type="text"  name="amountInWords" id="amountInWords" placeholder="Amount in Words" readonly="readonly"/>
+                            </div>
+
+                            <div class="col-xs-12 col-md-4">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.acc_transfer_voucher_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <button type="button" ng-show="current_state === JCOMPONENT.acc_transfer_voucher_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.acc_transfer_voucher_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.acc_transfer_voucher_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

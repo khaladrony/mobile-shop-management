@@ -1,0 +1,103 @@
+<div class="row" ng-init="getDataList(currentPage, itemPerPage)">
+    
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="filter-area">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10">
+                    
+                    <div class="input-group width250" id="emp_code" style="float: left; margin-right: 8px;">
+                        <span class="input-group-addon">Code</span>
+                        <input class="form-control" type="text" placeholder="Emp code/id" ng-model="search.emp_code" />
+                    </div>
+                    
+                    <div class="input-group width250" id="email" style="float: left; margin-right: 8px;">
+                        <span class="input-group-addon">Email</span>
+                        <input class="form-control" type="text" placeholder="Email" ng-model="search.usremail" />
+                    </div>
+                    
+                    <div class="input-group width250" id="first_name" style="float: left; margin-right: 8px;">
+                        <span class="input-group-addon">First Name</span>
+                        <input class="form-control" type="text" placeholder="First Name" ng-model="search.first_name" />
+                    </div>
+                    
+                    <div class="input-group width250" id="last_name" style="float: left; margin-right: 8px;">
+                        <span class="input-group-addon">Last Name</span>
+                        <input class="form-control" type="text" placeholder="Last Name" ng-model="search.last_name" />
+                    </div>
+                    
+                    
+                </div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                    <div class="btn-group" style="float: right;">
+                        <button ng-click="getDataList(1, itemPerPage)" class="btn btn-warning btn-sm" title="Filter now"><i class="icon fa fa-search"></i> Filter</button>
+                        <button ng-click="downloadUserList('xls', 'User_List')" class="btn btn-info btn-sm" title="XLS download"><i class="icon fa fa-file-excel-o"></i> User List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <table id="simple-table" class="table  table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Emp. PIN</th>
+                    <th>User Id/Login Id</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone</th>
+                    <th>Remarks</th>
+                    <th>Role</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Lock</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="obj in data.items| orderBy:orderByField:reverseSort" ng-if="obj.role_name !=='SuperAdmin' ">
+                    <td>{{obj.user_code}}</td>
+                    <td>{{obj.lan_id}}</td>
+                    <td>{{obj.first_name}}</td>
+                    <td>{{obj.last_name}}</td>
+                    <td>{{obj.phone}}</td>
+                    <td>{{obj.remarks}}</td>
+                    <td>{{obj.role_name}}</td>
+                    <td class="text-center">
+                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
+                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
+                    </td>
+                    <td class="text-center">
+                        <label ng-if="obj.account_non_locked===false || obj.account_non_locked===0" class="label label-danger">Lock</label>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-default" title="Clear DB session for further login" ng-click="clearSession(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.clear_user_session)" > <i class="ace-icon fa fa-close"></i> Session</button>
+                        
+                        <button class="btn btn-sm btn-warning" ng-click="showEditForm(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.user_edit_view)" ><i class="ace-icon fa fa-gear"></i> Manage</button>
+                        <button class="btn btn-sm btn-danger" ng-click="activeInactive(obj, false)" ng-show="obj.active === true" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.user_edit_view)"><i class="ace-icon fa fa-trash"></i> Deactivate</button>
+                        <button class="btn btn-sm btn-success" ng-click="activeInactive(obj, true)" ng-show="obj.active === false" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.user_edit_view)"><i class="ace-icon fa fa-check-circle"></i> Activate</button>
+                    </td>
+                </tr>
+                <tr ng-if="data.items.length < 1">
+                    <td colspan="8"><h5>No data found!!!</h5></td>
+                </tr>
+            </tbody>
+        </table>
+        <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="showModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <label for="inputRemarks">Remarks</label>
+                    <textarea id="inputRemarks" ng-model="inputRemarks" rows="3" cols="50"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" ng-click="modalSaveClose(false)" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="modalSaveClose(true)">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

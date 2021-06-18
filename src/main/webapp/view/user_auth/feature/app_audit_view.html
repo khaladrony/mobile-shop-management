@@ -1,0 +1,74 @@
+<div class="row" ng-init="getAuditData()">
+    
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">Audit Trail</h4>
+                <span class="widget-toolbar"> </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row">
+                        
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" ng-init="getUserList()">
+                            <select class="chosen-select form-control" id="role_id" ng-model="module.user_id" ng-change="selectRole(module.user_id)" required>
+                                <option value="">Choose user</option>
+                                <option ng-repeat="obj in userList track by $index" ng-value="obj.user_id">
+                                    {{obj.user_code}}-{{obj.first_name}} {{obj.last_name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            &nbsp;
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <button type="button" class="btn btn-warning btn-sm" ng-click="getAuditData()"><i class="fa fa-filter"></i> Filter</button>
+                            <button type="button" class="btn btn-info btn-sm" ng-click="downloadUserWiseAudit(module, 'User_Audit_Log')"><i class="fa fa-file-excel-o"></i> Download Audit Log</button>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 15px; max-height: 350px; overflow: auto;">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">SL</th>
+                                        <th class="text-center">Audit type</th>
+                                        <th class="text-center">Session ID</th>
+                                        <th class="text-left">Exc method</th>
+                                        <th class="text-left">Audit table</th>
+                                        <th class="text-center">Audit date</th>
+                                        <th class="text-left">Audit by</th>
+                                        <th class="text-center">&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                
+                                <tbody>
+                                    <tr ng-repeat="obj in dataList track by $index">
+                                        <th class="text-center">{{$index+1}}</th>
+                                        <th class="text-center">{{obj.audit_type}}</th>
+                                        <th class="text-center">{{obj.session_id}}</th>
+                                        <th class="text-left">{{obj.exc_method}}</th>
+                                        <th class="text-left">{{obj.audit_table}}</th>
+                                        <th class="text-center">{{obj.audit_date | date: 'yyyy-MM-d H:m:ss' : '+0000' : 'UTC'}}</th>
+                                        <th class="text-left">{{obj.user_code}}-{{obj.first_name}} {{obj.last_name}}</th>
+                                        <th class="text-center">
+                                            <button class="btn btn-info btn-sm" ng-click="showDetails(obj)"><i class="fa fa-eye"></i> Details</button>
+                                        </th>
+                                    </tr>
+                                    <tr ng-if="dataList.length < 1">
+                                        <td colspan="8" class="text-center"><h3>No audit data found!</h3></td>
+                                    </tr>
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+</div>

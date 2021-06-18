@@ -1,0 +1,95 @@
+<div class="row" ng-init="getRoleList()" id="roleFeatureMapCtrl">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+
+                <span class="widget-toolbar">
+
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
+                                <label>Choose Role</label>
+                                <select class="chosen-select form-control" ng-model="formObj.role_id" ng-change="getFeatureList(formObj.role_id)">
+                                    <option value="">Choose Role</option>
+                                    <option ng-repeat="obj in roleList track by $index" value="{{obj.role_id}}">
+                                        {{obj.role_name}}
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
+                                <label>Default Feature</label>
+                                <select class="form-control" id="default_home">
+                                    <option value="">Choose Default Home</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4" ng-repeat="module in featureList track by $index" ng-if="module.type==='Module' || module.type==='module'">
+                                <div class="well well-lg">
+                                    <b>{{module.feature_name}}</b>
+                                    
+                                    <div class="widget-box" ng-repeat="fg in featureList track by $index" ng-if="fg.parent_id===module.feature_id && (fg.type==='Feature Group' || fg.type==='feature group')">
+
+                                        <div class="widget-header widget-header-flat widget-header-small">
+                                            <h4 class="widget-title">{{fg.feature_name}}</h4>
+                                            <span class="widget-toolbar"></span>
+                                        </div>
+                                        <div class="widget-body">
+                                            <div class="widget-main" style="min-height: 20px;">
+                                                <div class="row">
+                                                    <div class="col-lg-6" ng-repeat="ft in featureList track by $index" ng-if="ft.parent_id===fg.feature_id && (ft.type==='Feature' || ft.type==='feature')">
+                                                        <label>
+                                                            <input ng-change="setChecked(ft.feature_id, ft.is_selected, module.feature_id, fg.feature_id, module.feature_name+'-'+fg.feature_name+'-'+ft.feature_name)" ng-init="setChecked(ft.feature_id, ft.is_selected, module.feature_id, fg.feature_id,module.feature_name+'-'+fg.feature_name+'-'+ft.feature_name)" ng-model="ft.is_selected" ng-true-value="1" ng-false-value="0" class="ace" type="checkbox">
+                                                            <span class="lbl"> {{ft.feature_name}}</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+                                    
+                                    <button type="button" ng-click="saveRoleFeatures()" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>        
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    
+    jQuery(function($){
+        
+        $("select#default_home").select2();
+        $('select#default_home').on("select2:select", function() {
+            var feature_id = $(this).val();
+            angular.element('#roleFeatureMapCtrl').scope().selectDefaultHome(feature_id);
+        });
+    });
+    
+</script>

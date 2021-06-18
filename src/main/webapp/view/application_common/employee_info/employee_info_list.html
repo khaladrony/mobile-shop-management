@@ -1,0 +1,59 @@
+<div class="row" ng-init="getDataList(currentPage, itemPerPage)">
+
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="filter-area">
+            <div class="row">
+
+                <div class="col-sm-12 col-md-10 col-lg-10" >&nbsp;</div>
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.employee_info_add_view}}">
+                        <i class="ace-icon fa fa-transfer-card"></i> Employee Create
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <table id="simple-table" class="table  table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Employee Code</th>
+                <th>Employee Name</th>
+                <th>Designation</th>
+                <th>email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="obj in data.items">
+                <td>{{obj.employee_code}}</td>
+                <td>{{obj.employee_name}}</td>
+                <td>{{obj.designation}}</td>
+                <td>{{obj.email}}</td>
+                <td>{{obj.phone}}</td>
+                <td width="300">{{obj.address}}</td>
+                <td class="text-center">
+                    <label ng-if="obj.status===false || obj.status===0" class="label label-danger">Inactive</label>
+                    <label ng-if="obj.status===true || obj.status===1" class="label label-success">Active</label>
+                </td>
+
+                <td class="text-center">
+                    <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(obj)"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                </td>
+            </tr>
+            <tr ng-if="data.items.length < 1">
+                <td colspan="8"><h5>No data found!!!</h5></td>
+            </tr>
+            </tbody>
+        </table>
+        <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+    </div>
+
+
+
+</div>

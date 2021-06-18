@@ -1,0 +1,108 @@
+@media print,screen{
+    .noprint{
+        display:none !important;
+    }
+    .footer,
+    #non-printable {
+        display: none !important;
+    }
+    #printable {
+        display: block;
+    }
+    
+    @page { margin: 0; }
+    body { margin-left: 1cm;
+           margin-right: 1cm;}
+    
+    body{
+        font-family: Courier New, Courier, Lucida Sans Typewriter, Lucida Typewriter, monospace;
+        font-size: 12px;
+    }
+
+    table{
+        width: 100%;
+    }
+    
+    table tr td,table tr th, table thead tr td, table tbody tr th, td, th{
+        
+    }
+    
+    .right{
+        text-align: right;
+        text-align: end;
+    }
+    
+    .left{
+        text-align: left;
+        text-align: start;
+    }
+    
+    .center{
+        text-align: center;
+    }
+    
+    table.details{
+        border: 1px dotted #2B2B7A;
+    }
+    
+    table.details tbody tr td, table.details thead tr th{
+        border-bottom: 1px dotted #2B2B7A;
+        padding: 2px;
+    }
+    
+    table.details tbody tr td:first-child{
+        border-bottom: 1px dotted #2B2B7A;
+    }
+    
+    table.details tbody tr td:last-child{
+        border-bottom: 1px dotted #2B2B7A;
+    }
+    
+    h1, h2, h3, h4, h5{
+        padding: 5px;
+        margin: 0px;
+    }
+    h1, h2, h3{
+        font-size: 18px;
+    }
+    h4, h5{
+        font-size: 16px;
+    }
+    hr{
+        width: 100%;
+        border-top: 1px dotted #2B2B7A;
+        background: none;
+    }
+    
+    .contact{
+        font-size: 10px;
+    }
+    
+    .print-by{
+        position: fixed;
+        top: 20px;
+        left: 10px;
+    }
+    
+    .print-date{
+        position: fixed;
+        top: 20px;
+        right: 10px;
+    }
+    
+    .due{
+        border: 3px solid #DD0000; border-radius: 8px;transform: rotate(-20deg);transition: transform 2s;
+    }
+    
+    .due > h2 .paid > h3{
+        color:#DD0000;
+    }
+    
+    .paid{
+        border: 3px solid #00DD00; border-radius: 8px;transform: rotate(-20deg);transition: transform 2s;
+    }
+    
+    .paid > h2, .paid > h3{
+        color:#00DD00;
+    }
+}

@@ -1,0 +1,138 @@
+<div class="row" ng-init="init()">
+
+    <div class="col-sm-2 col-md-2 col-lg-2" >&nbsp;</div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+
+                <span class="widget-toolbar">
+                    
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <form ng-submit="saveChartOfAccounts()">
+                        <div class="row">
+                            <div class="col-md-3">&nbsp;</div>
+                            <div class="col-md-8">
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <label>Account Code</label>
+                                        <input class="form-control" type="text" id="accountsCode" ng-model="module.accountsCode" placeholder="Account Code" readonly/>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Name</label>
+                                        <input class="form-control" type="text" id="accountsName" ng-model="module.accountsName" placeholder="Name" required />
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Account Type <span class="required">*</span></label><br>
+
+                                        <div ng-repeat="accountsType in accountsTypeList">
+                                            <label>
+                                                <input class="ace" type="radio" name="{{accountsType.value}}" value="{{accountsType.value}}"
+                                                       ng-change="accountsTypeChange('{{accountsType.value}}')" ng-model="module.accountsType"
+                                                       ng-checked="{{accountsType.value=='Asset'}}" />
+                                                <span class="lbl"> {{accountsType.value}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Account Usage <span class="required">*</span></label><br>
+
+                                        <div ng-repeat="accountsUsage in accountsUsageList">
+                                            <label>
+                                                <input class="ace" type="radio"  name="{{accountsUsage.value}}" value="{{accountsUsage.value}}"
+                                                       ng-change="accountsUsageChange('{{accountsUsage.value}}')" ng-model="module.accountsUsage"
+                                                       ng-checked="{{accountsUsage.value=='Ledger'}}" />
+                                                <span class="lbl"> {{accountsUsage.value}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Account Source <span class="required">*</span></label><br>
+
+                                        <div ng-repeat="accountsSource in accountsSourceList">
+                                            <label>
+                                                <input class="ace" type="radio" name="{{accountsSource.value}}" value="{{accountsSource.value}}"
+                                                       ng-model="module.accountsSource" ng-change="accountsSourceChange('{{accountsSource.value}}')"
+                                                       ng-checked="{{accountsSource.value=='None'}}" />
+                                                <span class="lbl"> {{accountsSource.value}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Status </label><br>
+                                        <!--<input class="form-control" type="text" id="accountsName" ng-model="module.accountsName" placeholder="Name" required />-->
+                                        <input type="checkbox" ng-model="module.active">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-actions pull-right">
+                                            <button type="button" ui-sref="{{JCOMPONENT.acc_chart_of_accounts_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                                <i class="ace-icon fa fa-close"></i> Cancel
+                                            </button>
+
+                                            <button type="reset" ng-show="current_state===JCOMPONENT.acc_chart_of_accounts_add_view" class="btn btn-sm btn-warning">
+                                                <i class="ace-icon fa fa-recycle"></i> Reset
+                                            </button>
+
+                                            <button type="submit" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.acc_chart_of_accounts_add_view) || hasPermission(JMODULE_NAME, JCOMPONENT.acc_chart_of_accounts_update)" class="btn btn-sm btn-primary">
+                                                <i class="ace-icon fa fa-check-circle"></i>
+                                                <span ng-if="current_state===JCOMPONENT.acc_chart_of_accounts_add_view" >Save</span>
+                                                <span ng-if="current_state===JCOMPONENT.acc_chart_of_accounts_update_view" >Update</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-sm-4 col-md-4 col-lg-4" ng-if="module.accountsSource==='notuse'">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Sub-account Add</h4>
+                <span class="widget-toolbar"></span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row  ">
+
+                        <div class="col-xs-12 col-md-8">
+                            <label>Sub-account name <span class="required">*</span></label>
+                            <input class="form-control" type="text" id="subaccountName" ng-model="module.subaccountName" ng-pattern-restrict="^[0-9A-Za-z _]*$" placeholder="Name" required />
+                        </div>
+                        <br>
+
+                        <div class="col-xs-12 col-md-3">
+                            <button type="button" class="btn btn-sm btn-primary" ng-click="addToGrid()" style="padding: 5px 25px;top: 4px">
+                                <i class="ace-icon fa fa-check-circle"></i>Add
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
