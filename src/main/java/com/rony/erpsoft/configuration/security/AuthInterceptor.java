@@ -1,13 +1,13 @@
-package com.rony.erpsoft.configuration;
+package com.rony.erpsoft.configuration.security;
 
 import com.rony.erpsoft.user_auth.service.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
     
-    @Autowired
+    /*@Autowired
     SessionService sService;
     
     @Override
@@ -75,6 +75,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             map.put(key, request.getHeader(key)); // key, value pair
         }
         return map;
-    }
+    }*/
     
 }

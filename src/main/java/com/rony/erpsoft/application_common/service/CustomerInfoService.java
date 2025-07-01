@@ -1,5 +1,6 @@
 package com.rony.erpsoft.application_common.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.model.CustomerInfo;
 import com.rony.erpsoft.application_common.repo.CustomerInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class CustomerInfoService implements ICustomerInfoService {
         return customerInfoRepo.save(customerInfo);
     }
 
-    public List<Map<String, Object>> getCustomerListForDropDown() {
+    public List<SubCOADropdownDTO> getCustomerListForDropDown() {
         return customerInfoRepo.getCustomerListForDropDown();
     }
 

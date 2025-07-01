@@ -1,0 +1,130 @@
+<div class="row">
+    
+    <div class="col-sm-3 col-md-3 col-lg-3" >&nbsp;</div>
+    
+    <div class="col-sm-6 col-md-6 col-lg-6">
+        
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title">{{page_name}}</h4>
+                <span class="widget-toolbar"> </span>
+
+                <label style="padding-left: 23em; font-size: medium; color:lightcoral; ">
+                </label>
+                <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.item_master_list_view}}">
+                    <i class="ace-icon fa fa-backward"></i> Back
+                </a>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row  ">
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Item Code <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="itemCode" ng-model="module.itemCode" placeholder="Item Code" ng-readonly="true" />
+
+                            </div>
+                            
+                            <div class="col-xs-12 col-md-6">
+                                <label>Item Name <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="itemName" ng-model="module.itemName" style="text-transform: capitalize;" placeholder="Item Name"/>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Description <span class="required">*</span></label>
+                                <input class="form-control" type="text" id="description" ng-model="module.description" placeholder="Description"/>
+
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label for="category">Category</label>
+                                <select class="form-control" id="category">
+                                    <option value="">Choose category</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label for="brand">Brand</label>
+                                <select class="form-control" id="brand">
+                                    <option value="">Choose brand</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label for="model">Model</label>
+                                <select class="form-control" id="model">
+                                    <option value="">Choose model</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label for="color">Color</label>
+                                <select class="form-control" id="color">
+                                    <option value="">Choose color</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>Storage </label>
+                                <input class="form-control" type="text" id="storage" ng-model="module.storage" style="text-transform: capitalize;" placeholder="Storage" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label for="unit">Unit</label>
+                                <select class="form-control" id="unit">
+                                    <option value="">Choose unit</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>price </label>
+                                <input class="form-control" type="tel" id="price" ng-model="module.price" ng-pattern-restrict="^[0-9]*$" placeholder="price" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>standard Price </label>
+                                <input class="form-control" type="tel" id="standardPrice" ng-model="module.standardPrice" ng-pattern-restrict="^[0-9]*$" placeholder="standardPrice" />
+                            </div>
+
+                            <div class="col-xs-12 col-md-6">
+                                <label>IMEI </label>
+                                <input class="form-control" type="tel" id="imei" ng-model="module.imei" placeholder="imei" />
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <label>Status </label><br>
+                                <input type="checkbox" ng-model="module.active">
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.item_master_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.item_master_add_view" class="btn btn-sm btn-warning" ng-click="reset()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.item_master_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.item_master_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+
+</div>

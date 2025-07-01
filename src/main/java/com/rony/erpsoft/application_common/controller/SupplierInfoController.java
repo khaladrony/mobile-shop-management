@@ -1,5 +1,6 @@
 package com.rony.erpsoft.application_common.controller;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.actionService.EmployeeInfoActionService;
 import com.rony.erpsoft.application_common.actionService.SupplierInfoActionService;
 import com.rony.erpsoft.application_common.model.BankInfo;
@@ -75,7 +76,7 @@ public class SupplierInfoController extends AppProperty {
     @RequestMapping(value = "/get/list", method = RequestMethod.GET)
     public AppResponse<Object> getSupplierList() {
         try {
-            List<Map<String, Object>> list = supplierInfoService.getSupplierListForDropDown();
+            List<SubCOADropdownDTO> list = supplierInfoService.getSupplierListForDropDown();
             if (!list.isEmpty()) {
                 return AppResponse.build(HttpStatus.OK).body(list);
             } else {

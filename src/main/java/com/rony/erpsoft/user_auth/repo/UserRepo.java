@@ -37,10 +37,6 @@ public class UserRepo implements ModelRepo<UserInfo> {
     @Autowired
     SessionService sessionService;
     
-    @Autowired
-    AppUtil appUtil;
-    
-    
     @Override
     public List<UserInfo> findAll() {
         StringBuilder sql = new StringBuilder();

@@ -1,5 +1,6 @@
 package com.rony.erpsoft.application_common.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.model.SupplierInfo;
 import com.rony.erpsoft.application_common.repo.SupplierInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SupplierInfoService implements ISupplierInfoService {
         return supplierInfoRepo.save(supplierInfo);
     }
 
-    public List<Map<String, Object>> getSupplierListForDropDown() {
+    public List<SubCOADropdownDTO> getSupplierListForDropDown() {
         return supplierInfoRepo.getSupplierListForDropDown();
     }
 

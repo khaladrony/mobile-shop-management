@@ -7,18 +7,16 @@ package com.rony.erpsoft.utils;
 
 import com.rony.erpsoft.user_auth.service.AppSettingService;
 import com.rony.erpsoft.user_auth.service.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,12 +35,6 @@ public class AppUtil {
 
     @Value("${app.full_name}")
     private String APP_FULL_NAME;
-    
-    @Value("${app.rootdir}")
-    private String ROOTDIR;
-    
-    @Value("${scheduler.endpoint}")
-    private String SCHEDULER_ENDPOINT;
 
     @Value("${app.name.hash}")
     private String SECRET_KEY;
@@ -338,28 +330,10 @@ public class AppUtil {
         }
         return "Contact Management System";
     }
-    
-    public String getRootDir() {
-        try {
-            return ROOTDIR;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "/AIPIMG";
-    }
 
     public String getSecretKey() {
         try {
             return SECRET_KEY;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-    
-    public String getSchedulerEndpoint() {
-        try {
-            return SCHEDULER_ENDPOINT + "/endpoint";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -381,15 +355,6 @@ public class AppUtil {
         } catch(Exception e){}
         
         return resp;
-    }
-    
-    public String getSchedulerInfoEndpoint() {
-        try {
-            return SCHEDULER_ENDPOINT + "/hterminal";
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
     
     

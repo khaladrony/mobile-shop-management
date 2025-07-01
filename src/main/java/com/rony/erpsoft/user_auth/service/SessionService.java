@@ -9,10 +9,10 @@ import com.rony.erpsoft.user_auth.model.Organization;
 import com.rony.erpsoft.user_auth.model.UserInfo;
 import com.rony.erpsoft.user_auth.repo.AuthRepo;
 import com.rony.erpsoft.utils.KEY;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**

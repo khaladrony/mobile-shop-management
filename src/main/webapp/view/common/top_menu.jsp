@@ -127,6 +127,9 @@
                                 <c:when test="${fn:contains(module.feature_name, 'Report')}">  
                                     <%--<i class="menu-icon fa fa-bar-chart"></i>--%>
                                 </c:when>
+                                <c:when test="${fn:contains(module.feature_name, 'Inventory')}">
+                                    <%--<i class="menu-icon fa fa-bar-chart"></i>--%>
+                                </c:when>
                                 <c:otherwise>
                                     <i class="menu-icon fa fa-desktop"></i>
                                 </c:otherwise>

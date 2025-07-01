@@ -32,9 +32,6 @@ public class AppSettingService {
     @Autowired
     SessionService sessionService;
     
-    @Autowired
-    AppUtil util;
-    
     @Transactional
     public AppResponse<Object> updateSettingService(Map<String, Object> model) {
 

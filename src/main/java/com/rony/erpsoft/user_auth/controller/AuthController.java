@@ -13,11 +13,11 @@ import com.rony.erpsoft.user_auth.model.UserInfo;
 import com.rony.erpsoft.user_auth.repo.AuthRepo;
 import com.rony.erpsoft.user_auth.repo.FeatureRepo;
 import com.rony.erpsoft.user_auth.repo.OrganizationRepo;
-import com.rony.erpsoft.user_auth.service.AppSettingService;
 import com.rony.erpsoft.user_auth.service.AuthService;
 import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.KEY;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,10 +54,7 @@ public class AuthController extends AppProperty {
 
     @Autowired
     SessionService sessionService;
-    
-    @Autowired
-    AppSettingService appSettingService;
-    
+
     @Autowired
     AppUtil appUtil;
 
@@ -143,13 +139,14 @@ public class AuthController extends AppProperty {
     
 
     @RequestMapping(value = {"/auth/login"}, method = {RequestMethod.POST})
-    public ModelAndView doLogin(@RequestParam("lanId") String lanId, @RequestParam("usrpkeycnv") String usrpkeycnv) {
+    public ModelAndView doLogin(@RequestParam("lanId") String lanId,
+                                @RequestParam("usrpkeycnv") String usrpkeycnv) {
 
-        if( lanId.trim().length() < 1 ){
+        if(lanId.trim().isEmpty()){
             return new ModelAndView("login_page").addObject("status", "User Id is required!");
         }
         
-        if( usrpkeycnv.trim().length() < 1 ){
+        if(usrpkeycnv.trim().isEmpty()){
             return new ModelAndView("login_page").addObject("status", "Password is required!");
         }
         
@@ -157,9 +154,9 @@ public class AuthController extends AppProperty {
             return new ModelAndView("login_page").addObject("status", "Enter valid user id!");
         }
 
-        if(!authService.licenseKeyCheck()){
+        /*if(!authService.licenseKeyCheck()){
             return new ModelAndView("login_page").addObject("status", "Please contact your vendor. You have a licence problem!!!");
-        }
+        }*/
         
         String plainStr = appUtil.retrievePaswd(usrpkeycnv);
         

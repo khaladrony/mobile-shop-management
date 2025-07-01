@@ -5,12 +5,12 @@
  */
 package com.rony.erpsoft.utils;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 
@@ -30,7 +30,7 @@ public  class ModelValidator {
     
     public <T> String validationMessage(T model){
         Validator validator = factory.getValidator();
-        Set<ConstraintViolation<T>> constraints = validator.validate(model);    
+        Set<ConstraintViolation<T>> constraints = validator.validate(model);
         StringBuilder sb=new  StringBuilder();
         for (ConstraintViolation<T> constraint : constraints) {
 	  //sb.append(constraint.getPropertyPath() + "  "+ constraint.getMessage()+";");

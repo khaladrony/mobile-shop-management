@@ -1,5 +1,6 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
 import com.rony.erpsoft.accounts.model.AccSubAccounts;
 import com.rony.erpsoft.accounts.model.enums.AccountsSource;
@@ -63,7 +64,7 @@ public class AccSubAccountsService implements IAccSubAccountsService {
     }
 
     @Override
-    public List<Map<String, Object>> findAllSubAccountListByAccountsSource(String accountsSource, Long chartOfAccountsId) {
+    public List<SubCOADropdownDTO> findAllSubAccountListByAccountsSource(String accountsSource, Long chartOfAccountsId) {
         if(accountsSource.equalsIgnoreCase(AccountsSource.CUSTOMER.code())){
             return customerInfoService.getCustomerListForDropDown();
         } else if(accountsSource.equalsIgnoreCase(AccountsSource.SUPPLIER.code())){

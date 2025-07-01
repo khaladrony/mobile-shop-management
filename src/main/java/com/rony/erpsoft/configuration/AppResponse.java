@@ -46,5 +46,4 @@ public class AppResponse<T> {
         this.body = data;
         return this;
     }
-
 }

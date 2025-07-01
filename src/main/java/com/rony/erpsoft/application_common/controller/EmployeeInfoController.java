@@ -1,5 +1,6 @@
 package com.rony.erpsoft.application_common.controller;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.actionService.CustomerInfoActionService;
 import com.rony.erpsoft.application_common.actionService.EmployeeInfoActionService;
 import com.rony.erpsoft.application_common.model.BankInfo;
@@ -75,7 +76,7 @@ public class EmployeeInfoController extends AppProperty {
     @RequestMapping(value = "/get/list", method = RequestMethod.GET)
     public AppResponse<Object> getEmployeeList() {
         try {
-            List<Map<String, Object>> list = employeeInfoService.getEmployeeListForDropDown();
+            List<SubCOADropdownDTO> list = employeeInfoService.getEmployeeListForDropDown();
             if (!list.isEmpty()) {
                 return AppResponse.build(HttpStatus.OK).body(list);
             } else {
