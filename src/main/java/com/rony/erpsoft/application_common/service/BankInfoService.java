@@ -1,5 +1,6 @@
 package com.rony.erpsoft.application_common.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.model.BankInfo;
 import com.rony.erpsoft.application_common.repo.BankInfoRepo;
 import com.rony.erpsoft.utils.AppUtil;
@@ -35,7 +36,7 @@ public class BankInfoService implements IBankInfoService {
         return bankInfoRepo.save(bankInfo);
     }
 
-    public List<Map<String, Object>> getBankAccountListForDropDown() {
+    public List<SubCOADropdownDTO> getBankAccountListForDropDown() {
         return bankInfoRepo.getBankAccountListForDropDown();
     }
 

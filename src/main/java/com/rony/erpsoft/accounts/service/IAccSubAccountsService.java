@@ -1,5 +1,6 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.accounts.model.AccSubAccounts;
 
 import java.util.List;
@@ -16,5 +17,5 @@ public interface IAccSubAccountsService {
 
     AccSubAccounts save(AccSubAccounts subAccounts);
 
-    List<Map<String, Object>> findAllSubAccountListByAccountsSource(String accountsSource, Long chartOfAccountsId);
+    List<SubCOADropdownDTO> findAllSubAccountListByAccountsSource(String accountsSource, Long chartOfAccountsId);
 }

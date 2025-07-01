@@ -1,5 +1,6 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
@@ -531,21 +532,17 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     }
 
     public List<Long> getSubAccountIds(long chartOfAccountsId, String accountsSource, String accountsUsage) {
-        List<Long> subAccountIds = new ArrayList<>();
-        List<Map<String, Object>> list = new ArrayList<>();
+        List<SubCOADropdownDTO> subCOAs = new ArrayList<>();
         if (accountsSource.equalsIgnoreCase(AccountsSource.NONE.code())) {
             if(accountsUsage.equalsIgnoreCase(AccountsUsage.BANK.code())){
-                list = bankInfoService.getBankAccountListForDropDown();
+                subCOAs = bankInfoService.getBankAccountListForDropDown();
             }
         } else {
-            list = accSubAccountsService.findAllSubAccountListByAccountsSource(accountsSource, chartOfAccountsId);
+            subCOAs = accSubAccountsService.findAllSubAccountListByAccountsSource(accountsSource, chartOfAccountsId);
         }
-
-        for (Map<String, Object> map : list) {
-            subAccountIds.add((long) map.get("id"));
-        }
-
-        return subAccountIds;
+        return subCOAs.stream()
+                .map(SubCOADropdownDTO::getId)
+                .collect(Collectors.toList());
     }
 
     public List<AccLedgerDto> getTrialBalance(String asOnDate){

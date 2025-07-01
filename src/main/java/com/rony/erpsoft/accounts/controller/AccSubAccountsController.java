@@ -1,6 +1,7 @@
 package com.rony.erpsoft.accounts.controller;
 
 import com.rony.erpsoft.accounts.actionService.accSubAccounts.SaveSubAccountsActionService;
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.accounts.model.AccSubAccounts;
 import com.rony.erpsoft.accounts.service.AccSubAccountsService;
 import com.rony.erpsoft.configuration.AppProperty;
@@ -79,7 +80,7 @@ public class AccSubAccountsController extends AppProperty {
     public AppResponse<Object> getSubAccountListByAccountsSource(@PathVariable("accountsSource") String accountsSource,
                                                                  @PathVariable("chartOfAccountsId") long chartOfAccountsId) {
         try {
-            List<Map<String, Object>> subAccountList = accSubAccountsService.findAllSubAccountListByAccountsSource(accountsSource, chartOfAccountsId);
+            List<SubCOADropdownDTO> subAccountList = accSubAccountsService.findAllSubAccountListByAccountsSource(accountsSource, chartOfAccountsId);
             if (!subAccountList.isEmpty()) {
                 return AppResponse.build(HttpStatus.OK).body(subAccountList);
             } else {

@@ -22,11 +22,11 @@ public interface AccChartOfAccountsRepo extends JpaRepository<AccChartOfAccounts
     @Query("SELECT max(accountsCode) FROM AccChartOfAccounts WHERE accountsType=?1 ")
     String findLastAccountsCodeByAccountsType(String type);
 
-    AccChartOfAccounts save(AccChartOfAccounts chartOfAccounts);
+//    AccChartOfAccounts save(AccChartOfAccounts chartOfAccounts);
 
     @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' (',accountsCode,')') as coa_code_name, " +
             "accountsSource as accounts_source, accountsUsage as accounts_usage " +
-            "FROM AccChartOfAccounts WHERE is_active = 1 order by accountsType, accountsName")
+            "FROM AccChartOfAccounts WHERE isActive = true order by accountsType, accountsName")
     List<Map<String, Object>> findAllCOAListForDropDown();
 
     @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' (',accountsCode,')') as coa_code_name FROM AccChartOfAccounts WHERE accountsUsage=?1 ")

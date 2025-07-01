@@ -92,7 +92,7 @@
                 $scope.configUserData = function(){
                     DialogBox.showProgress();
                     
-                    var g = Communication.request("GET", _baseurl_ + "/auth/mydata", {});
+                    var g = Communication.request("GET", _baseurl_ + "auth/mydata", {});
 
                     g.then(function (resp) {
                         //console.log("my data", JSON.stringify(resp));

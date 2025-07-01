@@ -12,12 +12,12 @@ import com.rony.erpsoft.user_auth.repo.AuthRepo;
 import com.rony.erpsoft.user_auth.repo.FeatureRepo;
 import com.rony.erpsoft.user_auth.repo.RoleRepo;
 import com.rony.erpsoft.utils.AppUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface AccJournalMasterRepo extends JpaRepository<AccJournalMaster, Long> {
-    List<AccJournalMaster> findAll();
+//    List<AccJournalMaster> findAll();
 
     AccJournalMaster findById(long id);
 
-    AccJournalMaster save(AccJournalMaster journalMaster);
+//    AccJournalMaster save(AccJournalMaster journalMaster);
 
     @Query("SELECT max(voucherNo) FROM AccJournalMaster WHERE voucherPrefix=?1 and year=?2 and month=?3 ")
     String findLastVoucherNoByVoucherPrefixAndYearAndMonth(String voucherPrefix, int year, int month);

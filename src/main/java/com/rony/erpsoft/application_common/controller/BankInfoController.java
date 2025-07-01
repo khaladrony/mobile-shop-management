@@ -1,6 +1,7 @@
 package com.rony.erpsoft.application_common.controller;
 
 
+import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.actionService.BankInfoActionService;
 import com.rony.erpsoft.application_common.model.BankInfo;
 import com.rony.erpsoft.application_common.service.BankInfoService;
@@ -72,7 +73,7 @@ public class BankInfoController extends AppProperty {
     @RequestMapping(value = "/get/list", method = RequestMethod.GET)
     public AppResponse<Object> getBankAccountList() {
         try {
-            List<Map<String, Object>> list = bankInfoService.getBankAccountListForDropDown();
+            List<SubCOADropdownDTO> list = bankInfoService.getBankAccountListForDropDown();
             if (!list.isEmpty()) {
                 return AppResponse.build(HttpStatus.OK).body(list);
             } else {

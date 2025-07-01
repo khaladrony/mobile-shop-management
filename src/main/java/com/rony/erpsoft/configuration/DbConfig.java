@@ -21,24 +21,24 @@ import javax.sql.DataSource;
  *
  * @author mdshahadat.sarker
  */
-@Configuration
-public class DbConfig {
-    
-    @Bean(name = "msWebDB")
-    @Primary
-    @ConfigurationProperties(prefix = "spring.dsweb")
-    public DataSource mysqlHealthRohingyaDataSource() {
-            return DataSourceBuilder.create().build();
-    }
-
-    @Bean(name = "mysqlWebJdbcTemplate")
-    public JdbcTemplate mysqlWebJdbcTemplate(@Qualifier("msWebDB") DataSource dsCustomMySQL) {
-            return new JdbcTemplate(dsCustomMySQL);
-    }
-    
-    @Bean(name = "namedWebJdbcTemplate")
-    public NamedParameterJdbcTemplate namedSchJdbcTemplate(@Qualifier("msWebDB") DataSource dsCustomMySQL) {
-            return new NamedParameterJdbcTemplate(dsCustomMySQL);
-    }
-}
+//@Configuration
+//public class DbConfig {
+//
+//    @Bean(name = "msWebDB")
+//    @Primary
+//    @ConfigurationProperties(prefix = "spring.dsweb")
+//    public DataSource mysqlHealthRohingyaDataSource() {
+//            return DataSourceBuilder.create().build();
+//    }
+//
+//    @Bean(name = "mysqlWebJdbcTemplate")
+//    public JdbcTemplate mysqlWebJdbcTemplate(@Qualifier("msWebDB") DataSource dsCustomMySQL) {
+//            return new JdbcTemplate(dsCustomMySQL);
+//    }
+//
+//    @Bean(name = "namedWebJdbcTemplate")
+//    public NamedParameterJdbcTemplate namedSchJdbcTemplate(@Qualifier("msWebDB") DataSource dsCustomMySQL) {
+//            return new NamedParameterJdbcTemplate(dsCustomMySQL);
+//    }
+//}
 

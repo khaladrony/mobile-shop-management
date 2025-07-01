@@ -28,8 +28,6 @@
                     </li>
                     <li class="active" id="page_name"></li>
                 </ul><!-- /.breadcrumb -->
-
-
             </div>
 
             <div class="page-content">
