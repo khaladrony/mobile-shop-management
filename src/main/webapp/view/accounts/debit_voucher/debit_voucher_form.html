@@ -8,23 +8,38 @@
     <div class="col-sm-9 col-md-9 col-lg-9">
 
         <div class="widget-box">
-            <div class="widget-header widget-header-flat">
-                <h4 class="widget-title">{{page_name}}</h4>
-                <span class="widget-toolbar"> </span>
 
-                <label style="padding-left: 10em; font-size: medium; color:lightcoral; " ng-if="current_state===JCOMPONENT.acc_debit_voucher_update_view">
-                    Voucher No:
-                    <input type="text" style="border: none; border-color: transparent; font-weight: bold" ng-model="module.voucherNo" readonly/>
-                    Voucher Date:
-                    <input type="text" style="border: none; border-color: transparent; font-weight: bold" ng-model="module.voucherDate | date: 'dd-MM-yyyy'" readonly/>
-                </label>
+            <div class="widget-header row" style="margin: 0; padding: 8px 12px;">
+                <!-- Left: Title -->
+                <div class="col-sm-4">
+                    <h4 class="widget-title" style="color: indianred; margin: 0;">
+                        {{page_name}}
+                    </h4>
+                </div>
 
-                <label style="padding-left: 44em; font-size: medium; color:lightcoral; " ng-if="current_state===JCOMPONENT.acc_debit_voucher_add_view">
-                </label>
-                <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.acc_debit_voucher_list_view}}">
-                    <i class="ace-icon fa fa-backward"></i> Back
-                </a>
+                <!-- Center: Voucher Info -->
+                <div class="col-sm-6" >
+                    <span class="widget-toolbar pull-left">
+                        <span style="color: #00689c; font-weight: normal;">Voucher No:</span>
+                        <strong style="color: black;">{{module.voucherNo}}</strong>
+                        &nbsp;&nbsp;
+                    </span>
+                    <span class="widget-toolbar pull-left">
+                        <span style="color: #00689c; font-weight: normal;">Voucher Date:</span>
+                        <strong style="color: black;">{{module.voucherDate | date: 'dd-MM-yyyy'}}</strong>
+                    </span>
+                </div>
+
+                <!-- Right: Back Button -->
+                <div class="col-sm-2 text-right">
+                    <span class="widget-toolbar pull-right">
+                        <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.acc_debit_voucher_list_view}}">
+                            <i class="ace-icon fa fa-backward"></i> Back
+                        </a>
+                    </span>
+                </div>
             </div>
+
 
             <div class="widget-body">
                 <div class="widget-main">
@@ -202,9 +217,13 @@
                                         <i class="ace-icon fa fa-close"></i>Cancel
                                     </button>
 
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.acc_debit_voucher_add_view"></span>
+
                                     <button type="button" ng-show="current_state === JCOMPONENT.acc_debit_voucher_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
                                         <i class="ace-icon fa fa-recycle"></i>Reset
                                     </button>
+
+                                    <span class="btn-divider"></span>
 
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="ace-icon fa fa-check-circle"></i>

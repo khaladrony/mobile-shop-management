@@ -1,4 +1,4 @@
-package com.rony.erpsoft.inventory.model;
+package com.rony.erpsoft.inventory.inventorymovement.model;
 
 import com.rony.erpsoft.application_common.model.BaseEntity;
 import com.rony.erpsoft.inventory.enums.InventoryAction;

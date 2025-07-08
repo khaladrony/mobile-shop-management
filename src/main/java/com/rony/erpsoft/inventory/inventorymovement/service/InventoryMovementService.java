@@ -1,6 +1,6 @@
-package com.rony.erpsoft.inventory.service;
+package com.rony.erpsoft.inventory.inventorymovement.service;
 
-import com.rony.erpsoft.inventory.model.InventoryMovement;
+import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovement;
 
 import java.util.List;
 

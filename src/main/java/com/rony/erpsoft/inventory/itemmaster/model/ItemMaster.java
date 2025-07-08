@@ -1,9 +1,10 @@
-package com.rony.erpsoft.inventory.model;
+package com.rony.erpsoft.inventory.itemmaster.model;
 
 import com.rony.erpsoft.application_common.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,13 +15,14 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "item_master")
 public class ItemMaster extends BaseEntity {
 
     @Column(name="item_code")
     private String itemCode;
 
-    @Column(name="item_name")
+    @Column(name="item_name", nullable = false)
     private String itemName;
 
     @Column(name="description")

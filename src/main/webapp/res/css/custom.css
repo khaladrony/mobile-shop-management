@@ -19,7 +19,65 @@
     margin:0px;
     padding:0px;
 }
-label{font-size: 13px;}
+label{
+    font-size: 15px;
+}
+
+.nav-list>li>a {
+    font-size: 15px;
+}
+
+.breadcrumb {
+    font-size: 15px;
+}
+
+body {
+    font-size: 15px;
+    color: #00689c
+}
+
+.btn-group-sm>.btn, .btn-sm {
+    font-size: 14px;
+}
+
+.form-control, select {
+    color: #080808;
+}
+
+.form-control:focus, select:focus {
+    color: #080808;
+}
+
+input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+    color: #000000
+}
+
+input[type=email]:focus, input[type=url]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=color]:focus, input[type=text]:focus, input[type=password]:focus, input[type=datetime]:focus, input[type=datetime-local]:focus, input[type=date]:focus, input[type=month]:focus, input[type=time]:focus, input[type=week]:focus, input[type=number]:focus, textarea:focus {
+color: #000000
+}
+
+.table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th {
+    color: #393939;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    color: #D15B47;
+    font-size: 20px;
+}
+
+.btn-divider {
+    display: inline-block;
+    height: 24px;
+    width: 1px;
+    background-color: #ccc;
+    margin: 0 8px;
+    vertical-align: middle;
+}
+
+.nav-list li.hover>.submenu {
+    width: 220px;
+}
+
 .service-group li {
     float:left;
     margin:0px;
@@ -92,6 +150,8 @@ label{font-size: 13px;}
 
 .filter-area{
     margin-bottom: 10px !important;
+    /*display: flex;
+    justify-content: flex-end;*/
 }
 
 .hospital{

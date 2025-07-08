@@ -1,8 +1,7 @@
-package com.rony.erpsoft.inventory.service.impl;
+package com.rony.erpsoft.inventory.inventorymovement.service;
 
-import com.rony.erpsoft.inventory.model.InventoryMovement;
-import com.rony.erpsoft.inventory.repository.InventoryMovementRepository;
-import com.rony.erpsoft.inventory.service.InventoryMovementService;
+import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovement;
+import com.rony.erpsoft.inventory.inventorymovement.repository.InventoryMovementRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

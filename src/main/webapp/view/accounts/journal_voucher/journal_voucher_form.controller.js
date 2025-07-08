@@ -22,7 +22,7 @@ app.controller('AccJournalVoucherFormCtrl', function ($scope, $http, $state, $ti
         bankAccountId: "",
         voucherNo: "",
         reference: "",
-        voucherDate: "",
+        voucherDate: new Date(),
         particulars: "",
         year: "",
         month: "",

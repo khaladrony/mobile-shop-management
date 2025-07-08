@@ -3,6 +3,10 @@ app.controller('FeatureListCtrl', function ($scope, $http, $state, $timeout, $ro
     $scope.list = [];
     $scope.moduleList = [];
     $scope.module = "ALL";
+    $scope.typeList = [];
+    $scope.type = "ALL";
+    $scope.featureList = [];
+    $scope.feature = "ALL";
     
     $scope.getDataList = function () {
         var req = Communication.request("GET", API.FEATURE_LIST, {});
@@ -17,6 +21,15 @@ app.controller('FeatureListCtrl', function ($scope, $http, $state, $timeout, $ro
                     
                     if( resp.body[i].type === "Module" && !$scope.existModule(name) ){
                         $scope.moduleList.push(name);
+                    }
+
+                    var type = resp.body[i].type;
+                    if (!$scope.typeList.includes(type)) {
+                        $scope.typeList.push(type);
+                    }
+
+                    if( resp.body[i].root_module === $scope.module){
+                        $scope.featureList.push(name);
                     }
                 }
                 
@@ -44,18 +57,44 @@ app.controller('FeatureListCtrl', function ($scope, $http, $state, $timeout, $ro
     };
 
     $scope.activeInactive = function (obj, val) {
-
         obj.active = val;
         var req = Communication.request("PUT", API.FEATURE_UPDATE + '/' + obj.feature_id, obj);
 
         req.then(function (resp) {
             log("feature active/inactive: " + JSON.stringify(resp));
-
             $scope.getDataList();
-
         }, function (err) {
             log("feature error", JSON.stringify(err));
         });
     };
 
+    $scope.moduleMatch = function(obj) {
+        return $scope.module === 'ALL' ||
+               obj.module === $scope.module ||
+               obj.root_module === $scope.module ||
+               obj.parent_name === $scope.module ||
+               obj.feature_name === $scope.module;
+    };
+
+    $scope.typeMatch = function(obj) {
+        return $scope.type === 'ALL' || obj.type === $scope.type;
+    };
+
+    $scope.featureMatch = function(obj) {
+        return $scope.feature === 'ALL' || obj.feature_name === $scope.feature;
+    };
+
+    $scope.onModuleChange = function() {
+        if ($scope.module === 'ALL') {
+            // Show all features
+            $scope.featureList = $scope.list.map(f => f.feature);
+        } else {
+            // Filter features by module
+            $scope.featureList = $scope.list
+                .filter(f => f.root_module === $scope.module)
+                .map(f => f.feature_name);
+        }
+        // Optionally reset selected feature
+        $scope.feature = 'ALL';
+    };
 });

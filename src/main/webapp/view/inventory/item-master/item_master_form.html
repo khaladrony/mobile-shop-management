@@ -1,19 +1,19 @@
-<div class="row">
-    
-    <div class="col-sm-3 col-md-3 col-lg-3" >&nbsp;</div>
-    
-    <div class="col-sm-6 col-md-6 col-lg-6">
-        
-        <div class="widget-box">
-            <div class="widget-header widget-header-flat">
-                <h4 class="widget-title">{{page_name}}</h4>
-                <span class="widget-toolbar"> </span>
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
 
-                <label style="padding-left: 23em; font-size: medium; color:lightcoral; ">
-                </label>
-                <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.item_master_list_view}}">
-                    <i class="ace-icon fa fa-backward"></i> Back
-                </a>
+<div class="row" ng-init="getDataList()">
+
+    <div class="col-sm-3 col-md-3 col-lg-3">&nbsp;</div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+                <span class="widget-toolbar">
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.item_master_list_view}}">
+                        <i class="ace-icon fa fa-backward"></i> Back
+                    </a>
+                </span>
             </div>
             <div class="widget-body">
                 <div class="widget-main">
@@ -21,110 +21,132 @@
                         <div class="row  ">
 
                             <div class="col-xs-12 col-md-6">
-                                <label>Item Code <span class="required">*</span></label>
-                                <input class="form-control" type="text" id="itemCode" ng-model="module.itemCode" placeholder="Item Code" ng-readonly="true" />
+                                <label>Item Code</label>
+                                <input class="form-control" type="text" id="itemCode" ng-model="module.itemCode"
+                                       placeholder="Item Code" ng-readonly="true"/>
 
                             </div>
-                            
+
                             <div class="col-xs-12 col-md-6">
                                 <label>Item Name <span class="required">*</span></label>
-                                <input class="form-control" type="text" id="itemName" ng-model="module.itemName" style="text-transform: capitalize;" placeholder="Item Name"/>
+                                <input class="form-control" type="text" id="itemName" ng-model="module.itemName"
+                                       style="text-transform: capitalize;" placeholder="Item Name"/>
                             </div>
 
-                            <div class="col-xs-12 col-md-6">
-                                <label>Description <span class="required">*</span></label>
-                                <input class="form-control" type="text" id="description" ng-model="module.description" placeholder="Description"/>
+                            <div class="col-xs-12">
+                                <label>Description </span></label>
+                                <input class="form-control" type="textarea" id="description"
+                                       ng-model="module.description" placeholder="Description"/>
 
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label for="category">Category</label>
-                                <select class="form-control" id="category">
+                                <select class="form-control" id="category"
+                                        ng-model="module.category"
+                                        ng-options="category for category in dropdownOptions.category">
                                     <option value="">Choose category</option>
                                 </select>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label for="brand">Brand</label>
-                                <select class="form-control" id="brand">
+                                <select class="form-control"
+                                        id="brand"
+                                        ng-model="module.brand"
+                                        ng-options="b for b in dropdownOptions.brand">
                                     <option value="">Choose brand</option>
                                 </select>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label for="model">Model</label>
-                                <select class="form-control" id="model">
-                                    <option value="">Choose model</option>
-                                </select>
+                                <input class="form-control" type="text" id="model" ng-model="module.model"
+                                       style="text-transform: capitalize;" placeholder="Model"/>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label for="color">Color</label>
-                                <select class="form-control" id="color">
+                                <select class="form-control" id="color"
+                                        ng-model="module.color"
+                                        ng-options="color for color in dropdownOptions.color">
                                     <option value="">Choose color</option>
                                 </select>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label>Storage </label>
-                                <input class="form-control" type="text" id="storage" ng-model="module.storage" style="text-transform: capitalize;" placeholder="Storage" />
+                                <input class="form-control" type="text" id="storage" ng-model="module.storage"
+                                       style="text-transform: capitalize;" placeholder="Storage"/>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label for="unit">Unit</label>
-                                <select class="form-control" id="unit">
+                                <select class="form-control" id="unit"
+                                        ng-model="module.unit"
+                                        ng-options="unit for unit in dropdownOptions.unit">
                                     <option value="">Choose unit</option>
                                 </select>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label>price </label>
-                                <input class="form-control" type="tel" id="price" ng-model="module.price" ng-pattern-restrict="^[0-9]*$" placeholder="price" />
+                                <label>Price </label>
+                                <input class="form-control" type="tel" id="price" ng-model="module.price"
+                                       ng-pattern-restrict="^[0-9]*$" placeholder="price"/>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label>standard Price </label>
-                                <input class="form-control" type="tel" id="standardPrice" ng-model="module.standardPrice" ng-pattern-restrict="^[0-9]*$" placeholder="standardPrice" />
+                                <label>Standard Price </label>
+                                <input class="form-control" type="tel" id="standardPrice"
+                                       ng-model="module.standardPrice" ng-pattern-restrict="^[0-9]*$"
+                                       placeholder="standardPrice"/>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
                                 <label>IMEI </label>
-                                <input class="form-control" type="tel" id="imei" ng-model="module.imei" placeholder="imei" />
+                                <input class="form-control" type="tel" id="imei" ng-model="module.imei"
+                                       placeholder="imei"/>
                             </div>
 
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 col-md-6">
                                 <label>Status </label><br>
                                 <input type="checkbox" ng-model="module.active">
                             </div>
-                            
+
                             <div class="col-md-12">
                                 <div class="form-actions pull-right">
 
-                                    <button type="button" ui-sref="{{JCOMPONENT.item_master_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                    <button type="button" ui-sref="{{JCOMPONENT.item_master_list_view}}" ng-show="true"
+                                            class="btn btn-sm btn-danger">
                                         <i class="ace-icon fa fa-close"></i>Cancel
                                     </button>
 
-                                    <button type="reset" ng-show="current_state === JCOMPONENT.item_master_add_view" class="btn btn-sm btn-warning" ng-click="reset()">
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.item_master_add_view"></span>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.item_master_add_view"
+                                            class="btn btn-sm btn-warning" ng-click="reset()">
                                         <i class="ace-icon fa fa-recycle"></i>Reset
                                     </button>
 
+                                    <span class="btn-divider"></span>
+
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="ace-icon fa fa-check-circle"></i>
-                                        <span ng-if="current_state === JCOMPONENT.item_master_add_view" >Save</span>
-                                        <span ng-if="current_state === JCOMPONENT.item_master_update_view" >Update</span>
+                                        <span ng-if="current_state === JCOMPONENT.item_master_add_view">Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.item_master_update_view">Update</span>
                                     </button>
                                 </div>
                             </div>
-                            
-                        </div>        
+
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
-        
+
 
     </div>
-    
+
 
 </div>

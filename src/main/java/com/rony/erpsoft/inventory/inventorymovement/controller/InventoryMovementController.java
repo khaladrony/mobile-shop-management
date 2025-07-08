@@ -1,4 +1,4 @@
-package com.rony.erpsoft.inventory.controller;
+package com.rony.erpsoft.inventory.inventorymovement.controller;
 
 import com.rony.erpsoft.configuration.AppProperty;
 import com.rony.erpsoft.utils.AppUtil;
@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.rony.erpsoft.utils.ApplicationConstants.INVENTORY_MASTER_BASE_URL;
+import static com.rony.erpsoft.utils.ApplicationConstants.INVENTORY_MOVEMENT_BASE_URL;
 import static com.rony.erpsoft.utils.ApplicationConstants.VIEW;
 import static com.rony.erpsoft.utils.ApplicationConstants.VIEW_PAGE;
 
-
 @RestController
-@RequestMapping(INVENTORY_MASTER_BASE_URL)
+@RequestMapping(INVENTORY_MOVEMENT_BASE_URL)
 @AllArgsConstructor
-public class ItemMasterController extends AppProperty {
+public class InventoryMovementController extends AppProperty {
 
     private final AppUtil appUtil;
 

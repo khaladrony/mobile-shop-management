@@ -22,7 +22,7 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
         bankAccountId: "",
         voucherNo: "",
         reference: "",
-        voucherDate: "",
+        voucherDate: new Date(),
         particulars: "",
         year: "",
         month: "",

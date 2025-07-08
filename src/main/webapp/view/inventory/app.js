@@ -13,21 +13,20 @@ var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRest
         .state(JCOMPONENT.item_master_add_view, {
             url: '/item_master_add_view',
             cache: false,
-            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/item_master/item_master_form.html',
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.ITEM_MASTER + '/' + 'item_master_form.html',
             controller: 'ItemMasterFormCtrl'
         }).state(JCOMPONENT.item_master_update_view, {
             url: '/item_master_update_view/:id',
             cache: false,
-            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/item_master/item_master_form.html',
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.ITEM_MASTER + '/' + 'item_master_form.html',
             controller: 'ItemMasterFormCtrl'
         }).state(JCOMPONENT.item_master_list_view, {
             url: '/item_master_list_view',
             cache: false,
-            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/item_master/item_master_list.html',
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.ITEM_MASTER + '/' + 'item_master_list.html',
             controller: 'ItemMasterListCtrl'
         })
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.item_master_list_view);
-        
     });
     

@@ -3,9 +3,25 @@
     <div class="col-sm-12 col-md-12 col-lg-12">
         <div class="input-group width350" style="float: left; margin-right: 8px;">
             <span class="input-group-addon">Module</span>
-            <select class="form-control" id="module" ng-model="module" style="float: left; margin-right: 8px;">
+            <select class="form-control" id="module" ng-model="module" style="float: left; margin-right: 8px;" ng-change="onModuleChange()">
                 <option value="ALL">All</option>
                 <option ng-repeat="obj in moduleList track by $index" ng-value="obj">{{obj}}</option>
+            </select>
+        </div>
+
+        <div class="input-group width350" style="float: left; margin-right: 8px;">
+            <span class="input-group-addon">Type</span>
+            <select class="form-control" id="type" ng-model="type" style="float: left; margin-right: 8px;">
+                <option value="ALL">All</option>
+                <option ng-repeat="obj in typeList track by $index" ng-value="obj">{{obj}}</option>
+            </select>
+        </div>
+
+        <div class="input-group width350" style="float: left; margin-right: 8px;">
+            <span class="input-group-addon">Feature</span>
+            <select class="form-control" id="feature" ng-model="feature" style="float: left; margin-right: 8px;">
+                <option value="ALL">All</option>
+                <option ng-repeat="obj in featureList track by $index" ng-value="obj">{{obj}}</option>
             </select>
         </div>
     </div>
@@ -24,7 +40,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="obj in list track by $index" ng-if=" obj.module === module || obj.root_module === module || obj.parent_name === module || obj.feature_name === module || module === 'ALL' ">
+                <tr ng-repeat="obj in list track by $index"
+                    ng-if="moduleMatch(obj) &&
+                            typeMatch(obj) &&
+                            featureMatch(obj)">
                     <td>{{obj.feature_name}}</td>
                     <td>{{obj.type}}</td>
                     <td>{{obj.root_module}}</td>
