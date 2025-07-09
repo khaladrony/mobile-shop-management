@@ -3,16 +3,24 @@ package com.rony.erpsoft.inventory.inventorymovement.model;
 import com.rony.erpsoft.application_common.model.BaseEntity;
 import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.inventory.enums.InventoryStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,11 +32,11 @@ public class InventoryMovement extends BaseEntity {
     @Column(name = "transaction_id")
     private String transactionId;   //Id prefix => RE--:IS-- (Receipt:Issue)
 
-    @Column(name = "reference")
-    private String reference;
-
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
+
+    @Column(name = "reference")
+    private String reference;
 
     @Column(name = "warehouse")
     private String warehouse;
@@ -58,4 +66,9 @@ public class InventoryMovement extends BaseEntity {
 
     @Column(name = "customer_code")
     String customerCode;    // CustomerInfo => customerCode
+
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JoinColumn(name = "inventory_movement_id")
+    private List<InventoryMovementItem> details = new ArrayList<>();
 }

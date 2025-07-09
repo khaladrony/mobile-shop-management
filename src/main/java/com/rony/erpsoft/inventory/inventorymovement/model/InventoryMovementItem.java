@@ -18,10 +18,7 @@ import java.math.BigDecimal;
 public class InventoryMovementItem extends BaseEntity {
 
     @Column(name = "inventory_movement_id")
-    private Long InventoryMovementId;   //InventoryMovement =>id
-
-    @Column(name = "transaction_id")
-    private String transactionId;   //InventoryMovement =>transactionId
+    private Long inventoryMovementId;   //InventoryMovement =>id
 
     @Column(name = "line_number")
     private int lineNumber;

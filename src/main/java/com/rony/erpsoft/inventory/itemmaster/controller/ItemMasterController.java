@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.rony.erpsoft.utils.ApplicationConstants.FILTER;
@@ -78,5 +79,19 @@ public class ItemMasterController extends AppProperty {
     @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppResponse<Object> get(@PathVariable("id") long id) {
         return AppResponse.build(HttpStatus.OK).body(itemMasterService.findById(id));
+    }
+
+    @RequestMapping(value = "/items", method = RequestMethod.GET)
+    public AppResponse<Object> getActiveItems() {
+        try {
+            List<Map<String, Object>> list = itemMasterService.findActiveItemsForDropDown();
+            if (!list.isEmpty()) {
+                return AppResponse.build(HttpStatus.OK).body(list);
+            } else {
+                return AppResponse.build(HttpStatus.NO_CONTENT).message("Items not found");
+            }
+        } catch (Exception ex) {
+            return AppResponse.build(HttpStatus.INTERNAL_SERVER_ERROR).message(ex.getMessage());
+        }
     }
 }

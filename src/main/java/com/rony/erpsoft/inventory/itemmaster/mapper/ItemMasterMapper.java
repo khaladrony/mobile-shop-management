@@ -6,12 +6,13 @@ import com.rony.erpsoft.inventory.itemmaster.model.ItemMaster;
 import com.rony.erpsoft.utils.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface ItemMasterMapper extends BaseMapper<ItemMasterResponseDTO, ItemMaster> {
 
-    @Override
+    /*@Override
     @Mappings({
             @Mapping(source = "id", target = "id"),
             @Mapping(source = "organizationId", target = "organizationId"),
@@ -73,6 +74,6 @@ public interface ItemMasterMapper extends BaseMapper<ItemMasterResponseDTO, Item
             @Mapping(source = "imei", target = "imei"),
             @Mapping(source = "active", target = "active"),
             @Mapping(source = "createdBy", target = "createdBy")
-    })
+    })*/
     ItemMaster requestDTOToEntity(ItemMasterRequestDTO requestDTO);
 }

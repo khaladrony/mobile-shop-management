@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -87,8 +88,12 @@ public class ItemMasterService {
     private String itemCodeGeneration() {
         String prefix = "MOBL";
         int length = 4;
-        String lastBankAccountCode = itemMasterRepository.findLastItemCode();
+        String lastItemCode = itemMasterRepository.findLastItemCode();
 
-        return generalInfoCommonService.autoCodeGeneration(prefix, length, lastBankAccountCode);
+        return generalInfoCommonService.autoCodeGeneration(prefix, length, lastItemCode);
+    }
+
+    public List<Map<String, Object>> findActiveItemsForDropDown() {
+        return itemMasterRepository.findActiveItemsForDropDown();
     }
 }

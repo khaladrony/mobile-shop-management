@@ -1,0 +1,186 @@
+
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row" ng-init="getItemList()">
+
+    <div class="col-sm-2 col-md-2 col-lg-2">&nbsp;</div>
+
+    <div class="col-sm-9 col-md-9 col-lg-9">
+
+        <div class="widget-box">
+
+            <div class="widget-header row" style="margin: 0; padding: 8px 12px;">
+                <!-- Left: Title -->
+                <div class="col-sm-4">
+                    <h4 class="widget-title" style="color: indianred; margin: 0;">
+                        {{page_name}}
+                    </h4>
+                </div>
+
+                <!-- Center: Transaction Info -->
+                <div class="col-sm-6" >
+                    <span class="widget-toolbar pull-left">
+                        <span style="color: #00689c; font-weight: normal;">Transaction No:</span>
+                        <strong style="color: black;">{{module.transactionId}}</strong>
+                        &nbsp;&nbsp;
+                    </span>
+                    <span class="widget-toolbar pull-left">
+                        <span style="color: #00689c; font-weight: normal;">Transaction Date:</span>
+                        <strong style="color: black;">{{module.transactionDate | date: 'dd-MM-yyyy'}}</strong>
+                    </span>
+                </div>
+
+                <!-- Right: Back Button -->
+                <div class="col-sm-2 text-right">
+                    <span class="widget-toolbar pull-right">
+                        <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.inventory_movement_list_view}}">
+                            <i class="ace-icon fa fa-backward"></i> Back
+                        </a>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-3" ng-hide="isWarehouseHide">
+                                <label for="warehouse">Warehouse</label>
+                                <select class="form-control" id="warehouse"
+                                        ng-model="module.warehouse"
+                                        ng-options="warehouse for warehouse in dropdownOptions.warehouse">
+                                    <option value="">Choose warehouse</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title">Transaction</h4>
+                            <span class="widget-toolbar"> </span>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="row">
+
+                                    <div class="col-xs-12 col-md-3">
+                                        <label>Item <span class="required">*</span></label>
+                                        <select class="chosen-select form-control" id="itemCode"
+                                                ng-model="inventory_movement_item.itemCode"
+                                                ng-change="selectItem(inventory_movement_item.itemCode)">
+                                            <option value="">Choose Item</option>
+                                            <option ng-repeat="obj in itemList track by $index" ng-value="obj.id">
+                                                {{obj.item_name_code}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-2">
+                                        <label>Quantity <span class="required">*</span></label>
+                                        <input class="form-control pastedString" type="text" id="quantity" ng-model="inventory_movement_item.quantity"
+                                               placeholder="Quantity" maxlength="17" onkeypress="return validateFloatKeyPress(this, event);" />
+                                    </div>
+
+                                    <br>
+
+                                    <div class="col-xs-12 col-md-1">
+                                        <button type="button" class="btn btn-sm btn-primary btn-round" ng-hide="detailsAddBtnHide"  ng-click="addToGrid()" style="padding: 5px 5px;top: 4px">
+                                            <i class="ace-icon fa fa-check-circle"></i>Add
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-yellow btn-round" ng-hide="detailsEditBtnHide" ng-click="editToGrid()" style="padding: 5px 5px;top: 4px">
+                                            <i class="ace-icon fa fa-check-circle"></i>Edit
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title">Item Details</h4>
+                            <span class="widget-toolbar"> </span>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="row  ">
+                                    <div class="col-md-12">
+                                        <table id="transaction-details-table" class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>SL</th>
+                                                <th ng-hide="true">ID</th>
+                                                <th ng-hide="true">Item Code</th>
+                                                <th>Item Code & Name</th>
+                                                <th>Quantity</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="movement_items in inventory_movement_items">
+                                                    <td><label>{{$index + 1}}</label></td>
+                                                    <td ng-hide="true"><label>{{movement_items.itemCode}}</label></td>
+                                                    <td><label>{{movement_items.item_name_code}}</label></td>
+                                                    <td align='right'><label>{{movement_items.Quantity>0? movement_items.Quantity: 0}}</label></td>
+                                                    <td style="width:130px">
+                                                        <input style='font-size:12px' type="button" ng-if="$index > 0" value="Edit" class="btn btn-no-border btn-yellow btn-round" data-ng-click='rowDataPopulate(movement_items, $index)' />
+                                                        <input style='font-size:12px' type="button" ng-if="$index > 0" value="Delete" class="btn btn-no-border btn-danger btn-round" data-ng-click='deleteRow($index)' />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr style="font-weight:bold">
+                                                    <td></td>
+                                                    <td>Total</td>
+                                                    <td align='right'></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row  ">
+                            <!--<div class="col-xs-12 col-md-8">
+                                <label>Amount(In words): </label>
+                                <input style="font-weight:bold" class="form-control" type="text"  name="amountInWords" id="amountInWords" placeholder="Amount in Words" readonly="readonly"/>
+                            </div>-->
+
+                            <div class="col-xs-12 col-md-4">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.acc_debit_voucher_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.acc_debit_voucher_add_view"></span>
+
+                                    <button type="button" ng-show="current_state === JCOMPONENT.acc_debit_voucher_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <span class="btn-divider"></span>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.acc_debit_voucher_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.acc_debit_voucher_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

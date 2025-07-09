@@ -11,4 +11,8 @@ public class ApplicationConstants {
     public static final String VIEW_PAGE = "inventory/view";
     public static final String FILTER = "/filter";
     public static final String SORT_BY_ID = "id";
+
+//    Inventory
+    public static final int RECEIPT_SIGN = 1;
+    public static final int ISSUE_SIGN = -1;
 }
