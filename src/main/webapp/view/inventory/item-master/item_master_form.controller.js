@@ -22,7 +22,7 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
         active: true
     };
 
-    $scope.getDataList = function () {
+    /*$scope.getDataList = function () {
         const url = _baseurl_ + "application_common/app_codes";
 
         var req = Communication.request("GET", url, {});
@@ -48,7 +48,7 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
                 .filter(item => item.xtype === type)
                 .map(item => item.xcode)
         )];
-    };
+    };*/
 
     if($state.current.name === JCOMPONENT.item_master_update_view) {
         var req = Communication.request("GET", API.ITEM_MASTER_GET + '/' + $stateParams.id, $scope.module);

@@ -1,5 +1,7 @@
 
-var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRestrict', '720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router','ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate', 'angular-growl'])
+var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRestrict',
+                        '720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router','ui.bootstrap',
+                         'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate', 'angular-growl'])
 
     .config(function($stateProvider, $urlRouterProvider, ngToastProvider, growlProvider) {
         growlProvider.globalTimeToLive(5000);
@@ -26,6 +28,23 @@ var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRest
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.ITEM_MASTER + '/' + 'item_master_list.html',
             controller: 'ItemMasterListCtrl'
         })
+
+        .state(JCOMPONENT.inventory_movement_add_view, {
+            url: '/inventory_movement_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT + '/' + 'inventory_movement_form.html',
+            controller: 'InventoryMovementFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_update_view, {
+            url: '/inventory_movement_update_view/:id',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT + '/' + 'inventory_movement_form.html',
+            controller: 'InventoryMovementFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_list_view, {
+            url: '/inventory_movement_list_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT + '/' + 'inventory_movement_list.html',
+            controller: 'InventoryMovementListCtrl'
+        });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.item_master_list_view);
     });

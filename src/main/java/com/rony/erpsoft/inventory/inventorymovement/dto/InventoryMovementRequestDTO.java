@@ -1,17 +1,20 @@
 package com.rony.erpsoft.inventory.inventorymovement.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.inventory.enums.InventoryStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
-public class InventoryMovementRequestDTO {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class InventoryMovementRequestDTO implements Serializable {
     private Long id;
     private Long organizationId;
     private String transactionId;

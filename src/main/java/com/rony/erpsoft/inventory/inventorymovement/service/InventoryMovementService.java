@@ -7,6 +7,7 @@ import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.inventory.enums.InventoryStatus;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementRequestDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementResponseDTO;
+import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementSearchDTO;
 import com.rony.erpsoft.inventory.inventorymovement.mapper.InventoryMovementMapper;
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovement;
 import com.rony.erpsoft.inventory.inventorymovement.repository.InventoryMovementRepository;
@@ -15,8 +16,12 @@ import com.rony.erpsoft.utils.ModelValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
+import java.util.List;
 
 import static com.rony.erpsoft.utils.ApplicationConstants.RECEIPT_SIGN;
 
@@ -30,8 +35,10 @@ public class InventoryMovementService {
     private final SessionService sessionService;
     private final GeneralInfoCommonService generalInfoCommonService;
 
-    public Page<InventoryMovementResponseDTO> findAll(Pageable pageable) {
-        return inventoryMovementRepository.findAll(pageable)
+    public Page<InventoryMovementResponseDTO> findAll(InventoryMovementSearchDTO searchDTO, Pageable pageable) {
+        Specification<InventoryMovement> spec = InventoryMovementSpecification.build(searchDTO);
+
+        return inventoryMovementRepository.findAll(spec, pageable)
                 .map(item -> inventoryMovementMapper.entityToDto(item));
     }
 
@@ -40,6 +47,10 @@ public class InventoryMovementService {
                 .map(inventoryMovementMapper::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
 
+    }
+
+    public List<String> searchTransactionIds(String query) {
+        return inventoryMovementRepository.findTransactionIdsByQuery(query);
     }
 
     public InventoryMovement save(InventoryMovement inventoryMovement) {
@@ -92,6 +103,7 @@ public class InventoryMovementService {
     private void prepareEntityForSave(InventoryMovementRequestDTO requestDTO) {
         if (requestDTO.getId() == null) {
             requestDTO.setTransactionId(transactionIdGeneration());
+            requestDTO.setTransactionDate(requestDTO.getTransactionDate().with(LocalTime.now()));
             requestDTO.setOrganizationId(sessionService.getOrganizationId());
             requestDTO.setSign(RECEIPT_SIGN);
             requestDTO.setAction(InventoryAction.RECEIPT);

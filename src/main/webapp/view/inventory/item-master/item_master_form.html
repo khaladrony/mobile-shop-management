@@ -1,6 +1,6 @@
 <div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
 
-<div class="row" ng-init="getDataList()">
+<div class="row">
 
     <div class="col-sm-3 col-md-3 col-lg-3">&nbsp;</div>
 
@@ -41,22 +41,13 @@
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label for="category">Category</label>
-                                <select class="form-control" id="category"
-                                        ng-model="module.category"
-                                        ng-options="category for category in dropdownOptions.category">
-                                    <option value="">Choose category</option>
-                                </select>
+                                <label>Category</label>
+                                <appcode-dropdown type="Category" model="module.category"></appcode-dropdown>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label for="brand">Brand</label>
-                                <select class="form-control"
-                                        id="brand"
-                                        ng-model="module.brand"
-                                        ng-options="b for b in dropdownOptions.brand">
-                                    <option value="">Choose brand</option>
-                                </select>
+                                <label>Brand</label>
+                                <appcode-dropdown type="Brand" model="module.brand"></appcode-dropdown>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
@@ -66,12 +57,8 @@
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label for="color">Color</label>
-                                <select class="form-control" id="color"
-                                        ng-model="module.color"
-                                        ng-options="color for color in dropdownOptions.color">
-                                    <option value="">Choose color</option>
-                                </select>
+                                <label>Color</label>
+                                <appcode-dropdown type="Color" model="module.color"></appcode-dropdown>
                             </div>
 
                             <div class="col-xs-12 col-md-6">
@@ -81,12 +68,8 @@
                             </div>
 
                             <div class="col-xs-12 col-md-6">
-                                <label for="unit">Unit</label>
-                                <select class="form-control" id="unit"
-                                        ng-model="module.unit"
-                                        ng-options="unit for unit in dropdownOptions.unit">
-                                    <option value="">Choose unit</option>
-                                </select>
+                                <label>Unit</label>
+                                <appcode-dropdown type="Unit" model="module.unit"></appcode-dropdown>
                             </div>
 
                             <div class="col-xs-12 col-md-6">

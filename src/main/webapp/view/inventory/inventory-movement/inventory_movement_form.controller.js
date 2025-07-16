@@ -1,4 +1,6 @@
-app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, encrypt, Communication,$filter,growl) {
+app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $timeout,
+                $q, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
+                DialogBox, encrypt, Communication,$filter,growl) {
 
     copyPasteStringRestrict('.pastedString');
     $rootScope.setPageName(JMODULE_NAME, $state.current.name);
@@ -15,10 +17,10 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         reference: "",
         warehouse: "",
         sign: "",
-        action: "",
+        action: INVENTORY_KEY.ACTION.RECEIPT,
         year: "",
         month: "",
-        status: "",
+        status: INVENTORY_KEY.STATUS.OPEN,
         remarks: "",
         supplierCode: "",
         customerCode: "",
@@ -27,24 +29,88 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
     };
 
     $scope.inventory_movement_item = {
+        id: "",
         itemCode: "",
+        rate: "1",
         quantity: "",
         createOn: new Date()
     };
 
-    $scope.isWarehouseHide = true;
+    $scope.itemObj = null;
 
-    $scope.getCoaList = function () {
+    $scope.isWarehouseHide = true;
+    $scope.detailsAddBtnHide = false;
+    $scope.detailsEditBtnHide = true;
+
+    /*$scope.getItemList = function () {
         var req = Communication.request("GET", API.ITEM_MASTER_ITEMS_DROP_DOWN, {});
         req.then(function (resp) {
             log("Item list: " + JSON.stringify(resp));
 
             if (resp.code === 200) {
                $scope.itemList = resp.body
+                return $scope.itemList;
+            } else {
+                return [];
             }
         }, function (err) {
             log("Item list fetch error", JSON.stringify(err));
+            return [];
         });
+    };*/
+
+    $scope.getItemList = function () {
+        // ✅ MUST return the request promise
+        return Communication.request("GET", API.ITEM_MASTER_ITEMS_DROP_DOWN, {})
+            .then(function (resp) {
+                log("Item list: " + JSON.stringify(resp));
+                if (resp.code === 200) {
+                    $scope.itemList = resp.body;
+                    return $scope.itemList;
+                } else {
+                    return [];
+                }
+            }, function (err) {
+                log("Item list fetch error", JSON.stringify(err));
+                return [];
+            });
+    };
+
+    // Item select handler
+    $scope.onItemSelect = function(item) {
+        console.log('Item selected:', item);
+    };
+
+    $scope.fetchItems = function(params) {
+        const offset = params.page * params.limit;
+        const search = params.search.toLowerCase();
+        const limit = params.limit;
+
+        return $q(function(resolve) {
+            $timeout(function() {
+                let filtered = $scope.itemList;
+                if (search) {
+                    filtered = filtered.filter(item =>
+                        item.item_name_code.toLowerCase().includes(search)
+                    );
+                }
+                const items = filtered.slice(offset, offset + limit);
+                resolve({
+                    items: items,
+                    hasMore: offset + limit < filtered.length
+                });
+            }, 300);
+        });
+    };
+
+    $scope.onItemChange = function(item) {
+        $scope.inventory_movement_item.itemCode = item.item_code;
+
+        $scope.selectItem($scope.inventory_movement_item.itemCode);
+    };
+
+    $scope.selectItem = function (item_code) {
+        $scope.itemObj =  $scope.itemList.find(item => item.item_code === item_code);
     };
 
     $scope.addToGrid = function () {
@@ -69,29 +135,70 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         return true;
     };
 
+    $scope.getTotalQuantity = function() {
+        return $scope.inventory_movement_items.reduce(function(total, row) {
+            return total + (parseFloat(row.quantity) || 0);
+        }, 0);
+    };
+
     $scope.movementItemsObj = function () {
         var details = [];
-        details.itemCode = $scope.inventory_movement_item.itemCode;
+        details.itemCode = $scope.itemObj.item_code;
+        details.rate = $scope.inventory_movement_item.rate;
         details.quantity = $scope.inventory_movement_item.quantity;
-        details.item_name_code = $scope.item_name_code;
+        details.item_name_code = $scope.itemObj.item_name_code;
 
         $scope.inventory_movement_items.push(details);
+
+        $scope.module.details.push(angular.copy($scope.inventory_movement_item));
     };
 
-    $scope.dropDownSelectText = function (elementid) {
-        var s1 = document.getElementById(elementid);
-        var text = s1.options[s1.selectedIndex].text.substring(0);
-        return text;
-    };
+    function formatToLocalDateTimeString(date) {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}T00:00:00`;
+    }
 
     $scope.clearTaxBox = function () {
-        $scope.inventory_movement_items.itemCode = "";
-        $scope.inventory_movement_items.quantity = "";
-        $scope.inventory_movement_items.item_name_code = "";
+        $scope.inventory_movement_item.itemCode = "";
+        $scope.inventory_movement_item.rate = "1";
+        $scope.inventory_movement_item.quantity = "";
+        $scope.inventory_movement_item.selectedItem = null;
+    };
+
+    $scope.rowDataPopulate = function (rowData, rowIndex) {
+        $scope.detailsAddBtnHide = true;
+        $scope.detailsEditBtnHide = false;
+
+        $scope.rowIndex = rowIndex;
+        $scope.inventory_movement_item.id = rowData.id;
+//        $scope.inventory_movement_item.itemCode = rowData.itemCode;
+        $scope.inventory_movement_item.selectedItem = $scope.itemList
+                    .find(item => item.item_code === rowData.itemCode);
+        $scope.inventory_movement_item.rate = rowData.rate;
+        $scope.inventory_movement_item.quantity = rowData.quantity;
+        $scope.selectItem(rowData.itemCode);
+    };
+
+    $scope.editToGrid = function () {
+        var details = [];
+        $scope.detailsAddBtnHide = false;
+        $scope.detailsEditBtnHide = true;
+
+        details.id = $scope.inventory_movement_item.id;
+        details.itemCode = $scope.itemObj.item_code;
+        details.rate = $scope.inventory_movement_item.rate;
+        details.quantity = $scope.inventory_movement_item.quantity;
+        details.item_name_code = $scope.itemObj.item_name_code;
+        $scope.inventory_movement_items[$scope.rowIndex] = details;
+
+        $scope.transactionUpdate(details);
+
+        $scope.clearTaxBox();
     };
 
     $scope.saveModule = function () {
-
         if(!$scope.saveValidation()){
             return;
         }
@@ -100,7 +207,10 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         if($state.current.name === JCOMPONENT.inventory_movement_update_view) {
             req = Communication.request("PUT", API.INVENTORY_MOVEMENT_UPDATE, $scope.module);
         } else{
-            req = Communication.request("POST", API.INVENTORY_MOVEMENT_SAVE, $scope.module);
+          //Avoid time zone
+          $scope.module.transactionDate = formatToLocalDateTimeString($scope.module.transactionDate);
+
+          req = Communication.request("POST", API.INVENTORY_MOVEMENT_SAVE, $scope.module);
         }
 
         req.then(function (resp) {
@@ -137,154 +247,61 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
         var req = Communication.request("GET", API.INVENTORY_MOVEMENT_GET + '/' + $stateParams.id, $scope.module);
         req.then(function (resp) {
-            log("voucher edit: " + JSON.stringify(resp));
+            log("Receive transaction edit: " + JSON.stringify(resp));
 
             if (resp.code === 200) {
                 $scope.module = resp.body;
-
-                $scope.getGridVoucherDetailsForEdit($scope.module.details);
+                //Date string convert to JS Date object
+                $scope.module.transactionDate = new Date(resp.body.transactionDate);
+                $scope.getGridTransactionItemsForEdit($scope.module.details);
             }
         }, function (err) {
-            log("voucher edit error", JSON.stringify(err));
+            log("Receive transaction edit error", JSON.stringify(err));
         });
     }
 
-    $scope.getGridVoucherDetailsForEdit = function (voucherDetails) {
+    $scope.getGridTransactionItemsForEdit = function (transactionItems) {
 
         var details = [];
-        angular.forEach(voucherDetails, function (value, key) {
-            details.chartOfAccountsId = value.chartOfAccountsId;
-            details.chartOfAccountsCodeName = value.chartOfAccountsCodeName;
-            details.chartOfAccountsSource = value.chartOfAccountsSource;
-
-            if (value.subAccountsId != null) {
-                details.subAccountsId = value.subAccountsId;
-                details.subAccountsCodeName = value.subAccountsCodeName;
-            }
-
-            details.particulars = value.particulars;
-            details.amount = value.amount;
-            details.primeAmount = value.primeAmount;
-            details.baseAmount = value.baseAmount;
+        angular.forEach(transactionItems, function (value, key) {
+            $scope.selectItem(value.itemCode);
             details.id = value.id;
+            details.itemCode = value.itemCode;
+            details.rate = value.rate;
+            details.quantity = value.quantity;
+            details.item_name_code = $scope.itemObj.item_name_code;;
 
-            $scope.voucher_details_list.push(details);
+            $scope.inventory_movement_items.push(details);
             details = [];
         });
-
-        if ($scope.module.paymentType === VOUCHER_KEY.PAYMENT_TYPE.BANK) {
-            $scope.isBankHide = false;
-            $scope.getBankAccountList();
-        } else {
-            $scope.isBankHide = true;
-        }
-
     };
 
-    $scope.rowDataPopulate = function (rowData, rowIndex) {
-
-        $scope.rowIndex = rowIndex;
-        $scope.detailsAddBtnHide = true;
-        $scope.detailsEditBtnHide = false;
-
-        $scope.voucher_details.chartOfAccountsId = rowData.chartOfAccountsId;
-        $scope.voucher_details.chartOfAccountsSource = rowData.chartOfAccountsSource;
-        $scope.voucher_details.particulars = rowData.particulars;
-        $scope.voucher_details.amount = rowData.amount;
-        $scope.voucher_details.id = rowData.id;
-
-        if (rowData.subAccountsId === "" || rowData.subAccountsId === undefined) {
-            $scope.isSubAccHide = true;
-            $scope.particularsDivClassVar = "col-xs-12 col-md-6";
-            $scope.voucher_details.subAccountsId = $scope.subaccountList[0];
-        } else {
-            $scope.getSubAccountList(rowData.chartOfAccountsSource, rowData.chartOfAccountsId);
-            $scope.particularsDivClassVar = "col-xs-12 col-md-3";
-            $scope.isSubAccHide = false;
-            $scope.voucher_details.subAccountsId = rowData.subAccountsId;
-        }
-
-    };
-
-    $scope.editToGrid = function () {
-
-        $scope.detailsAddBtnHide = false;
-        $scope.detailsEditBtnHide = true;
-        var details = [];
-
-        details.chartOfAccountsId = $scope.voucher_details.chartOfAccountsId;
-        details.chartOfAccountsCodeName = $scope.dropDownSelectText("chartOfAccountsId");
-
-        if ($scope.voucher_details.subAccountsId != "" && $scope.voucher_details.subAccountsId != undefined) {
-            details.subAccountsId = $scope.voucher_details.subAccountsId;
-            details.subAccountsCodeName = $scope.dropDownSelectText("subAccountsId");
-        }
-
-        details.particulars = $scope.voucher_details.particulars;
-        details.amount = $scope.voucher_details.amount;
-        details.primeAmount = $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-        details.baseAmount = $scope.voucher_details.amount;
-        details.id = $scope.voucher_details.id;
-        $scope.voucher_details_list[$scope.rowIndex] = details;
-
-        $scope.voucherDetailsUpdate(details);
-
-        $scope.firstRowAmountUpdate();
-
-        $scope.amountInWords(details);
-
-        $scope.clearTaxBox();
-    };
-
-    $scope.voucherDetailsUpdate = function (details) {
+    $scope.transactionUpdate = function (details) {
         var detailsObj;
 
         if(details.id === undefined){
             detailsObj = $scope.module.details[$scope.rowIndex];
         } else {
             detailsObj = $scope.module.details.find(function (v) {
-                return v.id == $scope.voucher_details.id;
+                return v.id == $scope.inventory_movement_item.id;
             });
         }
 
-        detailsObj.chartOfAccountsId = details.chartOfAccountsId;
-        detailsObj.chartOfAccountsCodeName = details.chartOfAccountsCodeName;
-        detailsObj.particulars = details.particulars;
-        if (details.subAccountsId != "" && details.subAccountsId != undefined) {
-            detailsObj.subAccountsId = details.subAccountsId;
-            detailsObj.subAccountsCodeName = details.subAccountsCodeName;
-        }
-        detailsObj.particulars = details.particulars;
-        detailsObj.amount = details.amount;
-        detailsObj.primeAmount = details.primeAmount;
-        detailsObj.baseAmount = details.baseAmount;
+        detailsObj.itemCode = details.itemCode;
+        detailsObj.rate = details.rate;
+        detailsObj.quantity = details.quantity;
 
         $scope.module.details[$scope.rowIndex] = detailsObj;
     };
 
-    $scope.firstRowAmountUpdate = function () {
-
-        var voucherAmount = $scope.voucherAmount();
-        var voucherDetailFirstRowData = $scope.module.details[0];
-        voucherDetailFirstRowData.amount = voucherAmount;
-        voucherDetailFirstRowData.primeAmount = (-1) * voucherAmount * $scope.voucher_details.currencyRate;
-        voucherDetailFirstRowData.baseAmount = (-1) * voucherAmount;
-
-        $scope.module.details[0] = voucherDetailFirstRowData;
-    };
 
     $scope.deleteRow = function (index) {
-
-        $scope.voucher_details_list.splice(index, 1);
-
+        $scope.inventory_movement_items.splice(index, 1);
         $scope.module.details.splice(index, 1);
-        $scope.firstRowAmountUpdate();
-        $scope.amountInWords();
-
     };
 
     $scope.resetTable = function () {
-        var table = document.getElementById("voucher-details-table");
+        var table = document.getElementById("transaction-details-table");
 
         while (table.rows.length-1 > 1) {
             table.deleteRow(1);
@@ -292,29 +309,14 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
     };
 
     $scope.reset = function () {
-        $scope.voucher_details_list = [];
-        $scope.bankList = [];
-        $scope.coaList = [];
-        $scope.subaccountList = [];
-        $scope.isBankHide = true;
-        $scope.isSubAccHide = true;
-        $scope.module.particulars = "";
-        $scope.module.chequeNo = "";
-        $scope.module.chequeDate = "";
-        $('#amountInWords').val("");
-        $('table tfoot td').eq($scope.table_debit_index).text(0);
-        $('table tfoot td').eq($scope.table_credit_index).text(0);
-        $scope.particularsDivClassVar = "col-xs-12 col-md-6";
-
-        $scope.getCoaList();
+        $scope.module.transactionDate = new Date();
+        $scope.module.remarks = "";
+        $scope.inventory_movement_items = [];
+        $scope.getItemList();
         $scope.resetTable();
     };
 
     $scope.resetForm = function () {
-        $scope.module.paymentType = VOUCHER_KEY.PAYMENT_TYPE.CASH;
         $scope.reset();
     };
-
-
-
 });

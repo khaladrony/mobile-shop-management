@@ -2,10 +2,18 @@ package com.rony.erpsoft.inventory.inventorymovement.repository;
 
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovement;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface InventoryMovementRepository extends JpaRepository<InventoryMovement, Long> {
+import java.util.List;
+
+public interface InventoryMovementRepository extends JpaRepository<InventoryMovement, Long>,
+        JpaSpecificationExecutor<InventoryMovement> {
 
     @Query("SELECT max(transactionId) FROM InventoryMovement WHERE sign=?1")
     String findLastTransactionId(int sign);
+
+    @Query("SELECT im.transactionId FROM InventoryMovement im WHERE im.transactionId LIKE %:query%")
+    List<String> findTransactionIdsByQuery(@Param("query") String query);
 }

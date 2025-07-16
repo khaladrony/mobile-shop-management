@@ -29,19 +29,19 @@ public class AppCodesService {
     public List<AppCodesDTO> findAllByCode(String code) {
         return appCodesRepository.findAllByXcodeAndActiveIsTrue(code)
                 .stream()
-                .map(appCodesMapper::toDto)
+                .map(appCodesMapper::entityToDto)
                 .toList();
     }
 
     public Page<AppCodesDTO> findAll(Pageable pageable) {
         return appCodesRepository.findAll(pageable)
-                .map(appCodes -> appCodesMapper.toDto(appCodes));
+                .map(appCodes -> appCodesMapper.entityToDto(appCodes));
     }
 
     public List<AppCodesDTO> findAll() {
         return appCodesRepository.findAll()
                 .stream()
-                .map(appCodes -> appCodesMapper.toDto(appCodes))
+                .map(appCodes -> appCodesMapper.entityToDto(appCodes))
                 .toList();
     }
 
@@ -51,7 +51,7 @@ public class AppCodesService {
 
     public AppCodesDTO findById(long id) {
         return appCodesRepository.findById(id)
-                .map(appCodesMapper::toDto)
+                .map(appCodesMapper::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Code not found with id: " + id));
     }
 
@@ -65,7 +65,7 @@ public class AppCodesService {
 
             prepareEntityForSave(requestDTO);
 
-            AppCodes appCodes = appCodesMapper.toEntity(requestDTO);
+            AppCodes appCodes = appCodesMapper.dtoToEntity(requestDTO);
 
             if (!modelValidator.isValid(appCodes)) {
                 String message = modelValidator.validationMessage(appCodes);
@@ -75,7 +75,7 @@ public class AppCodesService {
             AppCodes saved = appCodesRepository.save(appCodes);
 
             if (saved.getId() != null && saved.getId() > 0) {
-                AppCodesDTO responseDTO = appCodesMapper.toDto(saved);
+                AppCodesDTO responseDTO = appCodesMapper.entityToDto(saved);
                 return AppResponse.build(HttpStatus.OK).body(responseDTO);
             }
             return AppResponse.build(HttpStatus.EXPECTATION_FAILED).message("Not created");

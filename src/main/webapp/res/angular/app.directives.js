@@ -1,4 +1,4 @@
-app.run(function ($rootScope, $window, ClientService, $timeout) {
+app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q, $compile) {
     $rootScope.JMODULE_NAME = JMODULE_NAME;
     $rootScope.JCONTROLLER = JCONTROLLER;
     $rootScope.JCOMPONENT = JCOMPONENT;
@@ -216,6 +216,43 @@ app.directive('datePicker', function () {
     };
 });
 
+app.directive('formattedDatePicker', function($timeout, $filter) {
+    return {
+        restrict: "EA",
+        require: "ng-model",
+        link: function (scope, element, attrs, ngModelCtrl) {
+            var parent = $(element).parent();
+            var dtp = parent.datetimepicker({
+                format: "DD-MM-YYYY",
+                showTodayButton: false,
+                sideBySide: false,
+                useStrict:true,
+                useCurrent: false
+            });
+
+            // Set model to real Date
+            dtp.on("dp.change", function (e) {
+                if (e.date && e.date.isValid()) {
+                    // Convert Moment object to JS Date
+                    const jsDate = e.date.toDate();
+                    ngModelCtrl.$setViewValue(jsDate);
+                } else {
+                    ngModelCtrl.$setViewValue(null);
+                }
+                scope.$apply();
+            });
+
+            // Format view value for display
+            ngModelCtrl.$formatters.push(function (modelValue) {
+                if (modelValue) {
+                    return $filter('date')(modelValue, 'dd-MM-yyyy');
+                }
+                return '';
+            });
+        }
+    };
+});
+
 app.directive('fileModel', ['$parse', function ($parse) {
         return {
             restrict: 'A',
@@ -231,3 +268,334 @@ app.directive('fileModel', ['$parse', function ($parse) {
             }
         };
     }]);
+
+app.directive('appcodeDropdown', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '@',
+            model: '='
+        },
+        template: `
+            <select class="form-control" ng-model="model" ng-options="option for option in options">
+                <option value="">-- Select {{type}} --</option>
+            </select>
+        `,
+        controller: function ($scope, $http) {
+            const url = _baseurl_ + "application_common/app_codes";
+
+            $http.get(url).then(function (resp) {
+                if (resp.data.code === 200) {
+                    const list = resp.data.body || [];
+
+                    $scope.options = [...new Set(
+                        list
+                            .filter(item => item.xtype === $scope.type)
+                            .map(item => item.xcode)
+                    )];
+                }
+            }, function (err) {
+                console.error("App codes error", err);
+            });
+        }
+    };
+});
+
+app.directive('autocomplete', function($timeout, $sce) {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            fetchSuggestions: '&',
+            placeholder: '@'
+        },
+        template: `
+            <div>
+                <input type="text" class="form-control"
+                       ng-model="ngModel"
+                       ng-change="onInputChange()"
+                       ng-blur="hideDropdown()"
+                       ng-focus="onInputChange()"
+                       placeholder="{{ placeholder }}" />
+
+                <div class="autocomplete-dropdown" ng-show="suggestions.length && dropdownVisible">
+                    <div class="autocomplete-item"
+                         ng-repeat="suggestion in suggestions"
+                         ng-click="selectSuggestion(suggestion)">
+                        <span ng-bind-html="highlightMatch(suggestion, ngModel)"></span>
+                    </div>
+
+                </div>
+            </div>
+        `,
+        link: function(scope, element, attrs) {
+            scope.suggestions = [];
+            scope.dropdownVisible = false;
+
+            scope.onInputChange = function() {
+                if (!scope.ngModel) {
+                    scope.suggestions = [];
+                    scope.dropdownVisible = false;
+                    return;
+                }
+
+                scope.fetchSuggestions({ query: scope.ngModel }).then(function(results) {
+                    scope.suggestions = results || [];
+                    scope.dropdownVisible = true;
+                });
+            };
+
+            scope.selectSuggestion = function(suggestion) {
+                scope.ngModel = suggestion;
+                scope.suggestions = [];
+                scope.dropdownVisible = false;
+            };
+
+            scope.hideDropdown = function() {
+                setTimeout(function () {
+                    scope.dropdownVisible = false;
+                    scope.$apply();
+                }, 200);
+            };
+
+            scope.highlightMatch = function(text, query) {
+                if (!text) return $sce.trustAsHtml('');
+                if (!query) return $sce.trustAsHtml(text);
+
+                var safeQuery = query.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                var regex = new RegExp(safeQuery, 'gi');
+                var highlighted = text.toString().replace(regex, '<strong>$&</strong>');
+
+                return $sce.trustAsHtml(highlighted);
+            };
+        }
+    };
+});
+
+app.directive('lazyDropdown', function($timeout, $compile) {
+    return {
+        restrict: 'E',
+        scope: {
+            items: '=?',
+            selectedItem: '=',
+            placeholder: '@',
+            displayProperty: '@',
+            searchProperty: '@',
+            itemTemplate: '@',
+            enableSearch: '=?',
+            loadItems: '&?',
+            onSelect: '&?'
+        },
+        template: `
+            <div class="lazy-dropdown">
+                <button type="button"
+                        class="btn btn-default btn-dropdown form-control"
+                        ng-click="toggleDropdown()"
+                        ng-class="{'btn-primary': isOpen}">
+                    <span ng-if="!selectedItem" class="placeholder">{{placeholder || 'Select...'}}</span>
+                    <span ng-if="selectedItem">{{getDisplayText(selectedItem)}}</span>
+                    <span class="caret"></span>
+                </button>
+
+                <div class="dropdown-menu" ng-show="isOpen">
+                    <div ng-if="enableSearch !== false" class="search-input">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </span>
+                            <input type="text"
+                                   class="form-control input-sm"
+                                   placeholder="Search..."
+                                   ng-model="$parent.searchText"
+                                   ng-change="onSearch()"
+                                   ng-click="$event.stopPropagation()" />
+                        </div>
+                    </div>
+
+                    <div ng-if="!itemTemplate">
+                        <div class="dropdown-item"
+                             ng-repeat="item in displayedItems track by $index"
+                             ng-click="selectItem(item)">
+                            {{getDisplayText(item)}}
+                        </div>
+                    </div>
+
+                    <div ng-if="itemTemplate" id="custom-items-container">
+                        <!-- Custom template items will be compiled here -->
+                    </div>
+
+                    <div class="loading-item" ng-show="isLoading">
+                        <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+                        Loading more items...
+                    </div>
+
+                    <div class="no-results" ng-show="displayedItems.length === 0 && !isLoading">
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                        No items found
+                    </div>
+                </div>
+            </div>
+        `,
+        link: function(scope, element, attrs) {
+            // Initialize
+            scope.isOpen = false;
+            scope.displayedItems = [];
+            scope.filteredItems = [];
+            scope.searchText = '';
+            scope.isLoading = false;
+            scope.enableSearch = scope.enableSearch !== false;
+
+            // Pagination settings
+            const itemsPerPage = 10;
+            let currentPage = 0;
+            let hasMoreItems = true;
+
+            // Get display text for item
+            scope.getDisplayText = function(item) {
+                if (!item) return '';
+                return scope.displayProperty ? item[scope.displayProperty] : item;
+            };
+
+            // Reset dropdown state
+            scope.resetDropdown = function() {
+                scope.displayedItems = [];
+                currentPage = 0;
+                hasMoreItems = true;
+
+                if (scope.loadItems) {
+                    scope.loadMoreItems();
+                } else {
+                    scope.filterItems();
+                    scope.loadMoreItems();
+                }
+            };
+
+            // Filter items locally
+            scope.filterItems = function() {
+                if (!scope.items) return;
+
+                if (scope.searchText) {
+                    const searchProp = scope.searchProperty || scope.displayProperty;
+                    scope.filteredItems = scope.items.filter(item => {
+                        const text = searchProp ? item[searchProp] : item;
+                        return text && text.toString().toLowerCase().includes(scope.searchText.toLowerCase());
+                    });
+                } else {
+                    scope.filteredItems = scope.items.slice();
+                }
+            };
+
+            // Load more items
+            scope.loadMoreItems = function() {
+                if (!hasMoreItems || scope.isLoading) return;
+
+                scope.isLoading = true;
+
+                if (scope.loadItems) {
+                    // API-based loading
+                    scope.loadItems({
+                        params: {
+                           page: currentPage,
+                           search: scope.searchText,
+                           limit: itemsPerPage
+                       }
+                   }).then(function(result) {
+                        if (result && result.items && result.items.length > 0) {
+                            if (currentPage === 0) {
+                                scope.displayedItems = result.items;
+                            } else {
+                                scope.displayedItems = scope.displayedItems.concat(result.items);
+                            }
+                            currentPage++;
+                            hasMoreItems = result.hasMore;
+                        } else {
+                            hasMoreItems = false;
+                        }
+                        scope.isLoading = false;
+                    });
+                } else {
+                    // Local array loading
+                    $timeout(function() {
+                        const startIndex = currentPage * itemsPerPage;
+                        const endIndex = startIndex + itemsPerPage;
+                        const newItems = scope.filteredItems.slice(startIndex, endIndex);
+
+                        if (newItems.length > 0) {
+                            scope.displayedItems = scope.displayedItems.concat(newItems);
+                            currentPage++;
+                            hasMoreItems = endIndex < scope.filteredItems.length;
+                        } else {
+                            hasMoreItems = false;
+                        }
+
+                        scope.isLoading = false;
+                    }, 200);
+                }
+            };
+
+            // Toggle dropdown
+            scope.toggleDropdown = function() {
+                scope.isOpen = !scope.isOpen;
+                if (scope.isOpen) {
+                    scope.resetDropdown();
+                    $timeout(function() {
+                        scope.setupScrollListener();
+                    }, 0);
+                }
+            };
+
+            // Select item
+            scope.selectItem = function(item) {
+                scope.selectedItem = item;
+                scope.isOpen = false;
+                if (scope.onSelect) {
+                    scope.onSelect({item: item});
+                }
+            };
+
+            // Search functionality
+            scope.onSearch = function() {
+                console.log("Search Text:", scope.searchText);
+                scope.resetDropdown();
+            };
+
+            // Setup scroll listener
+            scope.setupScrollListener = function() {
+                const dropdownMenu = element.find('.dropdown-menu')[0];
+                if (!dropdownMenu) return;
+
+                dropdownMenu.addEventListener('scroll', function() {
+                    const scrollTop = dropdownMenu.scrollTop;
+                    const scrollHeight = dropdownMenu.scrollHeight;
+                    const clientHeight = dropdownMenu.clientHeight;
+
+                    if (scrollTop + clientHeight >= scrollHeight - 5) {
+                        scope.$apply(function() {
+                            scope.loadMoreItems();
+                        });
+                    }
+                });
+            };
+
+            // Close dropdown when clicking outside
+            function handleOutsideClick(event) {
+                if (!element[0].contains(event.target)) {
+                    scope.$apply(function() {
+                        scope.isOpen = false;
+                    });
+                }
+            }
+
+            document.addEventListener('click', handleOutsideClick);
+
+            // Cleanup
+            scope.$on('$destroy', function() {
+                document.removeEventListener('click', handleOutsideClick);
+            });
+        }
+    };
+})
+
+
+
+
