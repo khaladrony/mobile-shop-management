@@ -89,3 +89,7 @@ var CORE_API = {
     }
 };
 
+var COMMON_API = {
+    item_list: _baseurl_ + "inventory/item-master/items"
+};
+

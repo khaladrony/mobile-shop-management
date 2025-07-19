@@ -15,7 +15,7 @@
                     <h4 class="widget-title">
                         {{page_name}}
                     </h4>
-                    <p class="subtitle">Record received items into inventory</p>
+                    <p class="subtitle">Transfer items between warehouses</p>
                 </div>
                 <!-- Center: Transaction Info -->
                 <div class="col-sm-6" >
@@ -28,7 +28,7 @@
 
                 <!-- Right: Back Button -->
                 <span class="widget-toolbar pull-right">
-                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.inventory_movement_list_view}}">
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.inventory_movement_transfer_list_view}}">
                         <i class="ace-icon fa fa-backward"></i> Back
                     </a>
                 </span>
@@ -38,7 +38,7 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <form ng-submit="saveModule()">
-                        <div class="widget-body">
+                        <div class="widget-body widget-primary">
                             <div class="widget-main">
                                 <div class="row">
 
@@ -57,16 +57,36 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-md-2" ng-hide="isWarehouseHide">
-                                        <label>Warehouse</label>
-                                        <appcode-dropdown type="Warehouse" model="module.fromWarehouse"></appcode-dropdown>
+                                    <div class="col-xs-12 col-md-10">
+                                        <label>Note </span></label>
+                                        <input class="form-control" type="textarea" id="remarks"
+                                               ng-model="module.remarks" placeholder="Note"/>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-body widget-primary">
+                            <div class="widget-main">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <label>From Warehouse <span class="required">*</span></label>
+                                        <appcode-dropdown
+                                                type="Warehouse"
+                                                model="module.fromWarehouse"
+                                                placeholder="Select source warehouse">
+                                        </appcode-dropdown>
                                     </div>
 
-                                    <div class="col-xs-12 col-md-10">
-                                        <label>Remarks </span></label>
-                                        <input class="form-control" type="textarea" id="remarks"
-                                               ng-model="module.remarks" placeholder="Remarks"/>
-
+                                    <div class="col-xs-12 col-md-6">
+                                        <label>To Warehouse <span class="required">*</span></label>
+                                        <appcode-dropdown
+                                                type="Warehouse"
+                                                model="module.toWarehouse"
+                                                placeholder="Select destination warehouse"
+                                                exclude="module.fromWarehouse">
+                                        </appcode-dropdown>
                                     </div>
                                 </div>
                             </div>
@@ -177,13 +197,13 @@
                             <div class="col-xs-12">
                                 <div class="form-actions pull-right">
 
-                                    <button type="button" ui-sref="{{JCOMPONENT.inventory_movement_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                    <button type="button" ui-sref="{{JCOMPONENT.inventory_movement_transfer_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
                                         <i class="ace-icon fa fa-close"></i>Cancel
                                     </button>
 
-                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.inventory_movement_add_view"></span>
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.inventory_movement_transfer_add_view"></span>
 
-                                    <button type="button" ng-show="current_state === JCOMPONENT.inventory_movement_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
+                                    <button type="button" ng-show="current_state === JCOMPONENT.inventory_movement_transfer_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
                                         <i class="ace-icon fa fa-recycle"></i>Reset
                                     </button>
 
@@ -191,8 +211,8 @@
 
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="ace-icon fa fa-check-circle"></i>
-                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_add_view" >Save</span>
-                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_update_view" >Update</span>
+                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_transfer_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_transfer_update_view" >Update</span>
                                     </button>
                                 </div>
                             </div>

@@ -274,11 +274,16 @@ app.directive('appcodeDropdown', function () {
         restrict: 'E',
         scope: {
             type: '@',
-            model: '='
+            model: '=',
+            placeholder: '@',
+            exclude: '=?'
         },
         template: `
-            <select class="form-control" ng-model="model" ng-options="option for option in options">
-                <option value="">-- Select {{type}} --</option>
+            <select class="form-control" ng-model="model"
+                    ng-options="option for option in filteredOptions">
+                <option value="">
+                    -- {{ placeholder ? placeholder : 'Select ' + type }} --
+                </option>
             </select>
         `,
         controller: function ($scope, $http) {
@@ -297,6 +302,15 @@ app.directive('appcodeDropdown', function () {
             }, function (err) {
                 console.error("App codes error", err);
             });
+
+            function updateFiltered() {
+                if ($scope.exclude) {
+                    $scope.filteredOptions = $scope.options.filter(opt => opt !== $scope.exclude);
+                } else {
+                    $scope.filteredOptions = $scope.options.slice();
+                }
+            }
+            $scope.$watchGroup(['options', 'exclude'], updateFiltered);
         }
     };
 });
@@ -339,10 +353,15 @@ app.directive('autocomplete', function($timeout, $sce) {
                     return;
                 }
 
-                scope.fetchSuggestions({ query: scope.ngModel }).then(function(results) {
-                    scope.suggestions = results || [];
-                    scope.dropdownVisible = true;
-                });
+                var result = scope.fetchSuggestions({ query: scope.ngModel });
+                if (result && angular.isFunction(result.then)) {
+                    result.then(function(results) {
+                        scope.suggestions = results || [];
+                        scope.dropdownVisible = true;
+                    });
+                } else {
+                    console.error("fetchSuggestions must return a Promise.");
+                }
             };
 
             scope.selectSuggestion = function(suggestion) {
@@ -595,6 +614,29 @@ app.directive('lazyDropdown', function($timeout, $compile) {
         }
     };
 })
+
+app.directive('actionButton', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            label: '@',           // Button label: 'Add', 'Edit', etc.
+            icon: '@',            // Font Awesome icon class
+            type: '@',            // btn-primary, btn-yellow, etc.
+            visible: '=',         // Boolean flag to show/hide button
+            onClick: '&'          // Function to execute
+        },
+        template: `
+            <button type="button"
+                    class="btn-sm btn-round transition-fade"
+                    ng-class="'btn ' + type"
+                    ng-show="visible"
+                    ng-click="onClick()"
+                    style="padding: 5px 5px; position: absolute; top: 0; left: 0;">
+                <i class="ace-icon fa" ng-class="icon"></i> {{label}}
+            </button>
+        `
+    };
+});
 
 
 

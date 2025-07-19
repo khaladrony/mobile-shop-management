@@ -100,11 +100,18 @@
 
 
 <!-- include here rest of your ng app controller -->
+<script src="${NG_SRC}/inventory/inventory.service.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/inventory/item-master/item_master_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/inventory/item-master/item_master_list.controller.js?v=${SCRIPT_VERSION}"></script>
 
 <script src="${NG_SRC}/inventory/inventory-movement/inventory_movement_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/inventory/inventory-movement/inventory_movement_list.controller.js?v=${SCRIPT_VERSION}"></script>
+
+<script src="${NG_SRC}/inventory/inventory-movement-issue/inventory_movement_issue_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/inventory/inventory-movement-issue/inventory_movement_issue_list.controller.js?v=${SCRIPT_VERSION}"></script>
+
+<script src="${NG_SRC}/inventory/inventory-movement-transfer/inventory_movement_transfer_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/inventory/inventory-movement-transfer/inventory_movement_transfer_list.controller.js?v=${SCRIPT_VERSION}"></script>
 <!-- include here rest of your ng app controller -->
 
 <%@include file="../common/close_page.jsp" %>

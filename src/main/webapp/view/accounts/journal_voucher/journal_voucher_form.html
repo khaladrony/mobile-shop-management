@@ -8,12 +8,13 @@
     <div class="col-sm-9 col-md-9 col-lg-9">
 
         <div class="widget-box">
-            <div class="widget-header row" style="margin: 0; padding: 8px 12px;">
+            <div class="widget-header row">
                 <!-- Left: Title -->
                 <div class="col-sm-4">
-                    <h4 class="widget-title" style="color: indianred; margin: 0;">
+                    <h4 class="widget-title">
                         {{page_name}}
                     </h4>
+                    <p class="subtitle">Record non-cash,bank or adjustment entries</p>
                 </div>
 
                 <!-- Center: Voucher Info -->
@@ -42,25 +43,26 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <form ng-submit="saveModule()">
-                        <div class="row  ">
+                        <div class="widget-main">
+                            <div class="row">
 
-                            <div class="col-xs-12 col-md-8">
-                                <label>Particulars <span class="required">*</span></label>
-                                <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
+                                <div class="col-xs-12 col-md-8">
+                                    <label>Particulars <span class="required">*</span></label>
+                                    <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
+                                </div>
                             </div>
-
-
                         </div>
+
                         <br>
 
-                        <div class="widget-header widget-header-flat">
-                            <h4 class="widget-title">Transaction</h4>
-                            <span class="widget-toolbar"> </span>
-                        </div>
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div class="row  ">
+                                <div class="widget-header widget-header-flat">
+                                    <h4 class="widget-title">Transaction</h4>
+                                    <span class="widget-toolbar"> </span>
+                                </div>
 
+                                <div class="row">
                                     <div class="col-xs-12 col-md-3">
                                         <label>Chart of Accounts <span class="required">*</span></label>
                                         <select class="chosen-select form-control" id="chartOfAccountsId"
@@ -105,12 +107,21 @@
                                     <br>
 
                                     <div class="col-xs-12 col-md-1">
-                                        <button type="button" class="btn btn-sm btn-primary btn-round" ng-hide="detailsAddBtnHide"  ng-click="addToGrid()" style="padding: 5px 5px;top: 4px">
-                                            <i class="ace-icon fa fa-check-circle"></i>Add
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-yellow btn-round" ng-hide="detailsEditBtnHide" ng-click="editToGrid()" style="padding: 5px 5px;top: 4px">
-                                            <i class="ace-icon fa fa-check-circle"></i>Edit
-                                        </button>
+                                        <action-button
+                                                label="Add"
+                                                icon="fa-check-circle"
+                                                type="btn-primary"
+                                                visible="!detailsAddBtnHide"
+                                                on-click="addToGrid()">
+                                        </action-button>
+
+                                        <action-button
+                                                label="Edit"
+                                                icon="fa-check-circle"
+                                                type="btn-yellow"
+                                                visible="!detailsEditBtnHide"
+                                                on-click="editToGrid()">
+                                        </action-button>
                                     </div>
                                 </div>
                             </div>
@@ -118,13 +129,14 @@
 
                         <br>
 
-                        <div class="widget-header widget-header-flat">
-                            <h4 class="widget-title">Voucher Details</h4>
-                            <span class="widget-toolbar"> </span>
-                        </div>
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div class="row  ">
+                                <div class="widget-header widget-header-flat">
+                                    <h4 class="widget-title">Voucher Details</h4>
+                                    <span class="widget-toolbar"> </span>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-12">
                                         <table id="voucher-details-table" class="table table-bordered table-hover">
                                             <thead>

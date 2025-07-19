@@ -44,6 +44,40 @@ var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRest
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT + '/' + 'inventory_movement_list.html',
             controller: 'InventoryMovementListCtrl'
+        })
+
+        .state(JCOMPONENT.inventory_movement_issue_add_view, {
+            url: '/inventory_movement_issue_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_ISSUE + '/' + 'inventory_movement_issue_form.html',
+            controller: 'InventoryMovementIssueFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_issue_update_view, {
+            url: '/inventory_movement_issue_update_view/:id',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_ISSUE + '/' + 'inventory_movement_issue_form.html',
+            controller: 'InventoryMovementIssueFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_issue_list_view, {
+            url: '/inventory_movement_issue_list_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_ISSUE + '/' + 'inventory_movement_issue_list.html',
+            controller: 'InventoryMovementIssueListCtrl'
+        })
+
+        .state(JCOMPONENT.inventory_movement_transfer_add_view, {
+            url: '/inventory_movement_transfer_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_TRANSFER + '/' + 'inventory_movement_transfer_form.html',
+            controller: 'InventoryMovementTransferFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_transfer_update_view, {
+            url: '/inventory_movement_transfer_update_view/:id',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_TRANSFER + '/' + 'inventory_movement_transfer_form.html',
+            controller: 'InventoryMovementTransferFormCtrl'
+        }).state(JCOMPONENT.inventory_movement_transfer_list_view, {
+            url: '/inventory_movement_transfer_list_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_TRANSFER + '/' + 'inventory_movement_transfer_list.html',
+            controller: 'InventoryMovementTransferListCtrl'
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.item_master_list_view);

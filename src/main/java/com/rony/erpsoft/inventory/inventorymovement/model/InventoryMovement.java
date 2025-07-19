@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,11 +27,13 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "inventory_movement")
+@Table(name = "inventory_movement", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"transaction_id"})
+})
 public class InventoryMovement extends BaseEntity {
 
-    @Column(name = "transaction_id")
-    private String transactionId;   //Id prefix => RE--:IS-- (Receipt:Issue)
+    @Column(name = "transaction_id", nullable = false, unique = true)
+    private String transactionId;   //Id prefix => RE--:IS--:TO-- (Receipt:Issue:Transfer)
 
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
@@ -41,11 +44,17 @@ public class InventoryMovement extends BaseEntity {
     @Column(name = "warehouse")
     private String warehouse;
 
+    @Column(name = "from_warehouse")
+    private String fromWarehouse;   //use for transfer
+
+    @Column(name = "to_warehouse")
+    private String toWarehouse;     //use for transfer
+
     @Column(name = "sign")
-    private int sign;   //Receipt => 1, Issue => -1
+    private int sign;   //Receipt => 1, Issue => -1, Transfer => 2
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "action")
+    @Column(name = "action", nullable = false)
     private InventoryAction action;
 
     @Column(name = "year")
@@ -55,7 +64,7 @@ public class InventoryMovement extends BaseEntity {
     private int month;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private InventoryStatus status;
 
     @Column(name = "remarks")

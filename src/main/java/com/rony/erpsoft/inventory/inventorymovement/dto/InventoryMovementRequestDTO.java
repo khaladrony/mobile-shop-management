@@ -21,6 +21,8 @@ public class InventoryMovementRequestDTO implements Serializable {
     private LocalDateTime transactionDate;
     private String reference;
     private String warehouse;
+    private String fromWarehouse;
+    private String toWarehouse;
     private int sign;
     private InventoryAction action;
     private int year;

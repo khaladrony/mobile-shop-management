@@ -38,6 +38,10 @@ public class InventoryMovementSpecification {
                 predicates.add(cb.equal(root.get("status"), dto.getStatus()));
             }
 
+            if (dto.getAction() != null) {
+                predicates.add(cb.equal(root.get("action"), dto.getAction()));
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

@@ -2,7 +2,9 @@ var JMODULE_NAME = "inventory";
 
 var JCONTROLLER = {
     ITEM_MASTER: "item-master",
-    INVENTORY_MOVEMENT: "inventory-movement"
+    INVENTORY_MOVEMENT: "inventory-movement",
+    INVENTORY_MOVEMENT_ISSUE: "inventory-movement-issue",
+    INVENTORY_MOVEMENT_TRANSFER: "inventory-movement-transfer"
 };
 
 var JCOMPONENT = {
@@ -12,7 +14,15 @@ var JCOMPONENT = {
 
     inventory_movement_add_view: "inventory_movement_add_view",
     inventory_movement_update_view: "inventory_movement_update_view",
-    inventory_movement_list_view: "inventory_movement_list_view"
+    inventory_movement_list_view: "inventory_movement_list_view",
+
+    inventory_movement_issue_add_view: "inventory_movement_issue_add_view",
+    inventory_movement_issue_update_view: "inventory_movement_issue_update_view",
+    inventory_movement_issue_list_view: "inventory_movement_issue_list_view",
+
+    inventory_movement_transfer_add_view: "inventory_movement_transfer_add_view",
+    inventory_movement_transfer_update_view: "inventory_movement_transfer_update_view",
+    inventory_movement_transfer_list_view: "inventory_movement_transfer_list_view"
 };
 
 var API = {
@@ -33,7 +43,8 @@ var API = {
 var INVENTORY_KEY = {
     ACTION: {
         RECEIPT: "RECEIPT",
-        ISSUE: "ISSUE"
+        ISSUE: "ISSUE",
+        TRANSFER: "TRANSFER"
     },
     STATUS: {
         OPEN: "OPEN",

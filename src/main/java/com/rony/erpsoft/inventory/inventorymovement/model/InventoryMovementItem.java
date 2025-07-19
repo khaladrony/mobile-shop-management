@@ -17,13 +17,13 @@ import java.math.BigDecimal;
 @Table(name = "inventory_movement_item")
 public class InventoryMovementItem extends BaseEntity {
 
-    @Column(name = "inventory_movement_id")
+    @Column(name = "inventory_movement_id", nullable = false)
     private Long inventoryMovementId;   //InventoryMovement =>id
 
     @Column(name = "line_number")
     private int lineNumber;
 
-    @Column(name = "item_code")
+    @Column(name = "item_code", nullable = false)
     private String itemCode;    // ItemMaster => itemCode
 
     @Column(name = "unit")

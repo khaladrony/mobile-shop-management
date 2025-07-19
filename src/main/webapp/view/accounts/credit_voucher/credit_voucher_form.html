@@ -9,12 +9,13 @@
 
         <div class="widget-box">
 
-            <div class="widget-header row" style="margin: 0; padding: 8px 12px;">
+            <div class="widget-header row">
                 <!-- Left: Title -->
                 <div class="col-sm-4">
-                    <h4 class="widget-title" style="color: indianred; margin: 0;">
+                    <h4 class="widget-title">
                         {{page_name}}
                     </h4>
+                    <p class="subtitle">Record income or incoming payments</p>
                 </div>
 
                 <!-- Center: Voucher Info -->
@@ -43,57 +44,60 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <form ng-submit="saveModule()">
-                        <div class="row  ">
 
-                            <div class="col-xs-12 col-md-3">
-                                <label>Payment Type <span class="required">*</span></label>
-                                <select class="chosen-select form-control" id="paymentType" ng-model="module.paymentType" ng-change="selectPaymentType(module.paymentType)">
-                                    <option value="">Choose Payment Type</option>
-                                    <option value="Bank">Bank</option>
-                                    <option value="Cash">Cash</option>
-                                </select>
-                            </div>
+                        <div class="widget-main">
+                            <div class="row ">
+                                <div class="col-xs-12 col-md-3">
+                                    <label>Payment Type <span class="required">*</span></label>
+                                    <select class="chosen-select form-control" id="paymentType" ng-model="module.paymentType" ng-change="selectPaymentType(module.paymentType)">
+                                        <option value="">Choose Payment Type</option>
+                                        <option value="Bank">Bank</option>
+                                        <option value="Cash">Cash</option>
+                                    </select>
+                                </div>
 
-                            <div class="col-xs-12 col-md-9">
-                                <label>Particulars <span class="required">*</span></label>
-                                <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
-                            </div>
+                                <div class="col-xs-12 col-md-9">
+                                    <label>Particulars <span class="required">*</span></label>
+                                    <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
+                                </div>
 
-                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
-                                <label>Bank A/C </label>
-                                <select class="chosen-select form-control" id="bankAccountId" ng-model="module.bankAccountId">
-                                    <option value="">Choose Bank A/C</option>
-                                    <option ng-repeat="obj in bankAccountList track by $index" ng-value="obj.id">
-                                        {{obj.name}}
-                                    </option>
-                                </select>
-                            </div>
+                                <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                    <label>Bank A/C </label>
+                                    <select class="chosen-select form-control" id="bankAccountId" ng-model="module.bankAccountId">
+                                        <option value="">Choose Bank A/C</option>
+                                        <option ng-repeat="obj in bankAccountList track by $index" ng-value="obj.id">
+                                            {{obj.name}}
+                                        </option>
+                                    </select>
+                                </div>
 
-                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
-                                <label>Cheque No </label>
-                                <input class="form-control" type="text" id="chequeNo" ng-model="module.chequeNo" placeholder="Cheque No" />
-                            </div>
+                                <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                    <label>Cheque No </label>
+                                    <input class="form-control" type="text" id="chequeNo" ng-model="module.chequeNo" placeholder="Cheque No" />
+                                </div>
 
-                            <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
-                                <label>Cheque Date </label>
-                                <div class="input-group date" style="float: left; margin-right: 8px;">
-                                    <input data-date-picker class="form-control" type="text" id="chequeDate" ng-model="module.chequeDate" placeholder="Cheque Date" ng-model-options="{timezone: 'utc'}" />
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                    </span>
+                                <div class="col-xs-12 col-md-3" ng-hide="isBankHide">
+                                    <label>Cheque Date </label>
+                                    <div class="input-group date" style="float: left; margin-right: 8px;">
+                                        <input data-date-picker class="form-control" type="text" id="chequeDate" ng-model="module.chequeDate" placeholder="Cheque Date" ng-model-options="{timezone: 'utc'}" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
                         <br>
 
-                        <div class="widget-header widget-header-flat">
-                            <h4 class="widget-title">Transaction</h4>
-                            <span class="widget-toolbar"> </span>
-                        </div>
+
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div class="row  ">
+                                <div class="widget-header widget-header-flat">
+                                    <h4 class="widget-title">Transaction</h4>
+                                    <span class="widget-toolbar"> </span>
+                                </div>
+                                <div class="row">
 
                                     <div class="col-xs-12 col-md-3">
                                         <label>Chart of Accounts <span class="required">*</span></label>
@@ -131,12 +135,21 @@
                                     <br>
 
                                     <div class="col-xs-12 col-md-1">
-                                        <button type="button" class="btn btn-sm btn-primary btn-round" ng-hide="detailsAddBtnHide"  ng-click="addToGrid()" style="padding: 5px 5px;top: 4px">
-                                            <i class="ace-icon fa fa-check-circle"></i>Add
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-yellow btn-round" ng-hide="detailsEditBtnHide" ng-click="editToGrid()" style="padding: 5px 5px;top: 4px">
-                                            <i class="ace-icon fa fa-check-circle"></i>Edit
-                                        </button>
+                                        <action-button
+                                                label="Add"
+                                                icon="fa-check-circle"
+                                                type="btn-primary"
+                                                visible="!detailsAddBtnHide"
+                                                on-click="addToGrid()">
+                                        </action-button>
+
+                                        <action-button
+                                                label="Edit"
+                                                icon="fa-check-circle"
+                                                type="btn-yellow"
+                                                visible="!detailsEditBtnHide"
+                                                on-click="editToGrid()">
+                                        </action-button>
                                     </div>
 
                                 </div>
@@ -145,13 +158,14 @@
 
                         <br>
 
-                        <div class="widget-header widget-header-flat">
-                            <h4 class="widget-title">Voucher Details</h4>
-                            <span class="widget-toolbar"> </span>
-                        </div>
+
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div class="row  ">
+                                <div class="widget-header widget-header-flat">
+                                    <h4 class="widget-title">Voucher Details</h4>
+                                    <span class="widget-toolbar"> </span>
+                                </div>
+                                <div class="row ">
                                     <div class="col-md-12">
                                         <table id="voucher-details-table" class="table table-bordered table-hover">
                                             <thead>

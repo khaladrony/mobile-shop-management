@@ -1,6 +1,6 @@
-app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $timeout,
+app.controller('InventoryMovementTransferFormCtrl', function ($scope, $http, $state, $timeout,
                 $q, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
-                DialogBox, encrypt, Communication,$filter,growl, ItemService, ToasterMessageQueueService) {
+                DialogBox, encrypt, Communication, $filter, growl, ItemService, ToasterMessageQueueService) {
 
     copyPasteStringRestrict('.pastedString');
     $rootScope.setPageName(JMODULE_NAME, $state.current.name);
@@ -16,8 +16,10 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         transactionDate: new Date(),
         reference: "",
         warehouse: "",
+        fromWarehouse: null,
+        toWarehouse: null,
         sign: "",
-        action: INVENTORY_KEY.ACTION.RECEIPT,
+        action: INVENTORY_KEY.ACTION.TRANSFER,
         year: "",
         month: "",
         status: INVENTORY_KEY.STATUS.OPEN,
@@ -84,6 +86,7 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
     $scope.onItemChange = function(item) {
         $scope.inventory_movement_item.itemCode = item.item_code;
+
         $scope.selectItem($scope.inventory_movement_item.itemCode);
     };
 
@@ -151,7 +154,6 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
         $scope.rowIndex = rowIndex;
         $scope.inventory_movement_item.id = rowData.id;
-//        $scope.inventory_movement_item.itemCode = rowData.itemCode;
         $scope.inventory_movement_item.selectedItem = $scope.itemList
                     .find(item => item.item_code === rowData.itemCode);
         $scope.inventory_movement_item.rate = rowData.rate;
@@ -180,34 +182,34 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         if(!$scope.saveValidation()){
             return;
         }
+
         //Avoid time zone
         $scope.module.transactionDate = formatToLocalDateTimeString($scope.module.transactionDate);
 
         var req;
-        if($state.current.name === JCOMPONENT.inventory_movement_update_view) {
+        if($state.current.name === JCOMPONENT.inventory_movement_transfer_update_view) {
             req = Communication.request("PUT", API.INVENTORY_MOVEMENT_UPDATE, $scope.module);
         } else{
           req = Communication.request("POST", API.INVENTORY_MOVEMENT_SAVE, $scope.module);
         }
 
         req.then(function (resp) {
-            log("Inventory movement: " + JSON.stringify(resp));
+            log("Inventory movement transfer: " + JSON.stringify(resp));
             if (resp.code === 200) {
                 $scope.reset();
                 $scope.module.details = [];
 
-                if($state.current.name === JCOMPONENT.inventory_movement_update_view){
-                    $state.go(JCOMPONENT.inventory_movement_list_view);
+                if($state.current.name === JCOMPONENT.inventory_movement_transfer_update_view){
+                    $state.go(JCOMPONENT.inventory_movement_transfer_list_view);
                     ToasterMessageQueueService.addMessage('success', 'Successfully updated', 'Success!');
                 } else{
                     growl.success('Successfully saved',{title: 'Success!'});
                 }
-
             } else{
                 $rootScope.toastError(resp.message);
             }
         }, function (err) {
-            log("Inventory movement save error", JSON.stringify(err));
+            log("Inventory movement transfer save error", JSON.stringify(err));
             $rootScope.toastError(err.message);
         }).finally(function () {
             if (typeof $scope.module.transactionDate === 'string') {
@@ -225,11 +227,12 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         return true;
     };
 
-    if($state.current.name === JCOMPONENT.inventory_movement_update_view){
+    if($state.current.name === JCOMPONENT.inventory_movement_transfer_update_view){
 
         var req = Communication.request("GET", API.INVENTORY_MOVEMENT_GET + '/' + $stateParams.id, $scope.module);
         req.then(function (resp) {
-//            log("Receive transaction edit: " + JSON.stringify(resp));
+            log("Transfer transaction edit: " + JSON.stringify(resp));
+
             if (resp.code === 200) {
                 $scope.module = resp.body;
                 //Date string convert to JS Date object
@@ -237,20 +240,21 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
                 $scope.getGridTransactionItemsForEdit($scope.module.details);
             }
         }, function (err) {
-            log("Receive transaction edit error", JSON.stringify(err));
+            log("Transfer transaction edit error", JSON.stringify(err));
         });
     }
 
     $scope.getGridTransactionItemsForEdit = function (transactionItems) {
+
         var details = [];
         angular.forEach(transactionItems, function (value, key) {
-//            $scope.selectItem(value.itemCode);
+            $scope.selectItem(value.itemCode);
             details.id = value.id;
             details.itemCode = value.itemCode;
             details.rate = value.rate;
             details.quantity = value.quantity;
-            details.item_name_code = $scope.itemList.find(
-                    item => item.item_code === value.itemCode).item_name_code;
+            details.item_name_code = $scope.itemObj.item_name_code;;
+
             $scope.inventory_movement_items.push(details);
             details = [];
         });
@@ -290,6 +294,8 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
     $scope.reset = function () {
         $scope.module.transactionDate = new Date();
+        $scope.module.fromWarehouse = null;
+        $scope.module.toWarehouse = null;
         $scope.module.remarks = "";
         $scope.inventory_movement_items = [];
         $scope.resetTable();

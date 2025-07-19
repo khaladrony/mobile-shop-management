@@ -3,6 +3,7 @@ package com.rony.erpsoft.inventory.inventorymovement.dto;
 import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.inventory.enums.InventoryStatus;
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovementItem;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,8 @@ public class InventoryMovementResponseDTO {
     private LocalDateTime transactionDate;
     private String reference;
     private String warehouse;
+    private String fromWarehouse;
+    private String toWarehouse;
     private int sign;
     private InventoryAction action;
     private int year;

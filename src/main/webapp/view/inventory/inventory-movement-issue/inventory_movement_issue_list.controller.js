@@ -1,4 +1,4 @@
-app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $timeout,
+app.controller('InventoryMovementIssueListCtrl', function ($scope, $http, $state, $timeout,
                 $rootScope, $mdDialog, DialogBox, $interval, Communication, growl, ItemService,
                 ToasterMessageQueueService, DateUtilService, InventoryService) {
 
@@ -12,7 +12,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
         toDate: "",
         transactionId: "",
         status: INVENTORY_KEY.STATUS.OPEN,
-        action: INVENTORY_KEY.ACTION.RECEIPT
+        action: INVENTORY_KEY.ACTION.ISSUE
     };
 
     $scope.fromDate = '';
@@ -29,6 +29,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
     $scope.itemPerPage = 10;
 
     $scope.getDataList = function (currentPage, itemPerPage) {
+
         $scope.search.fromDate = $scope.fromDate
                          ? DateUtilService.formatToLocalDateTimeString($scope.fromDate)
                          : "";
@@ -52,6 +53,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
         var req = Communication.request("POST", url, $scope.search);
         req.then(function (resp) {
             DialogBox.hideProgress();
+            log("Inventory movement issue list: " + JSON.stringify(resp));
 
             if (resp.code === 200) {
                 $scope.data.items = resp.body.content;
@@ -62,11 +64,10 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
                 $scope.data.items.forEach(function (master) {
                     master.showDetails = false;
                 });
-                $scope.toastMessage();
             }
 
         }, function (err) {
-            log("Inventory movement receipt error", JSON.stringify(err));
+            log("Inventory movement issue error", JSON.stringify(err));
         });
     };
 
@@ -77,6 +78,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
            }).catch(function (err) {
                 log("Item list error", err);
            }).finally(function () {
+                DialogBox.hideProgress();
            });
     };
 
@@ -84,8 +86,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
         master.showDetails = !master.showDetails;
         master.details.forEach(function (detail) {
             detail.itemNameCode = $scope.itemList.find(
-                        item => item.item_code === detail?.itemCode
-                    )?.item_name_code || null;
+                        item => item.item_code === detail.itemCode).item_name_code;
         });
 
         $scope.getItemDetailsTotalQty = function(master) {
@@ -104,7 +105,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
     };
 
     $scope.showEditForm = function (obj) {
-        $state.go(JCOMPONENT.inventory_movement_update_view, {id: obj.id});
+        $state.go(JCOMPONENT.inventory_movement_issue_update_view, {id: obj.id});
     };
 
     $scope.toastMessage = function(){

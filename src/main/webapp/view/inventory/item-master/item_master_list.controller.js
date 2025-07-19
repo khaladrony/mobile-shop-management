@@ -31,8 +31,6 @@ app.controller('ItemMasterListCtrl', function ($scope, $http, $state, $timeout, 
         var req = Communication.request("POST", url, $scope.search);
         req.then(function (resp) {
             DialogBox.hideProgress();
-            log("user list: " + JSON.stringify(resp));
-
             if (resp.code === 200) {
                 $scope.data.items = resp.body.content;
                 $scope.data.itemCount = resp.body.totalElements;
@@ -47,7 +45,6 @@ app.controller('ItemMasterListCtrl', function ($scope, $http, $state, $timeout, 
     };
 
     $scope.showEditForm = function (obj) {
-
         $state.go(JCOMPONENT.item_master_update_view, {id: obj.id});
     };
 

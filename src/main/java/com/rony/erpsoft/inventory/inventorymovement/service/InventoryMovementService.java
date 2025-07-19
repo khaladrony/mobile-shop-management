@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.rony.erpsoft.utils.ApplicationConstants.RECEIPT_SIGN;
-
 @Service
 @AllArgsConstructor
 public class InventoryMovementService {
@@ -38,19 +36,16 @@ public class InventoryMovementService {
     public Page<InventoryMovementResponseDTO> findAll(InventoryMovementSearchDTO searchDTO, Pageable pageable) {
         Specification<InventoryMovement> spec = InventoryMovementSpecification.build(searchDTO);
 
-        return inventoryMovementRepository.findAll(spec, pageable)
-                .map(item -> inventoryMovementMapper.entityToDto(item));
+        return inventoryMovementRepository.findAll(spec, pageable).map(item -> inventoryMovementMapper.entityToDto(item));
     }
 
     public InventoryMovementResponseDTO findById(long id) {
-        return inventoryMovementRepository.findById(id)
-                .map(inventoryMovementMapper::entityToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+        return inventoryMovementRepository.findById(id).map(inventoryMovementMapper::entityToDto).orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
 
     }
 
-    public List<String> searchTransactionIds(String query) {
-        return inventoryMovementRepository.findTransactionIdsByQuery(query);
+    public List<String> searchTransactionIds(InventoryAction action, String query) {
+        return inventoryMovementRepository.findTransactionIdsByQuery(action, query);
     }
 
     public InventoryMovement save(InventoryMovement inventoryMovement) {
@@ -102,11 +97,11 @@ public class InventoryMovementService {
 
     private void prepareEntityForSave(InventoryMovementRequestDTO requestDTO) {
         if (requestDTO.getId() == null) {
-            requestDTO.setTransactionId(transactionIdGeneration());
+            requestDTO.setTransactionId(transactionIdGeneration(requestDTO.getAction()));
             requestDTO.setTransactionDate(requestDTO.getTransactionDate().with(LocalTime.now()));
             requestDTO.setOrganizationId(sessionService.getOrganizationId());
-            requestDTO.setSign(RECEIPT_SIGN);
-            requestDTO.setAction(InventoryAction.RECEIPT);
+            requestDTO.setSign(requestDTO.getAction().getSign());
+            requestDTO.setAction(requestDTO.getAction());
             requestDTO.setStatus(InventoryStatus.OPEN);
             requestDTO.setYear(requestDTO.getTransactionDate().getYear());
             requestDTO.setMonth(requestDTO.getTransactionDate().getMonthValue());
@@ -116,11 +111,20 @@ public class InventoryMovementService {
         }
     }
 
-    private String transactionIdGeneration() {
-        String prefix = "RE--";
+    private String transactionIdGeneration(InventoryAction action) {
+        String prefix = setPrefix(action);
+        int sign = action.getSign();
         int length = 6;
-        String lastTransactionId = inventoryMovementRepository.findLastTransactionId(RECEIPT_SIGN);
+        String lastTransactionId = inventoryMovementRepository.findLastTransactionId(sign);
 
         return generalInfoCommonService.autoCodeGeneration(prefix, length, lastTransactionId);
+    }
+
+    private String setPrefix(InventoryAction action){
+        return switch (action) {
+            case RECEIPT -> "RE--";
+            case ISSUE   -> "IS--";
+            case TRANSFER -> "TO--";
+        };
     }
 }

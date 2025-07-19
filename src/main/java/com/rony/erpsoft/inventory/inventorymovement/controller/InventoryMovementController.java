@@ -2,12 +2,10 @@ package com.rony.erpsoft.inventory.inventorymovement.controller;
 
 import com.rony.erpsoft.configuration.AppProperty;
 import com.rony.erpsoft.configuration.AppResponse;
+import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementRequestDTO;
-import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementResponseDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementSearchDTO;
 import com.rony.erpsoft.inventory.inventorymovement.service.InventoryMovementService;
-import com.rony.erpsoft.inventory.itemmaster.dto.ItemMasterRequestDTO;
-import com.rony.erpsoft.inventory.itemmaster.dto.ItemMasterResponseDTO;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.KEY;
 import lombok.AllArgsConstructor;
@@ -22,13 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.rony.erpsoft.utils.ApplicationConstants.FILTER;
 import static com.rony.erpsoft.utils.ApplicationConstants.INVENTORY_MOVEMENT_BASE_URL;
@@ -70,8 +66,11 @@ public class InventoryMovementController extends AppProperty {
     }
 
     @GetMapping(value = "/search-transaction-id")
-    public AppResponse<Object> searchTransactionIds(@RequestParam("q") String query) {
-        List<String> result = inventoryMovementService.searchTransactionIds(query);
+    public AppResponse<Object> searchTransactionIds(
+            @RequestParam("action") InventoryAction action,
+            @RequestParam("query") String query
+    ) {
+        List<String> result = inventoryMovementService.searchTransactionIds(action, query);
         return AppResponse.build(HttpStatus.OK).body(result);
     }
 

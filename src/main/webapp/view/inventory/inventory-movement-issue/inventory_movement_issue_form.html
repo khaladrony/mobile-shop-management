@@ -15,7 +15,7 @@
                     <h4 class="widget-title">
                         {{page_name}}
                     </h4>
-                    <p class="subtitle">Record received items into inventory</p>
+                    <p class="subtitle">Record items issued from inventory</p>
                 </div>
                 <!-- Center: Transaction Info -->
                 <div class="col-sm-6" >
@@ -28,7 +28,7 @@
 
                 <!-- Right: Back Button -->
                 <span class="widget-toolbar pull-right">
-                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.inventory_movement_list_view}}">
+                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.inventory_movement_issue_list_view}}">
                         <i class="ace-icon fa fa-backward"></i> Back
                     </a>
                 </span>
@@ -57,7 +57,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-md-2" ng-hide="isWarehouseHide">
+                                    <div class="col-xs-12 col-md-3" ng-hide="isWarehouseHide">
                                         <label>Warehouse</label>
                                         <appcode-dropdown type="Warehouse" model="module.fromWarehouse"></appcode-dropdown>
                                     </div>
@@ -104,7 +104,7 @@
 
                                     <br>
 
-                                    <div class="col-xs-12 col-md-1">
+                                    <div class="col-xs-12 col-md-1" style="position: relative; height: 34px;">
                                         <action-button
                                                 label="Add"
                                                 icon="fa-check-circle"
@@ -177,13 +177,13 @@
                             <div class="col-xs-12">
                                 <div class="form-actions pull-right">
 
-                                    <button type="button" ui-sref="{{JCOMPONENT.inventory_movement_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
+                                    <button type="button" ui-sref="{{JCOMPONENT.inventory_movement_issue_list_view}}" ng-show="true" class="btn btn-sm btn-danger">
                                         <i class="ace-icon fa fa-close"></i>Cancel
                                     </button>
 
-                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.inventory_movement_add_view"></span>
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.inventory_movement_issue_add_view"></span>
 
-                                    <button type="button" ng-show="current_state === JCOMPONENT.inventory_movement_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
+                                    <button type="button" ng-show="current_state === JCOMPONENT.inventory_movement_issue_add_view" class="btn btn-sm btn-warning" ng-click="resetForm()">
                                         <i class="ace-icon fa fa-recycle"></i>Reset
                                     </button>
 
@@ -191,8 +191,8 @@
 
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="ace-icon fa fa-check-circle"></i>
-                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_add_view" >Save</span>
-                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_update_view" >Update</span>
+                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_issue_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.inventory_movement_issue_update_view" >Update</span>
                                     </button>
                                 </div>
                             </div>

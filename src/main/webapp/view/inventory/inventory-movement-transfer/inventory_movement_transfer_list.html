@@ -40,7 +40,7 @@
                                       placeholder="Transaction No">
                         </autocomplete>
                         <span class="input-group-addon">
-                            <i class="fa fa-search" style="top: 10px; left: 10px; color: gray;"></i>
+                            <i class="fa fa-search" style="position: initial; top: 10px; left: 10px; color: gray;"></i>
                         </span>
                     </div>
 
@@ -58,8 +58,8 @@
 
                 <div class="col-sm-12 col-md-2 col-lg-2">
                     <div class="pull-right">
-                        <a class="btn btn-sm btn-success" ui-sref="{{JCOMPONENT.inventory_movement_add_view}}">
-                            <i class="ace-icon fa fa-plus"></i> Receive Create
+                        <a class="btn btn-sm btn-success" ui-sref="{{JCOMPONENT.inventory_movement_transfer_add_view}}">
+                            <i class="ace-icon fa fa-plus"></i> Transfer Create
                         </a>
                     </div>
                 </div>
@@ -74,8 +74,9 @@
                     <tr>
                         <th>Transaction No <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionId'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
                         <th>Transaction Date <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionDate'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th>From warehouse</th>
+                        <th>To warehouse</th>
                         <th>Remarks</th>
-                        <th ng-hide="true">warehouse</th>
                         <th class="text-center">Status</th>
                         <th></th>
                     </tr>
@@ -85,15 +86,16 @@
                         ng-click="toggleDetails(master)"
                         ng-class="{'success': master.showDetails}"
                         style="cursor: pointer;">
-                        <td width="150" align="center">
+                        <td style="width: 150px;text-align: center;">
                             <i class="fa" ng-class="{'fa-chevron-down': master.showDetails, 'fa-chevron-right': !master.showDetails}"></i>
                             {{master.transactionId}}
                         </td>
-                        <td width="170" align="center">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                        <td style="width: 170px;text-align: center;">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                        <td style="width: 250px;text-align: left;">{{master.fromWarehouse}}</td>
+                        <td style="width: 250px;text-align: left;">{{master.toWarehouse}}</td>
                         <td>{{master.remarks}}</td>
-                        <td ng-hide="true" width="140" align="center">{{master.warehouse}}</td>
-                        <td width="140" align="center">{{master.status}}</td>
-                        <td width="170" align="center">
+                        <td style="width: 140px;text-align: center;">{{master.status}}</td>
+                        <td style="width: 170px;text-align: center;">
                             <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
                             <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="preview()"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
                         </td>

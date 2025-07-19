@@ -40,6 +40,12 @@ body {
     font-size: 14px;
 }
 
+.form-control,input,
+              textarea {
+    font-size: 15px;
+    border-radius: 5px !important;
+}
+
 .form-control, select {
     color: #080808;
 }
@@ -48,12 +54,22 @@ body {
     color: #080808;
 }
 
+button, html, input, select, textarea {
+    font-family: unset;
+}
+
 input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
-    color: #000000
+    color: #000000;
+    font-size: 15px;
+     border-radius: 5px !important;
+     padding: 6px 12px;
 }
 
 input[type=email]:focus, input[type=url]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=color]:focus, input[type=text]:focus, input[type=password]:focus, input[type=datetime]:focus, input[type=datetime-local]:focus, input[type=date]:focus, input[type=month]:focus, input[type=time]:focus, input[type=week]:focus, input[type=number]:focus, textarea:focus {
-    color: #000000
+    color: #000000;
+    font-size: 15px;
+     border-radius: 5px !important;
+     padding: 6px 12px;
 }
 
 .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th {
@@ -683,3 +699,49 @@ html {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
+p.subtitle {
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    margin-top: -8px;
+    line-height: 2.2;
+}
+
+.widget-body .widget-primary{
+    /*background-color: #f6ffe0;*/
+}
+
+.widget-header.row {
+    margin: 0 !important;
+    padding: 8px 0px !important;
+}
+
+.widget-title {
+    color: indianred;
+     margin: 0;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.breadcrumbs .nav-search {
+    top: 2px;
+}
+
+/*Add & Edit button hide show in form*/
+.transition-fade.ng-hide-add,
+.transition-fade.ng-hide-remove {
+    transition: opacity 0.3s ease;
+    display: block !important;
+}
+
+.transition-fade.ng-hide {
+    opacity: 0;
+}
+
+.transition-fade {
+    opacity: 1;
+}
+/*===============*/

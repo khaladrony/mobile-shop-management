@@ -581,8 +581,61 @@ function printElement(content) {
     }, 300);
 }
 
-
-
 function log(tag,messaage) {
-             console.log(tag,messaage);
+    console.log(tag,messaage);
 }
+
+//Cache itemList[]
+app.factory('ItemService', function ($http, $q) {
+    var cache = null;
+
+    return {
+        getItemList: function () {
+            if (cache) {
+                return $q.resolve(cache); // return cached data
+            }
+
+            return $http.get(COMMON_API.item_list).then(function (resp) {
+                if (resp.data.code === 200) {
+                    cache = resp.data.body || [];
+                    return cache;
+                } else {
+                    return $q.reject("Failed to load items");
+                }
+            });
+        },
+
+        clearCache: function () {
+            cache = null;
+        }
+    };
+});
+
+//Toaster message queue
+app.factory('ToasterMessageQueueService', function () {
+    var messages = [];
+
+    return {
+        addMessage: function (type, message, title) {
+            messages.push({ type: type, message: message, title: title });
+        },
+        getMessages: function () {
+            var temp = angular.copy(messages);
+            messages = []; // Clear after read
+            return temp;
+        }
+    };
+});
+
+// app/services/dateUtilService.js
+app.factory('DateUtilService', function () {
+    return {
+        formatToLocalDateTimeString: function (date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}T00:00:00`;
+        }
+    };
+});
+
