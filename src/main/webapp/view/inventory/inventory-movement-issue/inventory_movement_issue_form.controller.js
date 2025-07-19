@@ -1,6 +1,6 @@
 app.controller('InventoryMovementIssueFormCtrl', function ($scope, $http, $state, $timeout,
                 $q, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
-                DialogBox, encrypt, Communication,$filter, growl, ItemService, ToasterMessageQueueService) {
+                DialogBox, encrypt, Communication,$filter, growl, ItemService, ToasterMessageQueueService, DateHelperService) {
 
     copyPasteStringRestrict('.pastedString');
     $rootScope.setPageName(JMODULE_NAME, $state.current.name);
@@ -139,13 +139,6 @@ app.controller('InventoryMovementIssueFormCtrl', function ($scope, $http, $state
         return `${yyyy}-${mm}-${dd}T00:00:00`;
     }
 
-    $scope.clearTaxBox = function () {
-        $scope.inventory_movement_item.itemCode = "";
-        $scope.inventory_movement_item.rate = "1";
-        $scope.inventory_movement_item.quantity = "";
-        $scope.inventory_movement_item.selectedItem = null;
-    };
-
     $scope.rowDataPopulate = function (rowData, rowIndex) {
         $scope.detailsAddBtnHide = true;
         $scope.detailsEditBtnHide = false;
@@ -181,7 +174,7 @@ app.controller('InventoryMovementIssueFormCtrl', function ($scope, $http, $state
             return;
         }
         //Avoid time zone
-        $scope.module.transactionDate = formatToLocalDateTimeString($scope.module.transactionDate);
+        $scope.module.transactionDate = DateHelperService.formatToLocalDateTimeString($scope.module.transactionDate);
 
         var req;
         if($state.current.name === JCOMPONENT.inventory_movement_issue_update_view) {

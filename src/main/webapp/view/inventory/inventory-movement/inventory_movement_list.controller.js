@@ -1,6 +1,6 @@
 app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $timeout,
                 $rootScope, $mdDialog, DialogBox, $interval, Communication, growl, ItemService,
-                ToasterMessageQueueService, DateUtilService, InventoryService) {
+                ToasterMessageQueueService, DateHelperService, InventoryService, ToastService) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.receive_status = INVENTORY_KEY.STATUS.OPEN;
@@ -29,17 +29,13 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
     $scope.itemPerPage = 10;
 
     $scope.getDataList = function (currentPage, itemPerPage) {
-        $scope.search.fromDate = $scope.fromDate
-                         ? DateUtilService.formatToLocalDateTimeString($scope.fromDate)
-                         : "";
-        $scope.search.toDate = $scope.toDate
-                       ? DateUtilService.formatToLocalDateTimeString($scope.toDate)
-                       : "";
 
-        if( $scope.search.fromDate  > $scope.search.toDate ){
-            growl.error('To date should be greater than or equal from date!',{title: 'Error!'});
-            return;
-        }
+        const result = DateHelperService.validateAndFormat($scope.fromDate, $scope.toDate);
+
+        if (!result) return;
+
+        $scope.search.fromDate = result.fromDate;
+        $scope.search.toDate = result.toDate;
 
         $scope.currentPage = currentPage;
         $scope.data = {};
@@ -62,7 +58,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
                 $scope.data.items.forEach(function (master) {
                     master.showDetails = false;
                 });
-                $scope.toastMessage();
+                ToastService.showMessages();
             }
 
         }, function (err) {
@@ -106,15 +102,4 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
     $scope.showEditForm = function (obj) {
         $state.go(JCOMPONENT.inventory_movement_update_view, {id: obj.id});
     };
-
-    $scope.toastMessage = function(){
-        var messages = ToasterMessageQueueService.getMessages();
-         messages.forEach(function (msg) {
-            if (msg.type === 'success') {
-                growl.success(msg.message, { title: msg.title });
-            } else if (msg.type === 'error') {
-                growl.error(msg.message, { title: msg.title });
-            }
-        });
-    }
 });

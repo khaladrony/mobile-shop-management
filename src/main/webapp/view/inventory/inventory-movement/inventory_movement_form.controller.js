@@ -1,6 +1,6 @@
 app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $timeout,
                 $q, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
-                DialogBox, encrypt, Communication,$filter,growl, ItemService, ToasterMessageQueueService) {
+                DialogBox, encrypt, Communication,$filter,growl, ItemService, ToasterMessageQueueService, DateHelperService) {
 
     copyPasteStringRestrict('.pastedString');
     $rootScope.setPageName(JMODULE_NAME, $state.current.name);
@@ -131,13 +131,6 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         $scope.module.details.push(angular.copy($scope.inventory_movement_item));
     };
 
-    function formatToLocalDateTimeString(date) {
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}T00:00:00`;
-    }
-
     $scope.clearTaxBox = function () {
         $scope.inventory_movement_item.itemCode = "";
         $scope.inventory_movement_item.rate = "1";
@@ -181,7 +174,7 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
             return;
         }
         //Avoid time zone
-        $scope.module.transactionDate = formatToLocalDateTimeString($scope.module.transactionDate);
+        $scope.module.transactionDate = DateHelperService.formatToLocalDateTimeString($scope.module.transactionDate);
 
         var req;
         if($state.current.name === JCOMPONENT.inventory_movement_update_view) {

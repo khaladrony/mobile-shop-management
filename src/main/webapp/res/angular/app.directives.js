@@ -287,9 +287,9 @@ app.directive('appcodeDropdown', function () {
             </select>
         `,
         controller: function ($scope, $http) {
-            const url = _baseurl_ + "application_common/app_codes";
+            $scope.options = [];
 
-            $http.get(url).then(function (resp) {
+            $http.get(COMMON_API.app_codes).then(function (resp) {
                 if (resp.data.code === 200) {
                     const list = resp.data.body || [];
 

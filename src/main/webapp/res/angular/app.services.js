@@ -595,7 +595,7 @@ app.factory('ItemService', function ($http, $q) {
                 return $q.resolve(cache); // return cached data
             }
 
-            return $http.get(COMMON_API.item_list).then(function (resp) {
+            return $http.get(COMMON_API.items).then(function (resp) {
                 if (resp.data.code === 200) {
                     cache = resp.data.body || [];
                     return cache;
@@ -627,15 +627,58 @@ app.factory('ToasterMessageQueueService', function () {
     };
 });
 
-// app/services/dateUtilService.js
-app.factory('DateUtilService', function () {
+app.factory('ToastService', function(growl, ToasterMessageQueueService) {
     return {
-        formatToLocalDateTimeString: function (date) {
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, '0');
-            const dd = String(date.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}T00:00:00`;
+        showMessages: function () {
+            const messages = ToasterMessageQueueService.getMessages();
+            messages.forEach(msg => {
+                if (msg.type === 'success') {
+                    growl.success(msg.message, { title: msg.title });
+                } else if (msg.type === 'error') {
+                    growl.error(msg.message, { title: msg.title });
+                } else if (msg.type === 'warning') {
+                    growl.warning(msg.message, { title: msg.title });
+                } else if (msg.type === 'info') {
+                    growl.info(msg.message, { title: msg.title });
+                }
+            });
         }
     };
 });
+
+app.factory('DateHelperService', function(growl) {
+    function pad(number) {
+        return String(number).padStart(2, '0');
+    }
+
+    function formatToLocalDateTimeString(date) {
+        if (!(date instanceof Date)) return "";
+        const yyyy = date.getFullYear();
+        const mm = pad(date.getMonth() + 1);
+        const dd = pad(date.getDate());
+        return `${yyyy}-${mm}-${dd}T00:00:00`;
+    }
+
+    function validateAndFormat(fromDate, toDate) {
+        const formattedFrom = formatToLocalDateTimeString(fromDate);
+        const formattedTo = formatToLocalDateTimeString(toDate);
+
+        if (formattedFrom && formattedTo && formattedFrom > formattedTo) {
+            growl.error('To date should be greater than or equal to From date!', { title: 'Error!' });
+            return null;
+        }
+
+        return {
+            fromDate: formattedFrom,
+            toDate: formattedTo
+        };
+    }
+
+    return {
+        formatToLocalDateTimeString,
+        validateAndFormat
+    };
+});
+
+
 
