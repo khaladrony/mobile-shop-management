@@ -9,6 +9,7 @@
     <div class="col-sm-12 col-md-12 col-lg-12">
 
         <div class="filter-area">
+
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-10">
 
@@ -40,12 +41,15 @@
                                       placeholder="Transaction No">
                         </autocomplete>
                         <span class="input-group-addon">
-                            <i class="fa fa-search" style="position: initial; top: 10px; left: 10px; color: gray;"></i>
+                            <i class="fa fa-search" style="top: 10px; left: 10px; color: gray;"></i>
                         </span>
                     </div>
 
                     <div class="input-group width110"  style="float: left; margin-right: 8px;">
-                        <appcode-dropdown type="Inventory Status" model="search.status"></appcode-dropdown>
+                        <appcode-dropdown
+                                type="Inventory Status"
+                                model="search.status">
+                        </appcode-dropdown>
                     </div>
 
                     <div class="input-group width110" style="float: left; margin-right: 8px;">
@@ -58,8 +62,8 @@
 
                 <div class="col-sm-12 col-md-2 col-lg-2">
                     <div class="pull-right">
-                        <a class="btn btn-sm btn-success" ui-sref="{{JCOMPONENT.inventory_movement_transfer_add_view}}">
-                            <i class="ace-icon fa fa-plus"></i> Transfer Create
+                        <a class="btn btn-sm btn-success" ng-click="voucherPost()">
+                            <i class="ace-icon fa fa-upload"></i> Inventory Post
                         </a>
                     </div>
                 </div>
@@ -69,14 +73,21 @@
 
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12">
+
                 <table id="simple-table" class="table  table-bordered table-hover">
                     <thead>
                     <tr>
+                        <th>
+                            <input
+                                    type="checkbox"
+                                    ng-model="selectAll"
+                                    ng-click="checkAll()" />
+                        </th>
+                        <th ng-hide="true">ID</th>
                         <th>Transaction No <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionId'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
                         <th>Transaction Date <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionDate'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
-                        <th>From warehouse</th>
-                        <th>To warehouse</th>
                         <th>Remarks</th>
+                        <th ng-hide="true">warehouse</th>
                         <th class="text-center">Status</th>
                         <th></th>
                     </tr>
@@ -86,14 +97,20 @@
                         ng-click="toggleDetails(master)"
                         ng-class="{'success': master.showDetails}"
                         style="cursor: pointer;">
+
+                        <td style="width: 20px;text-align: center;">
+                            <input type="checkbox" ng-model="master.selected">
+                        </td>
+                        <td ng-hide="true">{{master.id}}</td>
                         <td style="width: 150px;text-align: center;">
                             <i class="fa" ng-class="{'fa-chevron-down': master.showDetails, 'fa-chevron-right': !master.showDetails}"></i>
                             {{master.transactionId}}
                         </td>
-                        <td style="width: 170px;text-align: center;">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
-                        <td style="width: 250px;text-align: left;">{{master.fromWarehouse}}</td>
-                        <td style="width: 250px;text-align: left;">{{master.toWarehouse}}</td>
+                        <td style="width: 170px;text-align: center;">
+                            {{master.transactionDate | date: 'dd-MM-yyyy'}}
+                        </td>
                         <td>{{master.remarks}}</td>
+                        <td ng-hide="true" style="width: 140px;text-align: center;">{{master.warehouse}}</td>
                         <td style="width: 140px;text-align: center;">{{master.status}}</td>
                         <td style="width: 170px;text-align: center;">
                             <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
@@ -103,7 +120,7 @@
 
                     <tr ng-repeat-end ng-show="master.showDetails">
                         <td colspan="6" style="text-align: center;">
-                            <div class="fixed-width-div">
+                            <div style="display: inline-block; max-width: 100%; overflow-x: auto;">
                                 <table class="table table-sm table-striped table-bordered mb-0">
                                     <thead class="bg-secondary text-white">
                                     <tr>
@@ -128,7 +145,7 @@
                                         <td></td>
                                         <td>Total</td>
                                         <td></td>
-                                        <td align='center'><strong>{{ getItemDetailsTotalQty(master) }}</strong></td>
+                                        <td style="text-align: center;"><strong>{{ getItemDetailsTotalQty(master) }}</strong></td>
                                         <td></td>
                                     </tr>
                                     </tfoot>
@@ -145,6 +162,5 @@
                 <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
             </div>
         </div>
-
     </div>
 </div>

@@ -658,7 +658,7 @@ input:checked + .toggle_anim .off
 
 .lazy-dropdown .btn-dropdown .caret {
     float: right;
-    margin-top: 8px;
+    margin-top: -12px;
 }
 
 .lazy-dropdown .btn-dropdown .placeholder {
@@ -745,3 +745,21 @@ p.subtitle {
     opacity: 1;
 }
 /*===============*/
+
+/*lazy-dropdown directives*/
+.main-text {
+    font-weight: bold;
+    color: #333333e8;
+}
+
+.meta-text {
+    font-size: 12px;
+    color: #888;
+}
+/**/
+
+.fixed-width-div {
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+}

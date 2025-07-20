@@ -1,4 +1,5 @@
-app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q, $compile) {
+app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q,
+                $compile) {
     $rootScope.JMODULE_NAME = JMODULE_NAME;
     $rootScope.JCONTROLLER = JCONTROLLER;
     $rootScope.JCOMPONENT = JCOMPONENT;
@@ -391,7 +392,7 @@ app.directive('autocomplete', function($timeout, $sce) {
     };
 });
 
-app.directive('lazyDropdown', function($timeout, $compile) {
+app.directive('lazyDropdown', function($timeout, $compile, $sce) {
     return {
         restrict: 'E',
         scope: {
@@ -399,6 +400,7 @@ app.directive('lazyDropdown', function($timeout, $compile) {
             selectedItem: '=',
             placeholder: '@',
             displayProperty: '@',
+            displaySubtext: '@',
             searchProperty: '@',
             itemTemplate: '@',
             enableSearch: '=?',
@@ -412,7 +414,7 @@ app.directive('lazyDropdown', function($timeout, $compile) {
                         ng-click="toggleDropdown()"
                         ng-class="{'btn-primary': isOpen}">
                     <span ng-if="!selectedItem" class="placeholder">{{placeholder || 'Select...'}}</span>
-                    <span ng-if="selectedItem">{{getDisplayText(selectedItem)}}</span>
+                    <div class="selected-item" ng-bind-html="getDisplayText(selectedItem)"></div>
                     <span class="caret"></span>
                 </button>
 
@@ -435,7 +437,7 @@ app.directive('lazyDropdown', function($timeout, $compile) {
                         <div class="dropdown-item"
                              ng-repeat="item in displayedItems track by $index"
                              ng-click="selectItem(item)">
-                            {{getDisplayText(item)}}
+                            <span ng-bind-html="getDisplayText(item)"></span>
                         </div>
                     </div>
 
@@ -472,7 +474,15 @@ app.directive('lazyDropdown', function($timeout, $compile) {
             // Get display text for item
             scope.getDisplayText = function(item) {
                 if (!item) return '';
-                return scope.displayProperty ? item[scope.displayProperty] : item;
+
+                const main = item[scope.displayProperty] || '';
+                const displaySubtext = item[scope.displaySubtext] || '';
+
+                // HTML-based output
+                return $sce.trustAsHtml(`
+                    <span class="main-text">${main}</span>
+                    <span class="meta-text"> - ${displaySubtext}</span>
+                `);
             };
 
             // Reset dropdown state
@@ -546,7 +556,6 @@ app.directive('lazyDropdown', function($timeout, $compile) {
                         } else {
                             hasMoreItems = false;
                         }
-
                         scope.isLoading = false;
                     }, 200);
                 }
@@ -613,7 +622,7 @@ app.directive('lazyDropdown', function($timeout, $compile) {
             });
         }
     };
-})
+});
 
 app.directive('actionButton', function () {
     return {
@@ -637,7 +646,3 @@ app.directive('actionButton', function () {
         `
     };
 });
-
-
-
-
