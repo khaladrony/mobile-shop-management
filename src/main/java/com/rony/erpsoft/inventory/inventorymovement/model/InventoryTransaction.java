@@ -1,4 +1,4 @@
-package com.rony.erpsoft.inventory.model;
+package com.rony.erpsoft.inventory.inventorymovement.model;
 
 import com.rony.erpsoft.application_common.model.BaseEntity;
 import com.rony.erpsoft.inventory.enums.InventoryAction;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Table(name = "inventory_transaction")
 public class InventoryTransaction extends BaseEntity {
 
-    @Column(name = "transaction_id")
+    @Column(name = "transaction_id", nullable = false, unique = true)
     private String transactionId;   // Id prefix => IMRE:IMIS (Receipt:Issue)
 
     @Column(name = "transaction_date")
@@ -64,15 +64,15 @@ public class InventoryTransaction extends BaseEntity {
     @Column(name = "customer_code")
     String customerCode;    // CustomerInfo => customerCode
 
-    @Column(name = "document_type")
-    private String documentType;    //RT,IS,TO,PO
+    @Column(name = "document_no")
+    private String documentNo;    //RT--000001,IS--000001,.....
 
     @Column(name = "document_id")
-    private Long documentId;     //InventoryMovement,InventoryTransfer => id
+    private Long documentId;     //InventoryMovement => id
 
-    @Column(name = "document_transaction_id")
-    private String documentTransactionId;     //InventoryMovementItem,InventoryTransferItem => transactionId
+    @Column(name = "document_detail_id")
+    private Long documentDetailId;     //InventoryMovementItem => id
 
     @Column(name = "document_row")
-    private int documentRow;    //InventoryMovementItem,InventoryTransferItem => row
+    private int documentRow;    //InventoryMovementItem => lineNumber
 }

@@ -1,18 +1,22 @@
-app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $timeout, $rootScope, $mdDialog, DialogBox, $interval, Communication,growl) {
+app.controller('InventoryMovementPostingListCtrl', function ($scope, $http, $state, $timeout,
+                 $rootScope, $mdDialog, DialogBox, $interval, Communication, growl, ItemService,
+                 ToasterMessageQueueService, DateHelperService, InventoryService, ToastService) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
-    $scope.voucher_status = VOUCHER_KEY.STATUS.DRAFT;
     $scope.list = [];
 
     $scope.search = {
-        from_date: "",
-        to_date: "",
-        voucher_no: "",
-        payment_type: "",
-        status: VOUCHER_KEY.STATUS.DRAFT,
-        voucher_type: ""
+        fromDate: "",
+        toDate: "",
+        transactionId: "",
+        status: INVENTORY_KEY.STATUS.OPEN,
+        sortField: "transactionDate",
+        sortDirection: "desc",
+        action: null
     };
 
+    $scope.fromDate = '';
+    $scope.toDate = '';
     //filtering table column
     $scope.orderByField = '';
     $scope.reverseSort = false;
@@ -26,60 +30,76 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
 
     $scope.getDataList = function (currentPage, itemPerPage) {
 
-        var fromDate = new Date($scope.search.from_date);
-        var toDate = new Date($scope.search.to_date);
+        const result = DateHelperService.validateAndFormat($scope.fromDate, $scope.toDate);
 
-        if( fromDate > toDate ){
-            $rootScope.toastError("To date should be greater than or equal from date!");
-            return;
-        }
+        if (!result) return;
+
+        $scope.search.fromDate = result.fromDate;
+        $scope.search.toDate = result.toDate;
 
         $scope.currentPage = currentPage;
         $scope.data = {};
         $scope.data.items = [];
         $scope.data.itemCount = 0;
 
+        var url = API.INVENTORY_MOVEMENT_FILTER + '?page=' + (currentPage - 1) + '&size=' + itemPerPage;
+
         DialogBox.showProgress();
-        var req = Communication.request("POST", API.ACC_VOUCHER_POSTING_FILTER + "/" + currentPage + "/" + itemPerPage, $scope.search);
+        var req = Communication.request("POST", url, $scope.search);
         req.then(function (resp) {
             DialogBox.hideProgress();
-            log("Debit voucher list: " + JSON.stringify(resp));
 
             if (resp.code === 200) {
-                $scope.data = resp.body;
-                $scope.getVoucherStatusList();
+                $scope.data.items = resp.body.content;
+                $scope.data.itemCount = resp.body.totalElements;
+
+                $scope.getItemList();
+
+                $scope.data.items.forEach(function (master) {
+                    master.showDetails = false;
+                });
+                ToastService.showMessages();
             }
 
         }, function (err) {
-            log("Debit voucher error", JSON.stringify(err));
+            log("Inventory movement list fetch error", JSON.stringify(err));
         });
     };
 
-    $scope.getVoucherStatusList = function () {
+    $scope.getItemList = function () {
+        return ItemService.getItemList()
+            .then(function (items) {
+                $scope.itemList = items;
+           }).catch(function (err) {
+                log("Item list error", err);
+           }).finally(function () {
+           });
+    };
 
-        $scope.voucherStatusList = [];
-
-        var req = Communication.request("GET", API.ACC_VOUCHER_STATUS_LIST, {});
-        req.then(function (resp) {
-            log("voucher status list: " + JSON.stringify(resp));
-            if (resp.code === 200) {
-                $scope.voucherStatusList = resp.body;
-            }
-        }, function (err) {
-            log("voucher status list error", JSON.stringify(err));
+    $scope.toggleDetails = function (master) {
+        master.showDetails = !master.showDetails;
+        master.details.forEach(function (detail) {
+            detail.itemNameCode = $scope.itemList.find(
+                        item => item.item_code === detail?.itemCode
+                    )?.item_name_code || null;
         });
+
+        $scope.getItemDetailsTotalQty = function(master) {
+            return master.details.reduce(function(total, row) {
+                return total + (parseFloat(row.quantity) || 0);
+            }, 0);
+        };
+    };
+
+    $scope.getTransactionSuggestions = function (query) {
+        return InventoryService.getTransactionId($scope.search.action, query);
     };
 
     $scope.doFilter = function (currentPage, itemPerPage) {
         $scope.getDataList(currentPage, itemPerPage);
     };
 
-    $scope.voucherCreate = function () {
-        $state.go(JCOMPONENT.acc_debit_voucher_add_view);
-    };
-
     $scope.checkAll = function () {
-
         if ($scope.selectAll === undefined || $scope.selectAll === false) {
             for (var i = 0; i < $scope.data.items.length; i++) {
                 $scope.data.items[i].selected = true;
@@ -92,8 +112,7 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
         }
     };
 
-    $scope.voucherPost = function () {
-
+    $scope.inventoryMovementPost = function () {
         var ids = new Set();
         for (var i = 0; i < $scope.data.items.length; i++) {
             if ($scope.data.items[i].selected) {
@@ -103,9 +122,9 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
 
         var req;
 
-        req = Communication.request("POST", API.ACC_VOUCHER_POSTING,{"voucherIds":Array.from(ids)});
+        req = Communication.request("POST", API.INVENTORY_MOVEMENT_POSTING,{"inventoryMovementIds":Array.from(ids)});
         req.then(function (resp) {
-            log("voucher posting: " + JSON.stringify(resp));
+            log("Inventory posting: " + JSON.stringify(resp));
 
             if (resp.code === 200) {
                 $scope.module = resp.body;
@@ -116,7 +135,7 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
                 $rootScope.toastError(resp.message);
             }
         }, function (err) {
-            log("voucher posting error", JSON.stringify(err));
+            log("Inventory posting error", JSON.stringify(err));
             $rootScope.toastError(err.message);
         });
     };
@@ -138,6 +157,15 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
             }
         };
         xhttp.send();
+    };
+
+    $scope.sortBy = function(field) {
+        if ($scope.orderByField === field) {
+            $scope.reverseSort = !$scope.reverseSort; // toggle direction
+        } else {
+            $scope.orderByField = field;
+            $scope.reverseSort = false;
+        }
     };
 
 });

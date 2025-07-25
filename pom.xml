@@ -151,6 +151,22 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.rony</groupId>
+            <artifactId>arial-fonts</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/fonts/arial-fonts.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.rony</groupId>
+            <artifactId>arial-narrow-fonts</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/fonts/arial-narrow-fonts.jar</systemPath>
+        </dependency>
+
+
     </dependencies>
 
     <build>

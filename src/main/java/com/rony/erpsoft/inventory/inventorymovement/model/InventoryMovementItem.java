@@ -42,5 +42,8 @@ public class InventoryMovementItem extends BaseEntity {
     private BigDecimal quantityConfirm;
 
     @Column(name = "inventory_transaction_id")
-    private Long InventoryTransactionId;
+    private Long inventoryTransactionId;
+
+    @Column(name = "document_id")
+    private Long documentId;
 }

@@ -12,7 +12,9 @@ app.controller('InventoryMovementTransferListCtrl', function ($scope, $http, $st
         toDate: "",
         transactionId: "",
         status: INVENTORY_KEY.STATUS.OPEN,
-        action: INVENTORY_KEY.ACTION.TRANSFER
+        action: INVENTORY_KEY.ACTION.TRANSFER,
+        sortField: "transactionDate",
+        sortDirection: "desc"
     };
 
     $scope.fromDate = '';

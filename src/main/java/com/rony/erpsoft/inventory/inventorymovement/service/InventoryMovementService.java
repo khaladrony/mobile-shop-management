@@ -4,14 +4,13 @@ import com.rony.erpsoft.application_common.service.GeneralInfoCommonService;
 import com.rony.erpsoft.configuration.AppResponse;
 import com.rony.erpsoft.exception.ResourceNotFoundException;
 import com.rony.erpsoft.inventory.enums.InventoryAction;
-import com.rony.erpsoft.inventory.enums.InventoryStatus;
+import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementItemRequestDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementRequestDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementResponseDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryMovementSearchDTO;
 import com.rony.erpsoft.inventory.inventorymovement.mapper.InventoryMovementMapper;
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryMovement;
 import com.rony.erpsoft.inventory.inventorymovement.repository.InventoryMovementRepository;
-import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.ModelValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,23 +30,30 @@ public class InventoryMovementService {
     private final InventoryMovementRepository inventoryMovementRepository;
     private final InventoryMovementMapper inventoryMovementMapper;
     private final ModelValidator modelValidator;
-    private final SessionService sessionService;
     private final GeneralInfoCommonService generalInfoCommonService;
 
     public Page<InventoryMovementResponseDTO> findAll(InventoryMovementSearchDTO searchDTO, Pageable pageable) {
         Specification<InventoryMovement> spec = InventoryMovementSpecification.build(searchDTO);
 
-        return inventoryMovementRepository.findAll(spec, pageable).map(item -> inventoryMovementMapper.entityToDto(item));
+        return inventoryMovementRepository.findAll(spec, pageable)
+                .map(item -> inventoryMovementMapper.entityToDto(item));
     }
 
     public InventoryMovementResponseDTO findById(long id) {
-        return inventoryMovementRepository.findById(id).map(inventoryMovementMapper::entityToDto).orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
-
+        return inventoryMovementRepository.findById(id)
+                .map(inventoryMovementMapper::entityToDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
     }
 
     public List<String> searchTransactionIds(InventoryAction action, String query) {
-        return inventoryMovementRepository.findTransactionIdsByQuery(action, query);
+        Specification<InventoryMovement> spec = InventoryMovementSpecification.transactionIdMatches(query, action);
+        return inventoryMovementRepository.findAll(spec)
+                .stream()
+                .map(InventoryMovement::getTransactionId)
+                .distinct()
+                .collect(Collectors.toList());
     }
+
 
     public InventoryMovement save(InventoryMovement inventoryMovement) {
         return inventoryMovementRepository.save(inventoryMovement);
@@ -99,15 +106,14 @@ public class InventoryMovementService {
         if (requestDTO.getId() == null) {
             requestDTO.setTransactionId(transactionIdGeneration(requestDTO.getAction()));
             requestDTO.setTransactionDate(requestDTO.getTransactionDate().with(LocalTime.now()));
-            requestDTO.setOrganizationId(sessionService.getOrganizationId());
-            requestDTO.setSign(requestDTO.getAction().getSign());
-            requestDTO.setAction(requestDTO.getAction());
-            requestDTO.setStatus(InventoryStatus.OPEN);
-            requestDTO.setYear(requestDTO.getTransactionDate().getYear());
-            requestDTO.setMonth(requestDTO.getTransactionDate().getMonthValue());
-            requestDTO.setCreatedBy(sessionService.getUserId());
-        } else {
-            requestDTO.setUpdatedBy(sessionService.getUserId());
+
+            List<InventoryMovementItemRequestDTO> details = requestDTO.getDetails();
+            if (details != null) {
+                for (int i = 0; i < details.size(); i++) {
+                    InventoryMovementItemRequestDTO item = details.get(i);
+                    item.setLineNumber(i + 1);
+                }
+            }
         }
     }
 

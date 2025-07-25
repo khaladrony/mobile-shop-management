@@ -14,4 +14,7 @@ public class InventoryMovementSearchDTO {
     private LocalDateTime toDate;
     private String transactionId;
     private InventoryStatus status;
+    // Add these for sorting
+    private String sortField;
+    private String sortDirection; // "asc" or "desc"
 }

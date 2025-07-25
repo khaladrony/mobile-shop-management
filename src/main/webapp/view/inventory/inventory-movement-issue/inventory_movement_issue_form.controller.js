@@ -132,12 +132,12 @@ app.controller('InventoryMovementIssueFormCtrl', function ($scope, $http, $state
         $scope.module.details.push(angular.copy($scope.inventory_movement_item));
     };
 
-    function formatToLocalDateTimeString(date) {
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}T00:00:00`;
-    }
+    $scope.clearTaxBox = function () {
+        $scope.inventory_movement_item.itemCode = "";
+        $scope.inventory_movement_item.rate = "1";
+        $scope.inventory_movement_item.quantity = "";
+        $scope.inventory_movement_item.selectedItem = null;
+    };
 
     $scope.rowDataPopulate = function (rowData, rowIndex) {
         $scope.detailsAddBtnHide = true;

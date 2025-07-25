@@ -52,6 +52,13 @@
                         </appcode-dropdown>
                     </div>
 
+                    <div class="input-group width110"  style="float: left; margin-right: 8px;">
+                        <appcode-dropdown
+                                type="Inventory Action"
+                                model="search.action">
+                        </appcode-dropdown>
+                    </div>
+
                     <div class="input-group width110" style="float: left; margin-right: 8px;">
                         <div class="btn-group" style="float: right;">
                             <button ng-click="doFilter(1, itemPerPage)" class="btn btn-warning btn-sm" title="Filter now">
@@ -62,7 +69,7 @@
 
                 <div class="col-sm-12 col-md-2 col-lg-2">
                     <div class="pull-right">
-                        <a class="btn btn-sm btn-success" ng-click="voucherPost()">
+                        <a class="btn btn-sm btn-success" ng-click="inventoryMovementPost()">
                             <i class="ace-icon fa fa-upload"></i> Inventory Post
                         </a>
                     </div>
@@ -84,22 +91,39 @@
                                     ng-click="checkAll()" />
                         </th>
                         <th ng-hide="true">ID</th>
-                        <th>Transaction No <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionId'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
-                        <th>Transaction Date <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionDate'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th ng-click="sortBy('transactionId')" style="cursor: pointer;">
+                            Transaction No
+                            <i class="fa"
+                               ng-class="{
+                                   'fa-sort': orderByField !== 'transactionId',
+                                   'fa-sort-asc': orderByField === 'transactionId' && !reverseSort,
+                                   'fa-sort-desc': orderByField === 'transactionId' && reverseSort
+                               }"></i>
+                        </th>
+                        <th ng-click="sortBy('transactionDate')" style="cursor: pointer;">
+                            Transaction Date
+                            <i class="fa"
+                               ng-class="{
+                                   'fa-sort': orderByField !== 'transactionDate',
+                                   'fa-sort-asc': orderByField === 'transactionDate' && !reverseSort,
+                                   'fa-sort-desc': orderByField === 'transactionDate' && reverseSort
+                               }"></i>
+                        </th>
                         <th>Remarks</th>
                         <th ng-hide="true">warehouse</th>
+                        <th>Inventory Action</th>
                         <th class="text-center">Status</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat-start="master in data.items track by $index"
+                    <tr ng-repeat-start="master in data.items | orderBy:orderByField:reverseSort track by $index"
                         ng-click="toggleDetails(master)"
                         ng-class="{'success': master.showDetails}"
                         style="cursor: pointer;">
 
                         <td style="width: 20px;text-align: center;">
-                            <input type="checkbox" ng-model="master.selected">
+                            <input type="checkbox" ng-model="master.selected" ng-click="$event.stopPropagation()">
                         </td>
                         <td ng-hide="true">{{master.id}}</td>
                         <td style="width: 150px;text-align: center;">
@@ -111,7 +135,25 @@
                         </td>
                         <td>{{master.remarks}}</td>
                         <td ng-hide="true" style="width: 140px;text-align: center;">{{master.warehouse}}</td>
-                        <td style="width: 140px;text-align: center;">{{master.status}}</td>
+                        <td style="width: 140px;text-align: center;">
+                            <span class="status-label"
+                                  ng-class="{
+                                      'issue': master.action === 'ISSUE',
+                                      'receipt': master.action === 'RECEIPT',
+                                      'transfer': master.action === 'TRANSFER'
+                                    }">
+                                {{ master.action }}
+                            </span>
+                        </td>
+                        <td style="width: 140px;text-align: center;">
+                            <span class="status-label"
+                                  ng-class="{
+                                      'delivered': master.status === 'DELIVERED',
+                                      'open': master.status === 'OPEN'
+                                    }">
+                                {{ master.status }}
+                            </span>
+                        </td>
                         <td style="width: 170px;text-align: center;">
                             <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
                             <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="preview()"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
@@ -120,7 +162,7 @@
 
                     <tr ng-repeat-end ng-show="master.showDetails">
                         <td colspan="6" style="text-align: center;">
-                            <div style="display: inline-block; max-width: 100%; overflow-x: auto;">
+                            <div class="fixed-width-div">
                                 <table class="table table-sm table-striped table-bordered mb-0">
                                     <thead class="bg-secondary text-white">
                                     <tr>

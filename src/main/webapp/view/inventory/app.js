@@ -78,6 +78,13 @@ var app = angular.module('InventoryManagementApp', ['rt.select2', 'ngPatternRest
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_TRANSFER + '/' + 'inventory_movement_transfer_list.html',
             controller: 'InventoryMovementTransferListCtrl'
+        })
+
+        .state(JCOMPONENT.inventory_movement_posting_list_view, {
+            url: '/inventory_movement_posting_list_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.INVENTORY_MOVEMENT_POSTING + '/' +  'inventory_movement_posting_list.html',
+            controller: 'InventoryMovementPostingListCtrl'
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.item_master_list_view);

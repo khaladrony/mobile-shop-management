@@ -763,3 +763,40 @@ p.subtitle {
     max-width: 540px;
     margin: auto;
 }
+
+/*table status color*/
+.status-label {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-label.delivered {
+  background-color: #e6f4ea; /* light green background */
+  color: #2e7d32;            /* dark green text */
+}
+
+.status-label.open {
+  background-color: #fff8e1; /* light yellow background */
+  color: #f9a825;            /* amber text */
+}
+
+.status-label.issue {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.status-label.receipt {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-label.transfer {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+
+/**/
