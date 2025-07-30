@@ -59,10 +59,14 @@
 
                                     <div class="col-xs-12 col-md-3" ng-hide="isWarehouseHide">
                                         <label>Warehouse</label>
-                                        <appcode-dropdown type="Warehouse" model="module.fromWarehouse"></appcode-dropdown>
+                                        <appcode-dropdown
+                                                type="Warehouse"
+                                                model="module.warehouse"
+                                                placeholder="Select warehouse">
+                                        </appcode-dropdown>
                                     </div>
 
-                                    <div class="col-xs-12 col-md-10">
+                                    <div class="col-xs-12 col-md-6">
                                         <label>Note </span></label>
                                         <input class="form-control" type="textarea" id="remarks"
                                                ng-model="module.remarks" placeholder="Note"/>
@@ -70,7 +74,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div><br>
 
                         <div class="widget-body">
                             <div class="widget-main">

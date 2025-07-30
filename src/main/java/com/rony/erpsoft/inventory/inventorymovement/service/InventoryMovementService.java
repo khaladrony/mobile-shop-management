@@ -126,10 +126,10 @@ public class InventoryMovementService {
         return generalInfoCommonService.autoCodeGeneration(prefix, length, lastTransactionId);
     }
 
-    private String setPrefix(InventoryAction action){
+    private String setPrefix(InventoryAction action) {
         return switch (action) {
             case RECEIPT -> "RE--";
-            case ISSUE   -> "IS--";
+            case ISSUE -> "IS--";
             case TRANSFER -> "TO--";
         };
     }

@@ -77,8 +77,8 @@
                     <tr>
                         <th>Transaction No</th>
                         <th>Transaction Date</th>
+                        <th>warehouse</th>
                         <th>Remarks</th>
-                        <th ng-hide="true">warehouse</th>
                         <th class="text-center">Status</th>
                         <th></th>
                     </tr>
@@ -88,17 +88,17 @@
                         ng-click="toggleDetails(master)"
                         ng-class="{'success': master.showDetails}"
                         style="cursor: pointer;">
-                        <td width="150" align="center">
+                        <td style="width: 150px;text-align: center;">
                             <i class="fa" ng-class="{'fa-chevron-down': master.showDetails, 'fa-chevron-right': !master.showDetails}"></i>
                             {{master.transactionId}}
                         </td>
-                        <td width="170" align="center">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                        <td style="width: 170px;text-align: center;">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                        <td style="width: 190px;text-align: left;">{{master.warehouse}}</td>
                         <td>{{master.remarks}}</td>
-                        <td ng-hide="true" width="140" align="center">{{master.warehouse}}</td>
-                        <td width="140" align="center">{{master.status}}</td>
-                        <td width="170" align="center">
-                            <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
-                            <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="preview()"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
+                        <td style="width: 140px;text-align: center;">{{master.status}}</td>
+                        <td style="width: 170px;text-align: center;">
+                            <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="$event.stopPropagation(); showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="$event.stopPropagation(); preview(master.id)"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
                         </td>
                     </tr>
 

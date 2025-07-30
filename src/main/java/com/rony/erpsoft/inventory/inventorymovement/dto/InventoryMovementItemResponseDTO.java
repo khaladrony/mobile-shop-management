@@ -13,6 +13,7 @@ public class InventoryMovementItemResponseDTO {
     private Long inventoryMovementId;
     private int lineNumber;
     private String itemCode;
+    private String itemNameCode;
     private String unit;
     private BigDecimal quantity;
     private BigDecimal rate;

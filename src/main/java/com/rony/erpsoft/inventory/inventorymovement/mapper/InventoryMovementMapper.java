@@ -15,12 +15,5 @@ public interface InventoryMovementMapper extends BaseMapper<InventoryMovementRes
     @Mapping(target = "month", expression = "java(request.getTransactionDate() != null ? request.getTransactionDate().getMonthValue() : 0)")
     InventoryMovement requestDTOToEntity(InventoryMovementRequestDTO request);
 
-    /*@AfterMapping
-    default void afterMapping(
-            @MappingTarget List<InventoryMovementItem> entities
-    ) {
-        for (int i = 0; i < entities.size(); i++) {
-            entities.get(i).setLineNumber(i + 1);
-        }
-    }*/
+
 }

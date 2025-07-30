@@ -5,7 +5,8 @@ var JCONTROLLER = {
     INVENTORY_MOVEMENT: "inventory-movement",
     INVENTORY_MOVEMENT_ISSUE: "inventory-movement-issue",
     INVENTORY_MOVEMENT_TRANSFER: "inventory-movement-transfer",
-    INVENTORY_MOVEMENT_POSTING: "inventory-movement-posting"
+    INVENTORY_MOVEMENT_POSTING: "inventory-movement-posting",
+    INVENTORY_REPORT: "report"
 };
 
 var JCOMPONENT = {
@@ -25,7 +26,9 @@ var JCOMPONENT = {
     inventory_movement_transfer_update_view: "inventory_movement_transfer_update_view",
     inventory_movement_transfer_list_view: "inventory_movement_transfer_list_view",
 
-    inventory_movement_posting_list_view: "inventory_movement_posting_list_view"
+    inventory_movement_posting_list_view: "inventory_movement_posting_list_view",
+
+    inventory_movement_item_ledger_form_view: "inventory_movement_item_ledger_form_view"
 };
 
 var API = {
@@ -43,6 +46,10 @@ var API = {
     INVENTORY_MOVEMENT_TRNS_ID_AUTOCOMPLETE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.INVENTORY_MOVEMENT + "/search-transaction-id",
 
     INVENTORY_MOVEMENT_POSTING: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.INVENTORY_MOVEMENT + "/posting",
+
+    INVENTORY_REPORT_ITEM_LEDGER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.INVENTORY_REPORT + "/item-ledger",
+    INVENTORY_MOVEMENT_REPORT_VIEW: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.INVENTORY_REPORT
+
 };
 
 var INVENTORY_KEY = {

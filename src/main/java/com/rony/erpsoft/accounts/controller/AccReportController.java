@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/accounts/report")
@@ -107,6 +110,31 @@ public class AccReportController extends AppProperty {
     public ResponseEntity<Resource> trialBalancePreview(@PathVariable("asOnDate") String asOnDate) {
 
         ByteArrayResource resource = accountsReportService.getTrialBalance(asOnDate);
+
+        String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
+
+        return commonActionService.reportHeader(fileName, resource);
+    }
+
+    @GetMapping(value = "/balance_sheet/{asOnDate}")
+    public ResponseEntity<Resource> balanceSheetPreview(
+            @PathVariable("asOnDate") String asOnDate
+    ) {
+
+        ByteArrayResource resource = accountsReportService.getBalanceSheet(asOnDate);
+
+        String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
+
+        return commonActionService.reportHeader(fileName, resource);
+    }
+
+    @GetMapping(value = "/income_statement/{fromDate}/{toDate}")
+    public ResponseEntity<Resource> incomeStatementPreview(
+            @PathVariable("fromDate") String fromDate,
+            @PathVariable("toDate") String toDate
+    ) {
+
+        ByteArrayResource resource = accountsReportService.getIncomeStatement(fromDate, toDate);
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 

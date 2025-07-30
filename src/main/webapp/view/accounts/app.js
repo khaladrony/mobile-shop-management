@@ -134,6 +134,16 @@ var app = angular.module('AccountsManagementApp', ['rt.select2', 'ngPatternRestr
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/trial_balance_report.form.html',
             controller: 'AccReportTrialBalanceFormCtrl'
+        }).state(JCOMPONENT.acc_balance_sheet_form_view, {
+              url: '/acc_balance_sheet_form_view',
+              cache: false,
+              templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/balance_sheet_report.form.html',
+              controller: 'AccReportBalanceSheetFormCtrl'
+        }).state(JCOMPONENT.acc_income_statement_form_view, {
+              url: '/acc_income_statement_form_view',
+              cache: false,
+              templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/income_statement_report.form.html',
+              controller: 'AccReportIncomeStatementFormCtrl'
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.acc_debit_voucher_add_view);

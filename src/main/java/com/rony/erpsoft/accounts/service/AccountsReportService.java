@@ -1,5 +1,6 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.FinancialAccountDto;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
 import com.rony.erpsoft.accounts.model.AccDefaultSetup;
 import com.rony.erpsoft.accounts.model.AccLedgerDto;
@@ -24,12 +25,17 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.rony.erpsoft.utils.ApplicationConstants.ACCOUNTS_SUB_TYPE_BALANCE_SHEET;
+import static com.rony.erpsoft.utils.ApplicationConstants.ACCOUNTS_SUB_TYPE_REVENUE;
 
 @Service
 public class AccountsReportService {
@@ -130,7 +136,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Voucher preview report: " + e.getMessage());
+            logger.info("Account ledger report: {}", e.getMessage());
             return null;
         }
     }
@@ -173,7 +179,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Voucher preview report: " + e.getMessage());
+            logger.info("Sub account ledger report: {}", e.getMessage());
             return null;
         }
     }
@@ -195,7 +201,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Trial balance report: " + e.getMessage());
+            logger.info("Trial balance report: {}", e.getMessage());
             return null;
         }
     }
@@ -216,7 +222,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Chart of accounts report: " + e.getMessage());
+            logger.info("Chart of accounts report: {}", e.getMessage());
             return null;
         }
     }
@@ -241,9 +247,82 @@ public class AccountsReportService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception ex) {
-            logger.info("REPORT: " + ex.getMessage());
+            logger.info("REPORT: {}", ex.getMessage());
             return null;
         }
+    }
 
+    public ByteArrayResource getBalanceSheet(String asOnDate) {
+
+        try {
+            String fileName = "balanceSheet";
+            Organization organization = sessionService.getOrganization();
+            List<FinancialAccountDto> balanceSheetData = accJournalMasterService.getBalanceSheet(asOnDate, ACCOUNTS_SUB_TYPE_BALANCE_SHEET);
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(balanceSheetData);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("asOnDate", AppUtil.toDate(asOnDate));
+            parameters.put("organizationName", organization.getName());
+            parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("reportName", "Balance Sheet");
+            parameters.put("netAssets", getNetAssets(balanceSheetData));
+
+            return exportReportToPdf(dataSource, fileName, parameters);
+
+        } catch (Exception e) {
+            logger.info("Balance sheet report: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private BigDecimal getNetAssets(List<FinancialAccountDto> balanceSheetData) {
+        BigDecimal totalAssets = balanceSheetData.stream()
+                .filter(a -> "Asset".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalLiabilities = balanceSheetData.stream()
+                .filter(a -> "Liability".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return totalAssets.subtract(totalLiabilities);
+    }
+
+    public ByteArrayResource getIncomeStatement(String fromDate, String toDate) {
+        try {
+            String fileName = "incomeStatement";
+            Organization organization = sessionService.getOrganization();
+            List<FinancialAccountDto> incomeStatementData = accJournalMasterService.getIncomeStatement(fromDate, toDate, ACCOUNTS_SUB_TYPE_REVENUE);
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(incomeStatementData);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("fromDate", AppUtil.toDate(fromDate));
+            parameters.put("toDate", AppUtil.toDate(toDate));
+            parameters.put("organizationName", organization.getName());
+            parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("reportName", "Income Statement");
+            parameters.put("netIncome", getNetIncome(incomeStatementData));
+
+            return exportReportToPdf(dataSource, fileName, parameters);
+
+        } catch (Exception e) {
+            logger.info("Income statement report: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private BigDecimal getNetIncome(List<FinancialAccountDto> incomeStatementData) {
+        BigDecimal totalAssets = incomeStatementData.stream()
+                .filter(a -> "Income".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalLiabilities = incomeStatementData.stream()
+                .filter(a -> "Expenditure".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return totalAssets.subtract(totalLiabilities);
     }
 }

@@ -1,5 +1,6 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.FinancialAccountDto;
 import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
@@ -21,11 +22,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -570,5 +575,58 @@ public class AccJournalMasterService implements IAccJournalMasterService {
 
         return nDB.query(sql.toString(), params, new BeanPropertyRowMapper(AccLedgerDto.class));
 
+    }
+
+    public List<FinancialAccountDto> getBalanceSheet(String asOnDate, String accountsSubType) {
+        String sql = """
+        SELECT  
+            ajd.chart_of_accounts_id AS chartOfAccountsId,
+            coa.accounts_code AS accountsCode,
+            coa.accounts_name AS accountsName,
+            coa.accounts_type AS accountsType,
+            SUM(ajd.prime_amount) AS amount
+        FROM acc_journal_master ajm
+        INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
+        INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
+        WHERE ajm.status = 'POSTED'
+        AND coa.master_type = :accountsSubType
+        AND ajm.posting_date <= :asOnDate
+        GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
+        ORDER BY coa.accounts_code, coa.accounts_name
+        """;
+
+        Map<String, Object> params = Map.of(
+                "asOnDate", asOnDate,
+                "accountsSubType", accountsSubType
+                );
+
+        return nDB.query(sql, params, new BeanPropertyRowMapper<>(FinancialAccountDto.class));
+    }
+
+    public List<FinancialAccountDto> getIncomeStatement(String fromDate, String toDate, String accountsSubType) {
+        String sql = """
+        SELECT  
+            ajd.chart_of_accounts_id AS chartOfAccountsId,
+            coa.accounts_code AS accountsCode,
+            coa.accounts_name AS accountsName,
+            coa.accounts_type AS accountsType,
+            SUM(ajd.prime_amount) AS amount
+        FROM acc_journal_master ajm
+        INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
+        INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
+        WHERE ajm.status = 'POSTED'
+        AND coa.master_type = :accountsSubType
+        AND ajm.posting_date BETWEEN :fromDate AND :toDate
+        GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
+        ORDER BY coa.accounts_code, coa.accounts_name
+        """;
+
+        Map<String, Object> params = Map.of(
+                "fromDate", fromDate,
+                "toDate", toDate,
+                "accountsSubType", accountsSubType
+        );
+
+        return nDB.query(sql, params, new BeanPropertyRowMapper<>(FinancialAccountDto.class));
     }
 }

@@ -12,7 +12,7 @@ public interface ItemMasterRepository extends JpaRepository<ItemMaster, Long> {
     @Query("SELECT max(itemCode) FROM ItemMaster ")
     String findLastItemCode();
 
-    @Query("SELECT id as id, concat(itemName,' (',itemCode,')') as item_name_code, " +
+    @Query("SELECT id as id, concat(itemName,' [',itemCode,']') as item_name_code, " +
             " itemCode as item_code, concat(category,' (',brand,')') as label  FROM ItemMaster WHERE active=true")
     List<Map<String, Object>> findActiveItemsForDropDown();
 }

@@ -1,0 +1,64 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row" ng-init="">
+
+    <div class="col-sm-4 col-md-4 col-lg-4">&nbsp;</div>
+    <div class="col-sm-4 col-md-4 col-lg-4">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">{{page_name}}</h4>
+
+                <span class="widget-toolbar">
+
+                </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+
+                    <form ng-submit="">
+                        <div class="row">
+                            <div class="col-md-4">&nbsp;</div>
+                            <div class="col-md-12" style="padding-left: 80px;">
+                                <div class="input-group width170 date" id="fromDate" style="float: left; margin-right: 8px;">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="From Date"
+                                           ng-model="search.fromDate"
+                                           formatted-date-picker />
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                    </span>
+                                </div>
+
+                                <div class="input-group width170 date" id="toDate" style="float: left; margin-right: 8px;">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="To Date"
+                                           ng-model="search.toDate"
+                                           formatted-date-picker />
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-actions" align="center">
+
+                                    <button type="button" class="btn btn-sm btn-warning" ng-click="incomeStatementPreview()">
+                                        <i class="ace-icon fa fa-recycle"></i> Preview
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

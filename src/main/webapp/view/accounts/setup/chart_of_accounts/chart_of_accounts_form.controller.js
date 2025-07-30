@@ -12,6 +12,7 @@ app.controller('AccChartOfAccountsFormCtrl', function ($scope, $http, $state, $t
         accountsType: "Asset",
         accountsUsage: "Ledger",
         accountsSource: "None",
+        masterType: "Balance Sheet",
         active: true,
         isLeaf: true,
         createdBy: 0,
@@ -46,6 +47,12 @@ app.controller('AccChartOfAccountsFormCtrl', function ($scope, $http, $state, $t
     $scope.saveChartOfAccounts = function () {
         var req;
 
+        if (['Income', 'Expenditure'].includes($scope.module.accountsType )) {
+            $scope.module.masterType = "Revenue";
+        } else {
+            $scope.module.masterType = "Balance Sheet";
+        }
+
         if ($state.current.name === JCOMPONENT.acc_chart_of_accounts_update_view) {
             req = Communication.request("PUT", API.ACC_CHART_OF_ACCOUNTS_UPDATE, $scope.module);
         } else {
@@ -63,7 +70,8 @@ app.controller('AccChartOfAccountsFormCtrl', function ($scope, $http, $state, $t
                 $scope.module = {
                     accountsType: "Asset",
                     accountsUsage: "Ledger",
-                    accountsSource: "None"
+                    accountsSource: "None",
+                    masterType: "Balance Sheet"
                 };
             } else {
                 $rootScope.toastWarning(resp.message);
@@ -78,6 +86,7 @@ app.controller('AccChartOfAccountsFormCtrl', function ($scope, $http, $state, $t
         $scope.accountsTypeList = [
             {'id': 'Asset', 'value': 'Asset'},
             {'id': 'Expenditure', 'value': 'Expenditure'},
+            {'id': 'Equity', 'value': 'Equity'},
             {'id': 'Income', 'value': 'Income'},
             {'id': 'Liability', 'value': 'Liability'}
         ];
@@ -113,7 +122,4 @@ app.controller('AccChartOfAccountsFormCtrl', function ($scope, $http, $state, $t
     $scope.accountsSourceChange = function (accountsSource) {
         $scope.module.accountsSource = accountsSource;
     };
-
-
-
 });

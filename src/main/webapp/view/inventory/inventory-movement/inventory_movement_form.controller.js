@@ -15,7 +15,7 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
         transactionId: "",
         transactionDate: new Date(),
         reference: "",
-        warehouse: "",
+        warehouse: null,
         sign: "",
         action: INVENTORY_KEY.ACTION.RECEIPT,
         year: "",
@@ -38,7 +38,7 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
     $scope.itemObj = null;
 
-    $scope.isWarehouseHide = true;
+    $scope.isWarehouseHide = false;
     $scope.detailsAddBtnHide = false;
     $scope.detailsEditBtnHide = true;
 
@@ -283,6 +283,7 @@ app.controller('InventoryMovementFormCtrl', function ($scope, $http, $state, $ti
 
     $scope.reset = function () {
         $scope.module.transactionDate = new Date();
+        $scope.module.warehouse = null;
         $scope.module.remarks = "";
         $scope.inventory_movement_items = [];
         $scope.resetTable();

@@ -36,7 +36,7 @@ app.controller('AppCodesListCtrl', function ($scope, $http, $state, $timeout, $r
 
             if (resp.code === 200) {
                 $scope.data.items = resp.body.content;
-                $scope.data.itemCount = resp.body.numberOfElements;
+                $scope.data.itemCount = resp.body.totalElements;
             } else{
                 $rootScope.toastError(resp.message);
             }

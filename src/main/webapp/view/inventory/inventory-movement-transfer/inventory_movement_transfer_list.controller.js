@@ -104,4 +104,22 @@ app.controller('InventoryMovementTransferListCtrl', function ($scope, $http, $st
     $scope.showEditForm = function (obj) {
         $state.go(JCOMPONENT.inventory_movement_transfer_update_view, {id: obj.id});
     };
+
+    $scope.preview = function (id) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", API.INVENTORY_MOVEMENT_REPORT_VIEW + '/' + id, true);
+        xhttp.setRequestHeader('x-aip-token', _shskr_);
+        xhttp.responseType = 'blob';
+        xhttp.onload = function (e) {
+            if (this.status === 200) {
+                var pdfResponse = new Blob([this.response], {type: 'application/pdf'});
+                var fileURL = URL.createObjectURL(pdfResponse);
+                var link = document.createElement('a');
+                link.href = fileURL;
+                link.target = '_blank';
+                link.click();
+            }
+        };
+        xhttp.send();
+    };
 });

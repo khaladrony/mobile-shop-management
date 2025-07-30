@@ -11,7 +11,7 @@
    - `Arial Narrow`
 - Location:
    - `resources/fonts`
-- 2 jar file added in pom.xml
+- Two jar file added in pom.xml
 
 ---
 
@@ -41,3 +41,27 @@ public void prePersist() {
 - Configured using:
   - `AuditorAwareImpl`
   - `JpaConfig`
+
+**Date**: 30-July-2025
+
+---
+## 1. Inventory: added three report
+
+- Inventory Material Receive/Issue report
+- Item Ledger
+- Item Ledger(Summary)
+
+## 2. Added warehouse dropdown in Receive/Issue UI
+
+## 3. Accounts: two financial report added
+- Balance sheet
+- Income statement
+
+## 4. In chart of accounts add new AccountsType `Equity`
+
+## 5. Activate Accounts sub-type. Revenue & Balance Sheet
+- Revenue => Income & Expenditure 
+- Balance Sheet => Assets, Liability & Equity
+
+
+---

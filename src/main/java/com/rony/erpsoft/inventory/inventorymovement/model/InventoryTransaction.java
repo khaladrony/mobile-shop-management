@@ -59,10 +59,10 @@ public class InventoryTransaction extends BaseEntity {
     private BigDecimal value;
 
     @Column(name = "supplier_code")
-    String supplierCode;    // SupplierInfo => supplierCode
+    private String supplierCode;    // SupplierInfo => supplierCode
 
     @Column(name = "customer_code")
-    String customerCode;    // CustomerInfo => customerCode
+    private String customerCode;    // CustomerInfo => customerCode
 
     @Column(name = "document_no")
     private String documentNo;    //RT--000001,IS--000001,.....
