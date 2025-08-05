@@ -100,6 +100,9 @@
 
 
 <!-- include here rest of your ng app controller -->
+<script src="${NG_SRC}/accounts/accounts.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/accounts/accounts.directives.js?v=${SCRIPT_VERSION}"></script>
+
 <script src="${NG_SRC}/accounts/debit_voucher/debit_voucher_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/accounts/debit_voucher/debit_voucher_list.controller.js?v=${SCRIPT_VERSION}"></script>
 

@@ -1,7 +1,9 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.AccJournalDetailsDTO;
 import com.rony.erpsoft.accounts.dto.FinancialAccountDto;
 import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
+import com.rony.erpsoft.accounts.mapper.AccJournalDetailsMapper;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
@@ -17,13 +19,13 @@ import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.AppUtil;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,6 +53,8 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     AccSubAccountsService accSubAccountsService;
     @Autowired
     BankInfoService bankInfoService;
+    @Autowired
+    AccJournalDetailsMapper accJournalDetailsMapper;
 
     @Override
     public List<AccJournalMaster> findAll() {
@@ -65,6 +69,26 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     @Override
     public AccJournalMaster save(AccJournalMaster journalMaster) {
         return accJournalMasterRepo.save(journalMaster);
+    }
+
+    public List<AccJournalDetailsDTO> fetchByJournalMasterId(long id) {
+        return accJournalDetailsRepo.findAllByJournalMasterId(id)
+                .stream()
+                .map(accJournalDetailsMapper::entityToDto)
+                .toList();
+    }
+
+    public List<String> searchVouchers(VoucherType voucherType, VoucherStatus voucherStatus, String query) {
+        String voucherTypeCode = voucherType != null ? voucherType.code() : null;
+        String voucherStatusCode = voucherStatus != null ? voucherStatus.code() : null;
+
+        Specification<AccJournalMaster> spec = AccJournalMasterSpecification
+                .voucherNoMatches(voucherTypeCode, voucherStatusCode, query, sessionService.getUserId());
+        return accJournalMasterRepo.findAll(spec)
+                .stream()
+                .map(AccJournalMaster::getVoucherNo)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getVoucherListByVoucherType(String voucherType) {
@@ -138,15 +162,13 @@ public class AccJournalMasterService implements IAccJournalMasterService {
         }
 
         if (from_date != null && !from_date.equals("")) {
-            if (from_date.length() == 16) from_date += ":00";
-            sql.append(" AND voucher_date >= :from_date ");
-            params.put("from_date", from_date.concat(" 00:00:00"));
+            sql.append(" AND DATE(voucher_date) >= :from_date ");
+            params.put("from_date", from_date.substring(0, 10));
         }
 
         if (to_date != null && !to_date.equals("")) {
-            if (to_date.length() == 16) to_date += ":00";
-            sql.append(" AND voucher_date <= :to_date ");
-            params.put("to_date", to_date.concat(" 23:59:59"));
+            sql.append(" AND DATE(voucher_date) <= :to_date ");
+            params.put("to_date", to_date.substring(0, 10));
         }
 
         if (payment_type != null && !payment_type.equals("")) {
@@ -363,7 +385,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
 
             accLedgerDto.setVoucherNo((String) row.get("voucherNo"));
             accLedgerDto.setVoucherDate((String) row.get("voucherDate"));
-            accLedgerDto.setPostingDate(AppUtil.getLocalDateTimeToDate((LocalDateTime)row.get("postingDate")));
+            accLedgerDto.setPostingDate(AppUtil.getLocalDateTimeToDate((LocalDateTime) row.get("postingDate")));
             accLedgerDto.setParticulars((String) row.get("particulars"));
             accLedgerDto.setChartOfAccountsId((Long) row.get("chartOfAccountsId"));
             accLedgerDto.setDebitAmount((double) row.get("debitAmount"));
@@ -424,19 +446,19 @@ public class AccJournalMasterService implements IAccJournalMasterService {
         sql.append(" ajd.sub_accounts_id as subAccountsId, ");
         if (accountsSource.equalsIgnoreCase(AccountsSource.CUSTOMER.code())) {
             accountsSourceCode = AccountsSource.CUSTOMER.code();
-            sql.append(" (select concat(customer_name,' (',customer_code,')') from customer_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
+            sql.append(" (select concat(customer_name,' [',customer_code,']') from customer_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
         } else if (accountsSource.equalsIgnoreCase(AccountsSource.SUPPLIER.code())) {
             accountsSourceCode = AccountsSource.SUPPLIER.code();
-            sql.append(" (select concat(supplier_name,' (',supplier_code,')') from supplier_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
+            sql.append(" (select concat(supplier_name,' [',supplier_code,']') from supplier_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
         } else if (accountsSource.equalsIgnoreCase(AccountsSource.EMPLOYEE.code())) {
             accountsSourceCode = AccountsSource.EMPLOYEE.code();
-            sql.append(" (select concat(employee_name,' (',employee_code,')') from employee_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
+            sql.append(" (select concat(employee_name,' [',employee_code,']') from employee_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
         } else if (accountsSource.equalsIgnoreCase(AccountsSource.SUBACCOUNT.code())) {
             accountsSourceCode = AccountsSource.SUBACCOUNT.code();
-            sql.append(" (select concat(sub_accounts_name,' (',sub_accounts_code,')') from acc_sub_accounts where id=ajd.sub_accounts_id and chart_of_accounts_id=ajd.chart_of_accounts_id) as subAccountsCodeName, ");
+            sql.append(" (select concat(sub_accounts_name,' [',sub_accounts_code,']') from acc_sub_accounts where id=ajd.sub_accounts_id and chart_of_accounts_id=ajd.chart_of_accounts_id) as subAccountsCodeName, ");
         } else if (accountsSource.equalsIgnoreCase(AccountsSource.NONE.code()) && accountsUsage.equalsIgnoreCase(AccountsUsage.BANK.code())) {
             accountsSourceCode = AccountsSource.NONE.code();
-            sql.append(" (select concat(bank_account_name,' (',bank_account_no,')') from bank_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
+            sql.append(" (select concat(bank_account_name,' [',bank_account_no,']') from bank_info where id=ajd.sub_accounts_id ) as subAccountsCodeName, ");
         } else {
             sql.append(" '' as subAccountsCodeName, ");
         }
@@ -473,7 +495,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
 
         sql.append(" ORDER BY  ajm.posting_date");
 
-        List<AccLedgerDto> accLedgerDtoList = nDB.query(sql.toString(),params, new BeanPropertyRowMapper(AccLedgerDto.class));
+        List<AccLedgerDto> accLedgerDtoList = nDB.query(sql.toString(), params, new BeanPropertyRowMapper(AccLedgerDto.class));
 
         setOpeningBalance(accLedgerDtoList, fromDate, chartOfAccountsId, subAccountsId, accountsSource, accountsUsage, accountsSourceCode);
 
@@ -484,7 +506,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
         return accLedgerDtoList;
     }
 
-    public void setOpeningBalance(List<AccLedgerDto> accLedgerDtoList, String fromDate, long chartOfAccountsId, long subAccountsId, String accountsSource, String accountsUsage, String accountsSourceCode){
+    public void setOpeningBalance(List<AccLedgerDto> accLedgerDtoList, String fromDate, long chartOfAccountsId, long subAccountsId, String accountsSource, String accountsUsage, String accountsSourceCode) {
         List<Long> subAccountIds = new ArrayList<>();
 
         if (subAccountsId == 0) {
@@ -507,7 +529,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
             accLedgerDto.setId(0);
             accLedgerDto.setVoucherNo("Opening Balance :");
             accLedgerDto.setSubAccountsId(subAccountId);
-            if(ledgerDto == null){
+            if (ledgerDto == null) {
                 accLedgerDto.setSubAccountsCodeName(accSubAccountsService.getSubAccountNameCode(accountsSourceCode, chartOfAccountsId, subAccountId));
             } else {
                 accLedgerDto.setSubAccountsCodeName(ledgerDto.getSubAccountsCodeName());
@@ -520,7 +542,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
         }
     }
 
-    public void ledgerCumulativeBalanceUpdate(List<AccLedgerDto> accLedgerDtoList){
+    public void ledgerCumulativeBalanceUpdate(List<AccLedgerDto> accLedgerDtoList) {
         double cumulativeAmt = 0.0;
         double openingAmt = 0.0;
         for (AccLedgerDto accLedgerDto : accLedgerDtoList) {
@@ -539,7 +561,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     public List<Long> getSubAccountIds(long chartOfAccountsId, String accountsSource, String accountsUsage) {
         List<SubCOADropdownDTO> subCOAs = new ArrayList<>();
         if (accountsSource.equalsIgnoreCase(AccountsSource.NONE.code())) {
-            if(accountsUsage.equalsIgnoreCase(AccountsUsage.BANK.code())){
+            if (accountsUsage.equalsIgnoreCase(AccountsUsage.BANK.code())) {
                 subCOAs = bankInfoService.getBankAccountListForDropDown();
             }
         } else {
@@ -550,7 +572,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
                 .collect(Collectors.toList());
     }
 
-    public List<AccLedgerDto> getTrialBalance(String asOnDate){
+    public List<AccLedgerDto> getTrialBalance(String asOnDate) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT  ");
         sql.append(" ajd.chart_of_accounts_id as chartOfAccountsId, ");
@@ -566,7 +588,6 @@ public class AccJournalMasterService implements IAccJournalMasterService {
         sql.append(" and DATE(ajm.posting_date) <= :asOnDate ");
 
 
-
         Map<String, Object> params = new HashMap<>();
         params.put("asOnDate", asOnDate);
 
@@ -579,47 +600,47 @@ public class AccJournalMasterService implements IAccJournalMasterService {
 
     public List<FinancialAccountDto> getBalanceSheet(String asOnDate, String accountsSubType) {
         String sql = """
-        SELECT  
-            ajd.chart_of_accounts_id AS chartOfAccountsId,
-            coa.accounts_code AS accountsCode,
-            coa.accounts_name AS accountsName,
-            coa.accounts_type AS accountsType,
-            SUM(ajd.prime_amount) AS amount
-        FROM acc_journal_master ajm
-        INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
-        INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
-        WHERE ajm.status = 'POSTED'
-        AND coa.master_type = :accountsSubType
-        AND ajm.posting_date <= :asOnDate
-        GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
-        ORDER BY coa.accounts_code, coa.accounts_name
-        """;
+                SELECT  
+                    ajd.chart_of_accounts_id AS chartOfAccountsId,
+                    coa.accounts_code AS accountsCode,
+                    coa.accounts_name AS accountsName,
+                    coa.accounts_type AS accountsType,
+                    SUM(ajd.prime_amount) AS amount
+                FROM acc_journal_master ajm
+                INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
+                INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
+                WHERE ajm.status = 'POSTED'
+                AND coa.master_type = :accountsSubType
+                AND ajm.posting_date <= :asOnDate
+                GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
+                ORDER BY coa.accounts_code, coa.accounts_name
+                """;
 
         Map<String, Object> params = Map.of(
                 "asOnDate", asOnDate,
                 "accountsSubType", accountsSubType
-                );
+        );
 
         return nDB.query(sql, params, new BeanPropertyRowMapper<>(FinancialAccountDto.class));
     }
 
     public List<FinancialAccountDto> getIncomeStatement(String fromDate, String toDate, String accountsSubType) {
         String sql = """
-        SELECT  
-            ajd.chart_of_accounts_id AS chartOfAccountsId,
-            coa.accounts_code AS accountsCode,
-            coa.accounts_name AS accountsName,
-            coa.accounts_type AS accountsType,
-            SUM(ajd.prime_amount) AS amount
-        FROM acc_journal_master ajm
-        INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
-        INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
-        WHERE ajm.status = 'POSTED'
-        AND coa.master_type = :accountsSubType
-        AND ajm.posting_date BETWEEN :fromDate AND :toDate
-        GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
-        ORDER BY coa.accounts_code, coa.accounts_name
-        """;
+                SELECT  
+                    ajd.chart_of_accounts_id AS chartOfAccountsId,
+                    coa.accounts_code AS accountsCode,
+                    coa.accounts_name AS accountsName,
+                    coa.accounts_type AS accountsType,
+                    SUM(ajd.prime_amount) AS amount
+                FROM acc_journal_master ajm
+                INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
+                INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
+                WHERE ajm.status = 'POSTED'
+                AND coa.master_type = :accountsSubType
+                AND ajm.posting_date BETWEEN :fromDate AND :toDate
+                GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
+                ORDER BY coa.accounts_code, coa.accounts_name
+                """;
 
         Map<String, Object> params = Map.of(
                 "fromDate", fromDate,

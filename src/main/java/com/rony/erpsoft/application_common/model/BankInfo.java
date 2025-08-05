@@ -28,19 +28,19 @@ public class BankInfo {
     private Long organizationId;
 
     @Column(name = "bank_account_code", unique = true)
-    String bankAccountCode;
+    private String bankAccountCode;
     @Column(name = "bank_account_no")
-    String bankAccountNo;
+    private String bankAccountNo;
     @Column(name = "bank_account_name")
-    String bankAccountName;
+    private String bankAccountName;
     @Column(name = "bank_name")
-    String bankName;
+    private String bankName;
     @Column(name = "branch_name")
-    String branchName;
+    private String branchName;
     @Column(name = "phone")
-    String phone;
+    private String phone;
     @Column(name = "address")
-    String address;
+    private String address;
     @Column(name="status")
     private boolean status;
 

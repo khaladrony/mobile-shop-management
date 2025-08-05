@@ -240,3 +240,15 @@ function amountToText(val) {
 //        $('#amountFooter').val(finalWord);
 }
 
+function formatToYMD(dateInput) {
+    if (!dateInput) return ''; // return empty if null/undefined/empty string
+
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return ''; // invalid date check
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months start at 0!
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+

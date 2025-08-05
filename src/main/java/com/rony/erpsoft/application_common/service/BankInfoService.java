@@ -3,14 +3,12 @@ package com.rony.erpsoft.application_common.service;
 import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.model.BankInfo;
 import com.rony.erpsoft.application_common.repo.BankInfoRepo;
-import com.rony.erpsoft.utils.AppUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BankInfoService implements IBankInfoService {
@@ -37,7 +35,14 @@ public class BankInfoService implements IBankInfoService {
     }
 
     public List<SubCOADropdownDTO> getBankAccountListForDropDown() {
-        return bankInfoRepo.getBankAccountListForDropDown();
+        return bankInfoRepo.findAllByStatusTrueOrderByBankAccountName()
+                .stream()
+                .map(bankInfo -> SubCOADropdownDTO.builder()
+                        .id(bankInfo.getId())
+                        .name(bankInfo.getBankAccountName() + " [" + bankInfo.getBankAccountNo() + "]")
+                        .subLabel(bankInfo.getBankName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public Map<String, Object> filter(int currentPage, int itemPerPage, Map<String, Object> params) throws Exception {

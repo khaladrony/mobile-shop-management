@@ -1,22 +1,30 @@
-<div class="row">
+<div class="row" ng-init="getDataList()">
     
-    <div class="col-sm-3 col-md-3 col-lg-3" >&nbsp;</div>
+    <div class="col-sm-2 col-md-2 col-lg-2" >&nbsp;</div>
     
-    <div class="col-sm-6 col-md-6 col-lg-6">
+    <div class="col-sm-4 col-md-4 col-lg-4">
         
         <div class="widget-box">
-            <div class="widget-header">
-                <h4 class="widget-title">{{page_name}}</h4>
-                <span class="widget-toolbar">
-                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.app_codes_list_view}}">
-                        <i class="ace-icon fa fa-backward"></i> Back
-                    </a>
-                </span>
+            <div class="widget-header row">
+                <div class="col-sm-10">
+                    <h4 class="widget-title">
+                        {{page_name}}
+                    </h4>
+                    <p class="subtitle">Common application setup for dropdowns</p>
+                </div>
+
+                <div class="col-sm-2 text-right">
+                    <span class="widget-toolbar">
+                        <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.app_codes_list_view}}">
+                            <i class="ace-icon fa fa-backward"></i> Back
+                        </a>
+                    </span>
+                </div>
             </div>
             <div class="widget-body">
                 <div class="widget-main">
                     <form ng-submit="saveModule()">
-                        <div class="row  ">
+                        <div class="row" style="padding-left: 40px; padding-right: 40px;">
 
                             <div class="col-xs-12">
                                 <label>Type <span class="required">*</span></label>
@@ -67,8 +75,31 @@
                 </div>
             </div>
         </div>
-        
+    </div>
 
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Code Tree</h4>
+                <span class="widget-toolbar"></span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row  ">
+
+                        <ul>
+                            <li ng-repeat="node in tree"
+                                ng-include="'/view/application_common/directives/tree_item_renderer.html'">
+                            </li>
+                        </ul>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
     
 

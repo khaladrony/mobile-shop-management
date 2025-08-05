@@ -680,5 +680,11 @@ app.factory('DateHelperService', function(growl) {
     };
 });
 
+/*app.factory('AppCodeByTypeService', function($http) {
+    getByType = function(type) {
+        return $http.get(COMMON_API.app_codes +'/by-type/' + type);
+    };
+});*/
+
 
 

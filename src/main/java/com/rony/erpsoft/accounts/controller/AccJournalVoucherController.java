@@ -3,11 +3,15 @@ package com.rony.erpsoft.accounts.controller;
 
 import com.rony.erpsoft.accounts.actionService.CommonActionService;
 import com.rony.erpsoft.accounts.actionService.voucher.VoucherActionService;
+import com.rony.erpsoft.accounts.dto.AccJournalDetailsDTO;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
+import com.rony.erpsoft.accounts.model.enums.VoucherStatus;
+import com.rony.erpsoft.accounts.model.enums.VoucherType;
 import com.rony.erpsoft.accounts.service.AccJournalMasterService;
 import com.rony.erpsoft.accounts.service.AccountsReportService;
 import com.rony.erpsoft.configuration.AppProperty;
 import com.rony.erpsoft.configuration.AppResponse;
+import com.rony.erpsoft.inventory.enums.InventoryAction;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.KEY;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,5 +108,25 @@ public class AccJournalVoucherController extends AppProperty {
         String filename = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
         return commonActionService.reportHeader(filename, resource);
+    }
+
+    @GetMapping(value = "/voucher-details/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppResponse<Object> getVoucherDetails(@PathVariable("id") long id) {
+        List<AccJournalDetailsDTO> journalDetailsDTOS = accJournalMasterService.fetchByJournalMasterId(id);
+        if (journalDetailsDTOS != null) {
+            return AppResponse.build(HttpStatus.OK).body(journalDetailsDTOS);
+        } else {
+            return AppResponse.build(HttpStatus.NOT_FOUND).message("Voucher details not found");
+        }
+    }
+
+    @GetMapping(value = "/search-vouchers")
+    public AppResponse<Object> searchVouchers(
+            @RequestParam(value = "voucherType", required = false) VoucherType voucherType,
+            @RequestParam(value = "voucherStatus", required = false) VoucherStatus voucherStatus,
+            @RequestParam("query") String query
+    ) {
+        List<String> result = accJournalMasterService.searchVouchers(voucherType, voucherStatus, query);
+        return AppResponse.build(HttpStatus.OK).body(result);
     }
 }

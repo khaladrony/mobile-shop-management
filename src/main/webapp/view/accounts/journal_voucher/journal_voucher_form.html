@@ -48,7 +48,11 @@
 
                                 <div class="col-xs-12 col-md-8">
                                     <label>Particulars <span class="required">*</span></label>
-                                    <input class="form-control" type="text" id="masterParticulars" ng-model="module.particulars" placeholder="Particulars" />
+                                    <input class="form-control"
+                                           type="text"
+                                           id="masterParticulars"
+                                           ng-model="module.particulars"
+                                           placeholder="Particulars" />
                                 </div>
                             </div>
                         </div>
@@ -58,50 +62,72 @@
                         <div class="widget-body">
                             <div class="widget-main">
                                 <div class="widget-header widget-header-flat">
-                                    <h4 class="widget-title">Transaction</h4>
+                                    <h4 class="widget-title" style="font-size:17px;">Voucher Details</h4>
                                     <span class="widget-toolbar"> </span>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-xs-12 col-md-3">
+                                    <div class="col-xs-12 col-md-5">
                                         <label>Chart of Accounts <span class="required">*</span></label>
-                                        <select class="chosen-select form-control" id="chartOfAccountsId"
-                                                ng-model="voucher_details.chartOfAccountsId"
-                                                ng-change="selectChartOfAccounts(voucher_details.chartOfAccountsId)">
-                                            <option value="">Choose Chart of Accounts</option>
-                                            <option ng-repeat="obj in coaList track by $index" ng-value="obj.id">
-                                                {{obj.coa_code_name}}
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-xs-12 col-md-3" ng-hide="isSubAccHide">
-                                        <label>Sub-account </label>
-                                        <select class="chosen-select form-control" id="subAccountsId"
-                                                ng-model="voucher_details.subAccountsId">
-                                            <option value="">Choose Sub Accounts</option>
-                                            <option ng-repeat="obj in subaccountList track by $index" ng-value="obj.id">
-                                                {{obj.name}}
-                                            </option>
-                                        </select>
+                                        <lazy-dropdown
+                                                selected-item="selectedCoa"
+                                                display-property="coa_code_name"
+                                                display-subtext="accounts_type"
+                                                search-property="coa_code_name"
+                                                placeholder="Search chart of accounts..."
+                                                load-items="fetchChartOfAccounts(params)"
+                                                on-select="onChartOfAccountsChange(item)">
+                                        </lazy-dropdown>
                                     </div>
 
                                     <div ng-class="particularsDivClassVar">
                                         <label>Particulars <span class="required">*</span></label>
-                                        <input class="form-control" type="text" id="particulars" ng-model="voucher_details.particulars" placeholder="Particulars" />
+                                        <input class="form-control"
+                                               type="text"
+                                               id="particulars"
+                                               ng-model="voucher_details.particulars"
+                                               placeholder="Particulars" />
                                     </div>
 
                                 </div>
 
                                 <div class="row  ">
-                                    <div class="col-sm-12 col-md-7">&nbsp;</div>
+                                    <div class="col-xs-12 col-md-5" ng-hide="isSubAccHide">
+                                        <label>{{ voucher_details.chartOfAccountsSource || 'Sub-account' }}<span class="required">*</span></label>
+                                        <lazy-dropdown
+                                                selected-item="selectedSubCoa"
+                                                display-property="name"
+                                                display-subtext="label"
+                                                search-property="name"
+                                                placeholder="Search {{ voucher_details.chartOfAccountsSource || 'Sub Accounts' }}..."
+                                                load-items="fetchSubAccounts(params)"
+                                                on-select="onSubAccountChange(item)">
+                                        </lazy-dropdown>
+                                    </div>
+
+                                    <div ng-class="{'col-sm-12 col-md-7': isSubAccHide, 'col-sm-12 col-md-2': !isSubAccHide}">&nbsp;</div>
+
                                     <div class="col-xs-12 col-md-2">
                                         <label>Debit <span class="required">*</span></label>
-                                        <input class="form-control pastedString" type="text" id="debitAmount" ng-model="voucher_details.debitAmount" ng-disabled="voucher_details.creditAmount!=''" placeholder="Amount" maxlength="17" onkeypress="return validateFloatKeyPress(this, event);" />
+                                        <input class="form-control pastedString"
+                                               type="text"
+                                               id="debitAmount"
+                                               ng-model="voucher_details.debitAmount"
+                                               ng-disabled="voucher_details.creditAmount!=''"
+                                               placeholder="Amount"
+                                               maxlength="17"
+                                               onkeypress="return validateFloatKeyPress(this, event);" />
                                     </div>
                                     <div class="col-xs-12 col-md-2">
                                         <label>Credit <span class="required">*</span></label>
-                                        <input class="form-control pastedString" type="text" id="creditAmount" ng-model="voucher_details.creditAmount" ng-disabled="voucher_details.debitAmount!=''" placeholder="Amount" maxlength="17" onkeypress="return validateFloatKeyPress(this, event);" />
+                                        <input class="form-control pastedString"
+                                               type="text"
+                                               id="creditAmount"
+                                               ng-model="voucher_details.creditAmount"
+                                               ng-disabled="voucher_details.debitAmount!=''"
+                                               placeholder="Amount"
+                                               maxlength="17"
+                                               onkeypress="return validateFloatKeyPress(this, event);" />
                                     </div>
 
                                     <br>
@@ -127,14 +153,8 @@
                             </div>
                         </div>
 
-                        <br>
-
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div class="widget-header widget-header-flat">
-                                    <h4 class="widget-title">Voucher Details</h4>
-                                    <span class="widget-toolbar"> </span>
-                                </div>
 
                                 <div class="row">
                                     <div class="col-md-12">
@@ -146,6 +166,7 @@
                                                 <th ng-hide="true">COA Id</th>
                                                 <th ng-hide="true"></th>
                                                 <th>A/C Code & Name</th>
+                                                <th ng-hide="true">Accounts Source</th>
                                                 <th>Particulars</th>
                                                 <th>Debit</th>
                                                 <th>Credit</th>
@@ -158,16 +179,28 @@
                                                     <td ng-hide="true"><label>{{details.id}}</label></td>
                                                     <td ng-hide="true"><label>{{details.chartOfAccountsId}}</label></td>
                                                     <td ng-hide="true"><label>{{details.chartOfAccountsCodeName}}</label></td>
-                                                    <td><label>{{details.subAccountsId>0 ?
-                                                        details.chartOfAccountsCodeName + " -> " + details.subAccountsCodeName :
-                                                        details.chartOfAccountsCodeName}}</label>
+                                                    <td>
+                                                        <label>
+                                                            {{details.subAccountsId>0
+                                                                ? details.chartOfAccountsCodeName + " -> " + details.subAccountsCodeName
+                                                                : details.chartOfAccountsCodeName}}
+                                                        </label>
                                                     </td>
+                                                    <td ng-hide="true"><label>{{details.chartOfAccountsSource}}</label></td>
                                                     <td><label>{{details.particulars}}</label></td>
                                                     <td align='right'><label>{{details.primeAmount>0? details.amount: 0}}</label></td>
                                                     <td align='right'><label>{{details.primeAmount<0? details.amount: 0}}</label></td>
                                                     <td style="width:130px">
-                                                        <input style='font-size:12px' type="button" value="Edit" class="btn btn-no-border btn-yellow btn-round" data-ng-click='rowDataPopulate(details, $index)' />
-                                                        <input style='font-size:12px' type="button" value="Delete" class="btn btn-no-border btn-danger btn-round" data-ng-click='deleteRow($index)' />
+                                                        <input type="button"
+                                                               style='font-size:12px'
+                                                               value="Edit"
+                                                               class="btn btn-no-border btn-yellow btn-round"
+                                                               data-ng-click='populateRowData(details, $index)' />
+                                                        <input type="button"
+                                                               style='font-size:12px'
+                                                               value="Delete"
+                                                               class="btn btn-no-border btn-danger btn-round"
+                                                               data-ng-click='deleteRow($index)' />
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -175,10 +208,16 @@
                                                 <tr style="font-weight:bold">
                                                     <td></td>
                                                     <td></td>
-                                                    <td>Total</td>
+                                                    <td>Total </td>
                                                     <td align='right'></td>
                                                     <td align='right'></td>
-                                                    <td></td>
+                                                    <td>
+                                                        <span ng-class="getBalanceClass()"
+                                                              ng-bind-html="getBalanceText()"
+                                                              style="padding: 5px 10px; border-radius: 5px; height: 24px;"
+                                                              title="Debit and Credit must match to save">
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                             </tfoot>
                                         </table>

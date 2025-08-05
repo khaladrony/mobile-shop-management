@@ -38,7 +38,12 @@
 
                             <div class="col-xs-12 col-md-6">
                                 <label>Bank Name </label>
-                                <input class="form-control" type="text" id="bankName" ng-model="module.bankName" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Bank Name" />
+<!--                                <input class="form-control" type="text" id="bankName" ng-model="module.bankName" ng-pattern-restrict="^[0-9A-Za-z .]*$" style="text-transform: capitalize;" placeholder="Bank Name" />-->
+                                <appcode-dropdown
+                                        type="Bank Name"
+                                        model="module.bankName"
+                                        placeholder="Select Bank Name">
+                                </appcode-dropdown>
                             </div>
 
                             <div class="col-xs-12 col-md-6">

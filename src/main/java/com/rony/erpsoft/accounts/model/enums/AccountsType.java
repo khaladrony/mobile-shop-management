@@ -7,9 +7,9 @@ public enum AccountsType {
 
     ASSET("Asset", "1"),
     LIABILITY("Liability", "2"),
-    INCOME("Income", "3"),
-    EXPENDITURE("Expenditure", "4"),
-    EQUITY("Equity", "5");
+    EQUITY("Equity", "3"),
+    INCOME("Income", "4"),
+    EXPENDITURE("Expenditure", "5");
 
     private String displayName;
     private String code;

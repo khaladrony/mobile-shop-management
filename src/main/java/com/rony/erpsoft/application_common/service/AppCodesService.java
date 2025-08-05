@@ -1,6 +1,7 @@
 package com.rony.erpsoft.application_common.service;
 
 import com.rony.erpsoft.application_common.dto.AppCodesDTO;
+import com.rony.erpsoft.application_common.dto.DropdownAppCodesDTO;
 import com.rony.erpsoft.application_common.mapper.AppCodesMapper;
 import com.rony.erpsoft.application_common.model.AppCodes;
 import com.rony.erpsoft.application_common.repo.AppCodesRepository;
@@ -10,7 +11,9 @@ import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.ModelValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +37,15 @@ public class AppCodesService {
     }
 
     public Page<AppCodesDTO> findAll(Pageable pageable) {
-        return appCodesRepository.findAll(pageable)
+        Pageable pageableSort = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(
+                        Sort.Order.asc("xtype"),
+                        Sort.Order.asc("xcode")
+                )
+        );
+        return appCodesRepository.findAll(pageableSort)
                 .map(appCodes -> appCodesMapper.entityToDto(appCodes));
     }
 
@@ -45,7 +56,7 @@ public class AppCodesService {
                 .toList();
     }
 
-    public List<String> findXcodeByXtype(String type) {
+    public List<DropdownAppCodesDTO> findXcodeByXtype(String type) {
         return appCodesRepository.findXcodeByXtypeAndActiveTrue(type);
     }
 

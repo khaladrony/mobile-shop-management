@@ -2,6 +2,9 @@ app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $s
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
+    $scope.currentPage = 0;
+    $scope.itemPerPage = 2000;
+    $scope.search = {};
     $scope.module = {
         id: "",
         xtype: "",
@@ -48,4 +51,59 @@ app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $s
     };
 
     $scope.reset = function() {};
+
+    $scope.getDataList = function () {
+        var url = API.APP_CODES_FILTER + '?page=' + ($scope.currentPage) + '&size=' + $scope.itemPerPage;
+
+        DialogBox.showProgress();
+        var req = Communication.request("POST", url, $scope.search);
+        req.then(function (resp) {
+            DialogBox.hideProgress();
+
+            if (resp.code === 200) {
+                $scope.tree = $scope.buildXtypeXcodeTree(resp.body.content);
+            } else{
+                $rootScope.toastError(resp.message);
+            }
+        }, function (err) {
+            DialogBox.hideProgress();
+            log("user list error", JSON.stringify(err));
+        });
+    };
+
+    $scope.buildXtypeXcodeTree = function(flatList) {
+        const xtypeGroup = {};
+
+        flatList.forEach(item => {
+            const xtype = item.xtype;
+            const xcode = item.xcode;
+
+            // If xtype node doesn't exist, create it
+            if (!xtypeGroup[xtype]) {
+                xtypeGroup[xtype] = {
+                    label: xtype,
+                    collapsed: true,
+                    children: {}
+                };
+            }
+
+            // If xcode node under xtype doesn't exist, create it
+            if (!xtypeGroup[xtype].children[xcode]) {
+                xtypeGroup[xtype].children[xcode] = {
+                    label: xcode,
+                    collapsed: true,
+                    children: []
+                };
+            }
+        });
+
+        // Convert inner xcode objects to arrays
+        const finalTree = Object.values(xtypeGroup).map(xtypeNode => {
+            xtypeNode.children = Object.values(xtypeNode.children);
+            return xtypeNode;
+        });
+
+        return finalTree;
+    };
+
 });

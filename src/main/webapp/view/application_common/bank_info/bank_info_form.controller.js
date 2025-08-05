@@ -9,7 +9,7 @@ app.controller('BankInfoFormCtrl', function ($scope, $http, $state, $timeout, $s
         bankAccountCode: "",
         bankAccountNo: "",
         bankAccountName: "",
-        bankName: "",
+        bankName: null,
         branchName: "",
         phone: "",
         address: "",

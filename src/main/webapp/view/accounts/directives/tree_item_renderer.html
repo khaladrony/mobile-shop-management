@@ -1,0 +1,25 @@
+<!-- /directives/tree_item_renderer.html -->
+<li>
+    <span ng-click="node.collapsed = !node.collapsed" style="cursor: pointer;">
+        <i ng-if="node.children && node.children.length"
+           class="fa"
+           ng-class="{'fa-plus-square': node.collapsed, 'fa-minus-square': !node.collapsed}"
+           style="margin-right: 4px;"></i>
+
+        <!-- Leaf icon -->
+        <i ng-if="!node.children || !node.children.length" class="fa fa-file-o" style="margin-right: 4px;"></i>
+
+        <!-- Node label -->
+        <span class="coa-label" style="color: #2c3e50;">
+            {{ node.label }}
+        </span>
+
+        <!-- Optional source/code display (only for leaf nodes) -->
+        <span class="coa-code" ng-if="node.source" style="color: #999;"> [{{ node.source }}]</span>
+        <span class="coa-code" ng-if="node.code" style="color: #999;"> [{{ node.code }}]</span>
+    </span>
+
+    <ul ng-if="!node.collapsed && node.children && node.children.length">
+        <li ng-repeat="node in node.children" ng-include="'/view/accounts/directives/tree_item_renderer.html'"></li>
+    </ul>
+</li>

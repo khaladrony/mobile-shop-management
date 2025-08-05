@@ -1,5 +1,5 @@
 app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q,
-                $compile) {
+                $compile, $http) {
     $rootScope.JMODULE_NAME = JMODULE_NAME;
     $rootScope.JCONTROLLER = JCONTROLLER;
     $rootScope.JCOMPONENT = JCOMPONENT;
@@ -315,6 +315,43 @@ app.directive('appcodeDropdown', function () {
         }
     };
 });
+
+//appcode-dropdown-coa-group
+app.directive('appcodeDropdownCoaGroup', function($http) {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '=',
+            ngModel: '=',         // for two-way binding
+            placeholder: '@'
+        },
+        template: `
+            <select class="form-control" ng-model="ngModel">
+                <option value="">{{ placeholder }}</option>
+                <option ng-repeat="item in items" ng-value="item">{{ item.xcode }}</option>
+            </select>
+        `,
+        link: function(scope) {
+            scope.items = [];
+
+            function getByType(type) {
+                return $http.get(COMMON_API.app_codes +'/by-type/' + type);
+            }
+
+            // Load items when 'type' changes
+            scope.$watch('type', function(newType) {
+                if (newType) {
+                    getByType(newType).then(function(response) {
+                        scope.items = response.data.body;
+                    });
+                } else {
+                    scope.items = [];
+                }
+            });
+        }
+    };
+});
+
 
 app.directive('autocomplete', function($timeout, $sce) {
     return {
@@ -646,3 +683,124 @@ app.directive('actionButton', function () {
         `
     };
 });
+
+app.directive('dateRangePicker', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            fromDate: '=',
+            toDate: '='
+        },
+        template: `
+        <div class="date-range-group" style="display: flex; gap: 8px; margin-right: 8px; float: left;">
+            <div class="input-group width170 date">
+                <input type="text" class="form-control" placeholder="From Date" ng-model="fromDate" formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+            <div class="input-group width170 date">
+                <input type="text" class="form-control" placeholder="To Date" ng-model="toDate" formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+        </div>
+        `
+    };
+});
+
+app.directive('autocompleteInput', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            fetchSuggestions: '&',
+            placeholder: '@'
+        },
+        template: `
+            <div class="input-group width200" style="float: left; margin-right: 8px;">
+                <autocomplete ng-model="ngModel"
+                              fetch-suggestions="fetchSuggestions({query: query})"
+                              placeholder="{{placeholder}}">
+                </autocomplete>
+                <span class="input-group-addon">
+                    <i class="fa fa-search" style="position: initial; top: 10px; left: 10px; color: gray;"></i>
+                </span>
+            </div>
+        `,
+    };
+});
+
+app.directive('dropdownInput', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '@',
+            model: '='
+        },
+        template: `
+            <div class="input-group width110" style="float: left; margin-right: 8px;">
+                <appcode-dropdown
+                    type="{{type}}"
+                    model="model">
+                </appcode-dropdown>
+            </div>
+        `
+    };
+});
+
+app.directive('filterButton', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            clickAction: '&',
+            title: '@',
+            label: '@'
+        },
+        template: `
+            <div class="input-group width110" style="float: left; margin-right: 8px;">
+                <div class="btn-group" style="float: right;">
+                    <button ng-click="clickAction()" class="btn btn-warning btn-sm" title="{{title || 'Filter now'}}">
+                        <i class="icon fa fa-search"></i> {{label || 'Filter'}}
+                    </button>
+                </div>
+            </div>
+        `
+    };
+});
+
+// Register the directive in your app
+app.directive('voucherTable', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            data: '=',
+            toggleDetails: '&',
+            showEditForm: '&',
+            voucherPreview: '&',
+            voucherStatus: '='
+        },
+        templateUrl: '/view/accounts/directives/voucher-table.html'
+    };
+});
+
+app.directive('voucherCreateButton', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            state: '@' // passed as a string: ui-sref value
+        },
+        template: `
+            <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="pull-right">
+                    <a class="btn btn-sm btn-success" ui-sref="{{state}}">
+                        <i class="ace-icon fa fa-plus"></i> Voucher Create
+                    </a>
+                </div>
+            </div>
+        `
+    };
+});
+
+

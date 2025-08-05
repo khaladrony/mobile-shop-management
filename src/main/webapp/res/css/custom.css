@@ -748,8 +748,8 @@ p.subtitle {
 
 /*lazy-dropdown directives*/
 .main-text {
-    font-weight: bold;
-    color: #333333e8;
+    font-weight: normal;
+    color: black;
 }
 
 .meta-text {
@@ -760,7 +760,7 @@ p.subtitle {
 
 .fixed-width-div {
     width: 100%;
-    max-width: 540px;
+    max-width: var(--max-width, 540px);
     margin: auto;
 }
 
@@ -778,7 +778,8 @@ p.subtitle {
   color: #2e7d32;            /* dark green text */
 }
 
-.status-label.open {
+.status-label.open,
+.status-label.draft {
   background-color: #fff8e1; /* light yellow background */
   color: #f9a825;            /* amber text */
 }
@@ -788,7 +789,8 @@ p.subtitle {
   color: #c2185b;
 }
 
-.status-label.receipt {
+.status-label.receipt,
+.status-label.posted {
   background-color: #e8f5e9;
   color: #2e7d32;
 }
@@ -796,6 +798,39 @@ p.subtitle {
 .status-label.transfer {
   background-color: #e3f2fd;
   color: #1565c0;
+}
+
+/* Chart of accounts*/
+.radio-inline {
+    padding-left: 15px;
+    font-weight: normal;
+}
+
+.coa-tree {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+
+  .coa-tree li {
+    margin: 4px 0;
+  }
+
+  .coa-label {
+    font-weight: bold;
+  }
+
+  .coa-code {
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  .fa {
+      cursor: pointer;
+      margin-right: 6px;
+    }
+
+li::marker {
+  content: none;
 }
 
 

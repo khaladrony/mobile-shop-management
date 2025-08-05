@@ -3,12 +3,14 @@ package com.rony.erpsoft.accounts.repo;
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Map;
 
-public interface AccJournalMasterRepo extends JpaRepository<AccJournalMaster, Long> {
+public interface AccJournalMasterRepo extends JpaRepository<AccJournalMaster, Long>,
+        JpaSpecificationExecutor<AccJournalMaster> {
 //    List<AccJournalMaster> findAll();
 
     AccJournalMaster findById(long id);

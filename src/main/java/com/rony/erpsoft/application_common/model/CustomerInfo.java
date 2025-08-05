@@ -29,17 +29,17 @@ public class CustomerInfo {
     private Long organizationId;
 
     @Column(name = "customer_code", unique = true)
-    String customerCode;
+    private String customerCode;
     @Column(name = "customer_name")
-    String customerName;
+    private String customerName;
     @Column(name = "email")
-    String email;
+    private String email;
     @Column(name = "phone")
-    String phone;
+    private String phone;
     @Column(name = "address")
-    String address;
+    private String address;
     @Column(name="chart_of_accounts_id")
-    private boolean chartOfAccountsId;
+    private Long chartOfAccountsId;
     @Column(name="status")
     private boolean status;
 

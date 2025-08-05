@@ -18,7 +18,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -483,5 +486,15 @@ public class AppUtil {
 
         return value;
     }
+
+    public static String formatDateUtc(String isoDateString, String formatPattern) {
+        if (isoDateString == null || isoDateString.isEmpty()) {
+            return "";
+        }
+        Instant instant = Instant.parse(isoDateString);
+        LocalDate date = instant.atZone(ZoneId.of("UTC")).toLocalDate();
+        return date.format(DateTimeFormatter.ofPattern(formatPattern));
+    }
+
 
 }

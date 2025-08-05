@@ -24,11 +24,11 @@ public interface AccChartOfAccountsRepo extends JpaRepository<AccChartOfAccounts
 
 //    AccChartOfAccounts save(AccChartOfAccounts chartOfAccounts);
 
-    @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' (',accountsCode,')') as coa_code_name, " +
+    @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' [',accountsCode,']') as coa_code_name, " +
             "accountsSource as accounts_source, accountsUsage as accounts_usage " +
             "FROM AccChartOfAccounts WHERE isActive = true order by accountsType, accountsName")
     List<Map<String, Object>> findAllCOAListForDropDown();
 
-    @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' (',accountsCode,')') as coa_code_name FROM AccChartOfAccounts WHERE accountsUsage=?1 ")
+    @Query("SELECT id as id, accountsType as accounts_type, concat(accountsName,' [',accountsCode,']') as coa_code_name FROM AccChartOfAccounts WHERE accountsUsage=?1 ")
     Map<String, Object> findChartOfAccountsByAccountsUsage(String type);
 }

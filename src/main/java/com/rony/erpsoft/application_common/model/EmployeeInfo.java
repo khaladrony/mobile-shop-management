@@ -29,25 +29,25 @@ public class EmployeeInfo {
     private Long organizationId;
 
     @Column(name = "employee_code", unique = true)
-    String employeeCode;
+    private String employeeCode;
     @Column(name = "employee_name")
-    String employeeName;
+    private String employeeName;
     @Column(name = "employee_pin", unique = true)
-    String employeePin;
+    private String employeePin;
     @Column(name = "designation")
-    String designation;
+    private String designation;
     @Column(name = "department")
-    String department;
+    private String department;
     @Column(name = "salary")
-    double salary;
+    private double salary;
     @Column(name = "email")
-    String email;
+    private String email;
     @Column(name = "phone")
-    String phone;
+    private String phone;
     @Column(name = "address")
-    String address;
+    private String address;
     @Column(name="chart_of_accounts_id")
-    private boolean chartOfAccountsId;
+    private Long chartOfAccountsId;
     @Column(name="status")
     private boolean status;
 
