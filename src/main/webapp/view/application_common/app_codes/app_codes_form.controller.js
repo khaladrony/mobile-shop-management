@@ -1,4 +1,8 @@
-app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, encrypt, Communication) {
+app.controller('AppCodesFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope,
+            $sce, $mdDialog, $interval, ClientService, DialogBox,
+            encrypt, Communication, growl
+            ) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
@@ -10,7 +14,7 @@ app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $s
         xtype: "",
         xcode: "",
         description: "",
-        active: ""
+        active: true
     };
 
     if($state.current.name === JCOMPONENT.app_codes_update_view){
@@ -39,8 +43,9 @@ app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $s
             log("App codes: " + JSON.stringify(resp));
             if (resp.code === 200) {
                 $scope.module = resp.body;
-                $rootScope.toastSuccess("Successfully saved");
-                $state.go(JCOMPONENT.app_codes_list_view);
+                growl.success('Successfully saved',{title: 'Success!'});
+                $scope.resetModule();
+                $scope.getDataList($scope.currentPage, $scope.itemPerPage);
             } else{
                 $rootScope.toastError(resp.message);
             }
@@ -105,5 +110,15 @@ app.controller('AppCodesFormCtrl', function ($scope, $http, $state, $timeout, $s
 
         return finalTree;
     };
+
+    $scope.resetModule = function () {
+         $scope.module = {
+                id: "",
+                xtype: "",
+                xcode: "",
+                description: "",
+                active: true
+            };
+    }
 
 });

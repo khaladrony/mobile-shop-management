@@ -605,6 +605,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
                     coa.accounts_code AS accountsCode,
                     coa.accounts_name AS accountsName,
                     coa.accounts_type AS accountsType,
+                    coa.group1 AS group1,
                     SUM(ajd.prime_amount) AS amount
                 FROM acc_journal_master ajm
                 INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
@@ -612,8 +613,28 @@ public class AccJournalMasterService implements IAccJournalMasterService {
                 WHERE ajm.status = 'POSTED'
                 AND coa.master_type = :accountsSubType
                 AND ajm.posting_date <= :asOnDate
-                GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type
-                ORDER BY coa.accounts_code, coa.accounts_name
+                GROUP BY ajd.chart_of_accounts_id, coa.accounts_code, coa.accounts_name, coa.accounts_type, coa.group1
+                                
+                UNION ALL
+                
+                -- Retained Earnings Calculation (Net Income)
+                SELECT
+                    NULL AS chartOfAccountsId,
+                    '300001' AS accountsCode,
+                    'Retained Earning' AS accountsName,
+                    'Equity' AS accountsType,
+                    'Shareholders Equity' AS group1,
+                    SUM(CASE WHEN coa.accounts_type = 'Income' THEN ajd.prime_amount
+                             WHEN coa.accounts_type = 'Expenditure' THEN ajd.prime_amount
+                             ELSE 0 END) AS amount
+                FROM acc_journal_master ajm
+                INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id
+                INNER JOIN acc_chart_of_accounts coa ON ajd.chart_of_accounts_id = coa.id
+                WHERE ajm.status = 'POSTED'
+                  AND coa.accounts_type IN ('Income', 'Expenditure')
+                  AND ajm.posting_date <= :asOnDate
+                
+                ORDER BY accountsCode, accountsName
                 """;
 
         Map<String, Object> params = Map.of(
@@ -631,6 +652,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
                     coa.accounts_code AS accountsCode,
                     coa.accounts_name AS accountsName,
                     coa.accounts_type AS accountsType,
+                    coa.group1 AS group1,
                     SUM(ajd.prime_amount) AS amount
                 FROM acc_journal_master ajm
                 INNER JOIN acc_journal_details ajd ON ajm.id = ajd.journal_master_id

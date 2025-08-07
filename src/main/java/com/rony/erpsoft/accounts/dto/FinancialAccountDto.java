@@ -10,5 +10,6 @@ public class FinancialAccountDto {
     private String accountsCode;
     private String accountsName;
     private String accountsType;
+    private String group1;
     private BigDecimal amount;
 }

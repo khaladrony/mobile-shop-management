@@ -98,4 +98,24 @@ var app = angular.module('ApplicationCommonApp', ['rt.select2', 'ngPatternRestri
         $urlRouterProvider.otherwise('/' + JCOMPONENT.bank_info_list_view);
         
     });
-    
+
+app.run(function($transitions, $state, $timeout, growl, $rootScope) {
+
+    $transitions.onStart({}, function(transition) {
+        const toState = transition.to();
+        const module = toState.data?.module || JMODULE_NAME;
+        const component = toState.name;
+
+        if (typeof $rootScope.hasPermission === 'function') {
+            const hasAccess = $rootScope.hasPermission(module, component);
+
+            if (!hasAccess) {
+                growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
+
+                $timeout(function () {
+                    window.location.href = _baseurl_ + 'auth/login';
+                }, 1500);
+            }
+        }
+    });
+});

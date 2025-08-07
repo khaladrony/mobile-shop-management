@@ -10,7 +10,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="utf-8" />
-    <title>${fn:escapeXml(APP_NAME)}</title>
+    <title>${fn:escapeXml(ORGANIZATION_NAME)}</title>
     <% response.addHeader("x-frame-options","DENY"); %>
     
     <link rel="icon" type="image/x-icon" href="${fn:escapeXml(STATIC_RES)}/images/favicon.ico" />

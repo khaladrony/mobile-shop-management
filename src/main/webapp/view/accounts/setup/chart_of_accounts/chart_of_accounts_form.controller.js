@@ -144,7 +144,7 @@ app.controller('AccChartOfAccountsFormCtrl', function (
                 typeGroup[type].children[accountGroup] = {
                     label: accountGroup,
                     code: '',
-                    collapsed: false,
+                    collapsed: true,
                     children: []
                 };
             }

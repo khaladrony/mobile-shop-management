@@ -58,7 +58,7 @@ app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q,
     };
     
     $timeout(function(){
-        $window.location.href = _baseurl_ + '/auth/login';
+        $window.location.href = _baseurl_ + 'auth/login';
     },_SESSION_TIMEOUT_);
 
 });

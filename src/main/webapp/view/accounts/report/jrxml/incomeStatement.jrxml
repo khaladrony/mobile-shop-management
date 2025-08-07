@@ -22,7 +22,11 @@
 	<field name="accountsType" class="java.lang.String"/>
 	<field name="accountsName" class="java.lang.String"/>
 	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="group1" class="java.lang.String"/>
 	<variable name="totalByType" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="totalByAccountGroup" class="java.math.BigDecimal" resetType="Group" resetGroup="accountGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
 	</variable>
 	<group name="Group1">
@@ -32,7 +36,7 @@
 				<textField>
 					<reportElement x="0" y="0" width="320" height="19" uuid="42ce1840-f7cb-4d35-bdd7-a376f1ce74f9"/>
 					<box leftPadding="4"/>
-					<textElement>
+					<textElement verticalAlignment="Bottom">
 						<font fontName="Arial Narrow" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{accountsType}.toUpperCase()]]></textFieldExpression>
@@ -40,11 +44,11 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="42">
+			<band height="24">
 				<textField>
-					<reportElement x="0" y="3" width="390" height="21" uuid="4dbba720-6305-4c3e-abdd-06d71fcb1fdf"/>
+					<reportElement x="0" y="3" width="320" height="21" uuid="4dbba720-6305-4c3e-abdd-06d71fcb1fdf"/>
 					<box leftPadding="4">
-						<topPen lineWidth="1.0"/>
+						<topPen lineWidth="0.0"/>
 					</box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial Narrow" isBold="true"/>
@@ -52,14 +56,55 @@
 					<textFieldExpression><![CDATA["TOTAL "+$F{accountsType}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="320" y="3" width="129" height="21" uuid="f0617b2c-38d4-4286-87de-2246fd6fd8f3"/>
-					<box>
+					<reportElement x="360" y="3" width="89" height="21" uuid="f0617b2c-38d4-4286-87de-2246fd6fd8f3"/>
+					<box rightPadding="4">
+						<pen lineWidth="2.0"/>
 						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="2.0" lineStyle="Double"/>
+						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($V{totalByType})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="accountGroup">
+		<groupExpression><![CDATA[$F{group1}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="320" height="19" uuid="294c96bf-9592-466c-8ba0-256759a1ea69"/>
+					<box leftPadding="12" rightPadding="0"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{group1}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="360" y="0" width="89" height="21" uuid="b4caf7dd-0bdb-4565-afc8-c5100f1dfae7"/>
+					<box rightPadding="4">
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($V{totalByAccountGroup})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="1" width="320" height="19" uuid="5b51c281-f673-47ff-8814-803ff13a60f2"/>
+					<box leftPadding="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL "+$F{group1}.toUpperCase()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -97,7 +142,7 @@
 					<font fontName="Arial Narrow" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<b>For the period </b>" + new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{fromDate}) + "<b> to </b>" +
-new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{toDate}) ]]></textFieldExpression>
+new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{toDate})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -110,18 +155,19 @@ new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{toDate}) ]]></textFieldEx
 	<detail>
 		<band height="19" splitType="Stretch">
 			<textField>
-				<reportElement x="320" y="1" width="129" height="18" uuid="d70f41ed-fb7d-4d68-8efe-e92384869a4b"/>
-				<textElement textAlignment="Right">
+				<reportElement x="360" y="1" width="89" height="18" uuid="d70f41ed-fb7d-4d68-8efe-e92384869a4b"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial Narrow" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($F{amount})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="1" width="320" height="18" uuid="bd3f1e13-d0a2-4c7b-8883-fb40aa4ff4e1">
+				<reportElement x="20" y="1" width="300" height="18" uuid="bd3f1e13-d0a2-4c7b-8883-fb40aa4ff4e1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4cad72a2-a4fa-44f6-96aa-136a392e0a56"/>
 				</reportElement>
-				<box leftPadding="4"/>
-				<textElement>
+				<box leftPadding="15"/>
+				<textElement verticalAlignment="Bottom">
 					<font fontName="Arial Narrow" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accountsName}]]></textFieldExpression>
@@ -139,7 +185,7 @@ new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{toDate}) ]]></textFieldEx
 			<textField>
 				<reportElement x="0" y="0" width="320" height="21" uuid="770573a9-113d-4cef-b731-5246c7bb7e46"/>
 				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
@@ -148,10 +194,10 @@ new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{toDate}) ]]></textFieldEx
 				<textFieldExpression><![CDATA["Net Income".toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="320" y="0" width="129" height="21" uuid="491cf0e2-5ba0-41db-b30f-59945bc2c977"/>
-				<box>
+				<reportElement x="360" y="0" width="89" height="21" uuid="491cf0e2-5ba0-41db-b30f-59945bc2c977"/>
+				<box rightPadding="4">
 					<topPen lineWidth="1.0"/>
-					<bottomPen lineWidth="0.0"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" isBold="true"/>

@@ -27,13 +27,13 @@ app.factory('Communication', function ($http, $q, $timeout, CommunicationService
 
                 $http(req).then(function (msg) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + '/auth/login';
+                        window.location.href = _baseurl_ + 'auth/login';
                     }
                     deferred.resolve(msg.data);
 
                 }, function (err) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + '/auth/login';
+                        window.location.href = _baseurl_ + 'auth/login';
                     }
                     deferred.reject(err);
                 });

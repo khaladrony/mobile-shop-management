@@ -51,11 +51,11 @@
 
     </head>
 
-    <body class="login-layout light-login" ng-controller="LauncherScreenCtrl" style="background: #C1CDCD">
+    <body class="login-layout light-login" ng-controller="LauncherScreenCtrl" style="background: #434D55">
         <div class="main-container" ng-init="configUserData()">
-            <div class="main-content">
+            <!-- <div class="main-content">
                 <center><h2 style="color:#4683ea;">Loading "<b>${fn:escapeXml(USER.first_name)} ${fn:escapeXml(USER.last_name)}</b>" as ${fn:escapeXml(USER.role_name)}</h2></center>
-            </div><!-- /.main-content -->
+            </div>/.main-content -->
         </div><!-- /.main-container -->
 
         <!-- basic scripts -->

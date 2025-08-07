@@ -195,7 +195,13 @@ public class AuthController extends AppProperty {
 
     @RequestMapping(value = {"/auth/logout"}, method = {RequestMethod.GET})
     public ModelAndView logout() {
-        authService.endedLoginSession(sessionService.getUser());
+        if (sessionService != null) {
+            try {
+                authService.endedLoginSession(sessionService.getUser());
+            } catch (Exception e) {
+                System.err.println("Failed to end session cleanly: " + e.getMessage());
+            }
+        }
         session.invalidate();
         return new ModelAndView("redirect:/auth/login");
     }

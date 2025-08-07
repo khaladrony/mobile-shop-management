@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -265,7 +264,7 @@ public class AccountsReportService {
             parameters.put("organizationName", organization.getName());
             parameters.put("orgAddress", organization.getAddress1());
             parameters.put("reportName", "Balance Sheet");
-            parameters.put("netAssets", getNetAssets(balanceSheetData));
+            parameters.put("totalLiabilityAndEquity", getLiabilityAndEquity(balanceSheetData));
 
             return exportReportToPdf(dataSource, fileName, parameters);
 
@@ -275,18 +274,13 @@ public class AccountsReportService {
         }
     }
 
-    private BigDecimal getNetAssets(List<FinancialAccountDto> balanceSheetData) {
-        BigDecimal totalAssets = balanceSheetData.stream()
-                .filter(a -> "Asset".equalsIgnoreCase(a.getAccountsType()))
+    private BigDecimal getLiabilityAndEquity(List<FinancialAccountDto> balanceSheetData) {
+        return balanceSheetData.stream()
+                .filter(a -> "Liability".equalsIgnoreCase(a.getAccountsType())
+                        || "Equity".equalsIgnoreCase(a.getAccountsType()))
                 .map(FinancialAccountDto::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalLiabilities = balanceSheetData.stream()
-                .filter(a -> "Liability".equalsIgnoreCase(a.getAccountsType()))
-                .map(FinancialAccountDto::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return totalAssets.subtract(totalLiabilities);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .abs();
     }
 
     public ByteArrayResource getIncomeStatement(String fromDate, String toDate) {
@@ -313,16 +307,10 @@ public class AccountsReportService {
     }
 
     private BigDecimal getNetIncome(List<FinancialAccountDto> incomeStatementData) {
-        BigDecimal totalAssets = incomeStatementData.stream()
-                .filter(a -> "Income".equalsIgnoreCase(a.getAccountsType()))
+        return incomeStatementData.stream()
+                .filter(a -> "Income".equalsIgnoreCase(a.getAccountsType())
+                        || "Expenditure".equalsIgnoreCase(a.getAccountsType()))
                 .map(FinancialAccountDto::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalLiabilities = incomeStatementData.stream()
-                .filter(a -> "Expenditure".equalsIgnoreCase(a.getAccountsType()))
-                .map(FinancialAccountDto::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return totalAssets.subtract(totalLiabilities);
     }
 }

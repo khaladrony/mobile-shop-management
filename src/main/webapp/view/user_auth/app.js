@@ -1,9 +1,5 @@
-/* 
- * Created on : 24 May, 2018, 10:19:44 PM
- * Author     : sarker
- */
 
-var app = angular.module('UserAuthManagementApp', ['rt.select2', 'ngPatternRestrict', '720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router','ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate'])
+var app = angular.module('UserAuthManagementApp', ['rt.select2', 'ngPatternRestrict', '720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router','ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate', 'angular-growl'])
     
     .config(function($stateProvider, $urlRouterProvider, ngToastProvider) {
         ngToastProvider.configure({
@@ -103,4 +99,24 @@ var app = angular.module('UserAuthManagementApp', ['rt.select2', 'ngPatternRestr
         $urlRouterProvider.otherwise('/' + JCOMPONENT.user_profile_view);
         
     });
-    
+
+app.run(function($transitions, $state, $timeout, growl, $rootScope) {
+
+    $transitions.onStart({}, function(transition) {
+        const toState = transition.to();
+        const module = toState.data?.module || JMODULE_NAME;
+        const component = toState.name;
+
+        if (typeof $rootScope.hasPermission === 'function') {
+            const hasAccess = $rootScope.hasPermission(module, component);
+
+            if (!hasAccess) {
+                growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
+
+                $timeout(function () {
+                    window.location.href = _baseurl_ + 'auth/login';
+                }, 1500);
+            }
+        }
+    });
+});
