@@ -6,7 +6,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <style type="text/css">
     .page-content{
@@ -17,7 +17,7 @@
         margin-top: 2px;
     }
     .main-content {
-        min-height: 480px !important;
+        min-height: 605px !important;
         background: #FFF !important;
     }
 </style>
@@ -113,22 +113,22 @@
                         <a class="dropdown-toggle">
                             <c:choose>
                                 <c:when test="${fn:contains(module.feature_name, 'Auth')}">  
-                                    <%--<i class="menu-icon fa fa-key fa-align-left"></i>--%>
+                                    <i class="menu-icon fa fa-key fa-align-left"></i>
                                 </c:when>
                                 <c:when test="${fn:contains(module.feature_name, 'General Settings')}">
-                                    <%--<i class="menu-icon fa fa-cloud"></i>--%>
+                                    <i class="menu-icon fa fa-cogs"></i>
                                 </c:when>
                                 <c:when test="${fn:contains(module.feature_name, 'Accounts')}">
-                                    <%--<i class="menu-icon fa fa-money"></i>--%>
+                                    <i class="menu-icon fa fa-university"></i>
                                 </c:when>
                                 <c:when test="${fn:contains(module.feature_name, 'Setup')}">
                                     <%--<i class="menu-icon fa fa-clock-o"></i>--%>
                                 </c:when>
                                 <c:when test="${fn:contains(module.feature_name, 'Report')}">  
-                                    <%--<i class="menu-icon fa fa-bar-chart"></i>--%>
+                                    <i class="menu-icon fa fa-line-chart"></i>
                                 </c:when>
                                 <c:when test="${fn:contains(module.feature_name, 'Inventory')}">
-                                    <%--<i class="menu-icon fa fa-bar-chart"></i>--%>
+                                    <i class="menu-icon fa fa-archive"></i>
                                 </c:when>
                                 <c:otherwise>
                                     <i class="menu-icon fa fa-desktop"></i>

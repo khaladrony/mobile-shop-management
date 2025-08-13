@@ -100,6 +100,9 @@
 
 
 <!-- include here rest of your ng app controller -->
+<script src="${NG_SRC}/accounts/accounts.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/accounts/accounts.directives.js?v=${SCRIPT_VERSION}"></script>
+
 <script src="${NG_SRC}/accounts/debit_voucher/debit_voucher_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/accounts/debit_voucher/debit_voucher_list.controller.js?v=${SCRIPT_VERSION}"></script>
 
@@ -123,6 +126,8 @@
 <script src="${NG_SRC}/accounts/report/cus_sup_emp_ledger_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/accounts/report/bank_ledger_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/accounts/report/trial_balance_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/accounts/report/balance_sheet_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/accounts/report/income_statement_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
 <!-- include here rest of your ng app controller -->
 
 <%@include file="../common/close_page.jsp" %>

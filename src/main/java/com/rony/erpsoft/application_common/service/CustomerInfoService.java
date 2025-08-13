@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerInfoService implements ICustomerInfoService {
@@ -33,7 +34,14 @@ public class CustomerInfoService implements ICustomerInfoService {
     }
 
     public List<SubCOADropdownDTO> getCustomerListForDropDown() {
-        return customerInfoRepo.getCustomerListForDropDown();
+        return customerInfoRepo.findAllByStatusTrueOrderByCustomerName()
+                .stream()
+                .map(customer -> SubCOADropdownDTO.builder()
+                        .id(customer.getId())
+                        .name(customer.getCustomerName() + " [" + customer.getCustomerCode() + "]")
+                        .chartOfAccountsId(customer.getChartOfAccountsId())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public Map<String, Object> filter(int currentPage, int itemPerPage, Map<String, Object> params) throws Exception {

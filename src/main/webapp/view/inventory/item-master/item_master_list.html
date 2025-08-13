@@ -1,16 +1,13 @@
 <div class="row" ng-init="getDataList(currentPage, itemPerPage)">
-    
-    <div class="col-sm-12 col-md-12 col-lg-12">
+
+    <div class="col-xs-12">
         <div class="filter-area">
             <div class="row">
-
-                <div class="col-sm-12 col-md-10 col-lg-10" >&nbsp;</div>
-                <div class="col-sm-12 col-md-2 col-lg-2">
-                    <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.item_master_add_view}}">
-                        <i class="ace-icon fa fa-transfer-card"></i> Item Create
+                <div class="col-xs-12">
+                    <a class="btn btn-sm btn-success pull-right" ui-sref="{{JCOMPONENT.item_master_add_view}}">
+                        <i class="ace-icon fa fa-plus"></i> Item Create
                     </a>
                 </div>
-
             </div>
         </div>
     </div>
@@ -30,14 +27,14 @@
             </thead>
             <tbody>
                 <tr ng-repeat="obj in data.items">
-                    <td>{{obj.item_code}}</td>
-                    <td>{{obj.item_name}}</td>
+                    <td>{{obj.itemCode}}</td>
+                    <td>{{obj.itemName}}</td>
                     <td>{{obj.price}}</td>
-                    <td>{{obj.standard_price}}</td>
+                    <td>{{obj.standardPrice}}</td>
                     <td>{{obj.category}}</td>
                     <td class="text-center">
-                        <label ng-if="obj.status===false || obj.status===0" class="label label-danger">Inactive</label>
-                        <label ng-if="obj.status===true || obj.status===1" class="label label-success">Active</label>
+                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
+                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
                     </td>
 
                     <td class="text-center">

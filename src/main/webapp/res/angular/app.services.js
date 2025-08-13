@@ -27,13 +27,13 @@ app.factory('Communication', function ($http, $q, $timeout, CommunicationService
 
                 $http(req).then(function (msg) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + '/auth/login';
+                        window.location.href = _baseurl_ + 'auth/login';
                     }
                     deferred.resolve(msg.data);
 
                 }, function (err) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + '/auth/login';
+                        window.location.href = _baseurl_ + 'auth/login';
                     }
                     deferred.reject(err);
                 });
@@ -83,6 +83,26 @@ app.factory('Communication', function ($http, $q, $timeout, CommunicationService
     };
 });
 
+app.service('ImageService', ['$http', function($http) {
+
+    // Upload image file
+    this.upload = function(moduleName, file, uploadUrl) {
+        var formData = new FormData();
+        formData.append("file", file);
+        formData.append("moduleName", moduleName);
+
+        return $http.post(uploadUrl, formData, {
+            transformRequest: angular.identity,
+            headers: { 'Content-Type': undefined }
+        });
+    };
+
+    // Build full image URL
+    this.getImageUrl = function(moduleName, fileName, baseUrl) {
+        return baseUrl + moduleName + '/' + fileName;
+    };
+
+}]);
 
 app.factory('autoCompleteDataService', [function () {
     return {
@@ -581,8 +601,156 @@ function printElement(content) {
     }, 300);
 }
 
-
-
 function log(tag,messaage) {
-             console.log(tag,messaage);
+    console.log(tag,messaage);
 }
+
+//Cache itemList[]
+app.factory('ItemService', function ($http, $q) {
+    var cache = null;
+
+    return {
+        getItemList: function () {
+            if (cache) {
+                return $q.resolve(cache); // return cached data
+            }
+
+            return $http.get(COMMON_API.items).then(function (resp) {
+                if (resp.data.code === 200) {
+                    cache = resp.data.body || [];
+                    return cache;
+                } else {
+                    return $q.reject("Failed to load items");
+                }
+            });
+        },
+
+        clearCache: function () {
+            cache = null;
+        }
+    };
+});
+
+//Toaster message queue
+app.factory('ToasterMessageQueueService', function () {
+    var messages = [];
+
+    return {
+        addMessage: function (type, message, title) {
+            messages.push({ type: type, message: message, title: title });
+        },
+        getMessages: function () {
+            var temp = angular.copy(messages);
+            messages = []; // Clear after read
+            return temp;
+        }
+    };
+});
+
+app.factory('ToastService', function(growl, ToasterMessageQueueService) {
+    return {
+        showMessages: function () {
+            const messages = ToasterMessageQueueService.getMessages();
+            messages.forEach(msg => {
+                if (msg.type === 'success') {
+                    growl.success(msg.message, { title: msg.title });
+                } else if (msg.type === 'error') {
+                    growl.error(msg.message, { title: msg.title });
+                } else if (msg.type === 'warning') {
+                    growl.warning(msg.message, { title: msg.title });
+                } else if (msg.type === 'info') {
+                    growl.info(msg.message, { title: msg.title });
+                }
+            });
+        }
+    };
+});
+
+app.factory('DateHelperService', function(growl) {
+    function pad(number) {
+        return String(number).padStart(2, '0');
+    }
+
+    function formatToLocalDateTimeString(date) {
+        if (!(date instanceof Date)) return "";
+        const yyyy = date.getFullYear();
+        const mm = pad(date.getMonth() + 1);
+        const dd = pad(date.getDate());
+        return `${yyyy}-${mm}-${dd}T00:00:00`;
+    }
+
+    function formatMultipleFields (obj, fields) {
+        fields.forEach(function (field) {
+            obj[field] = this.formatToLocalDateTimeString(obj[field]);
+        }, this);
+        return obj;
+    }
+
+    function formatDateLocal(date) {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = pad(d.getDate());
+        const month = pad(d.getMonth() + 1);
+        const year = d.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+
+    function validateAndFormat(fromDate, toDate) {
+        const formattedFrom = formatToLocalDateTimeString(fromDate);
+        const formattedTo = formatToLocalDateTimeString(toDate);
+
+        if (formattedFrom && formattedTo && formattedFrom > formattedTo) {
+            growl.error('To date should be greater than or equal to From date!', { title: 'Error!' });
+            return null;
+        }
+
+        return {
+            fromDate: formattedFrom,
+            toDate: formattedTo
+        };
+    }
+
+    return {
+        formatToLocalDateTimeString,
+        formatMultipleFields,
+        formatDateLocal,
+        validateAndFormat
+    };
+});
+
+app.factory('ReportPreviewService', function () {
+    function previewPdf(apiUrl, token) {
+        return new Promise(function (resolve, reject) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", apiUrl, true);
+            xhttp.setRequestHeader('x-aip-token', token);
+            xhttp.responseType = 'blob';
+
+            xhttp.onload = function () {
+                if (this.status === 200) {
+                    var pdfResponse = new Blob([this.response], { type: 'application/pdf' });
+                    var fileURL = URL.createObjectURL(pdfResponse);
+                    var link = document.createElement('a');
+                    link.href = fileURL;
+                    link.target = '_blank';
+                    link.click();
+                    resolve();
+                } else {
+                    reject("Failed to preview report. Status: " + this.status);
+                }
+            };
+
+            xhttp.onerror = function () {
+                reject("Network error occurred while previewing report.");
+            };
+
+            xhttp.send();
+        });
+    }
+
+    return {
+        previewPdf
+    };
+});
+
+

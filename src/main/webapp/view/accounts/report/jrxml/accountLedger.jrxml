@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="accountLedger" pageWidth="595" pageHeight="842" columnWidth="523" leftMargin="54" rightMargin="18" topMargin="20" bottomMargin="20" uuid="088c4dcb-3454-47b9-abd2-0da7cb6f48cd">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -39,7 +40,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[Balance]]></text>
@@ -53,7 +54,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[  Credit]]></text>
@@ -67,7 +68,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[Particulars]]></text>
@@ -95,7 +96,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[  Voucher No]]></text>
@@ -109,7 +110,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[Posting Date]]></text>
@@ -123,7 +124,7 @@
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[  Debit]]></text>
@@ -181,7 +182,7 @@
 				<textFieldExpression><![CDATA[$P{organizationName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="19" width="520" height="15" uuid="02d30531-d56b-4ac7-b4cb-31732e401c95"/>
+				<reportElement x="2" y="19" width="520" height="15" uuid="02d30531-d56b-4ac7-b4cb-31732e401c95"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
@@ -190,12 +191,12 @@
 		</band>
 	</title>
 	<detail>
-		<band height="16" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="65" y="1" width="82" height="15" uuid="b9ffd3b1-6f47-4eca-a30b-8953673becce"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="65" y="0" width="82" height="15" uuid="b9ffd3b1-6f47-4eca-a30b-8953673becce"/>
 				<box leftPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -205,11 +206,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{voucherNo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="147" y="1" width="144" height="15" isPrintWhenDetailOverflows="true" uuid="40bf6c9f-164d-4ee5-850d-ea3840faee5d"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="147" y="0" width="144" height="15" isPrintWhenDetailOverflows="true" uuid="40bf6c9f-164d-4ee5-850d-ea3840faee5d"/>
 				<box leftPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -219,11 +220,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{particulars}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="291" y="1" width="74" height="15" uuid="db03b694-b6d1-4a12-9d76-c43bf864ec52"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="291" y="0" width="74" height="15" uuid="db03b694-b6d1-4a12-9d76-c43bf864ec52"/>
 				<box rightPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -233,11 +234,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{debitAmount}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="365" y="1" width="74" height="15" uuid="16214f58-f193-4cb8-ba97-71cedcbbb4a0"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="365" y="0" width="74" height="15" uuid="16214f58-f193-4cb8-ba97-71cedcbbb4a0"/>
 				<box rightPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -247,11 +248,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{creditAmount}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="439" y="1" width="83" height="15" uuid="c1f0f957-5835-429d-958e-32908e558e31"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00;(###0.00)" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="439" y="0" width="83" height="15" uuid="c1f0f957-5835-429d-958e-32908e558e31"/>
 				<box rightPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -262,10 +263,10 @@
 				<textFieldExpression><![CDATA[$F{balanceAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MM-yyyy">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="2" y="1" width="63" height="15" uuid="486ce45b-f7f2-4799-8e76-f6642ea3ded6"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="2" y="0" width="63" height="15" uuid="486ce45b-f7f2-4799-8e76-f6642ea3ded6"/>
 				<box leftPadding="4">
 					<pen lineWidth="0.25" lineStyle="Dashed"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -278,7 +279,7 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="54" splitType="Stretch">
+		<band height="52" splitType="Stretch">
 			<textField>
 				<reportElement x="423" y="38" width="77" height="14" uuid="ee06ea16-9bef-448c-ac43-547e64730b87"/>
 				<textElement textAlignment="Right">
@@ -312,7 +313,7 @@
 	</pageFooter>
 	<lastPageFooter>
 		<band height="50" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="439" y="36" width="49" height="14" uuid="a1a12cd8-905d-4665-b7ca-0f92b54f94a4"/>
 				<box leftPadding="0" rightPadding="0"/>
 				<textElement textAlignment="Right">
@@ -320,7 +321,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Page  "+$V{PAGE_NUMBER}+"   of"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" evaluationTime="Report">
+			<textField textAdjust="StretchHeight" evaluationTime="Report">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="488" y="36" width="32" height="14" uuid="bd1a62a6-c47f-4d5e-a3c0-3b421d9c525c"/>
 				<box leftPadding="4" rightPadding="0"/>
 				<textElement>
@@ -351,7 +352,7 @@
 				<reportElement x="2" y="0" width="289" height="16" uuid="a554bfc6-4b4a-4c00-9a48-fd8764ad055b"/>
 				<box>
 					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
 					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -365,10 +366,10 @@
 				<reportElement x="291" y="0" width="74" height="16" uuid="eba2b706-d84e-4bb2-896b-8a8e8c277f27"/>
 				<box bottomPadding="0" rightPadding="4">
 					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
@@ -379,10 +380,10 @@
 				<reportElement x="365" y="0" width="74" height="16" uuid="875052e2-d6e3-4bfe-bd6d-c5c74e954552"/>
 				<box bottomPadding="0" rightPadding="4">
 					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>

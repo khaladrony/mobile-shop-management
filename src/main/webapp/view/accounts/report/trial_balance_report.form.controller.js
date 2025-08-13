@@ -1,4 +1,8 @@
-app.controller('AccReportTrialBalanceFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, Communication, growl) {
+app.controller('AccReportTrialBalanceFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope, $sce,
+            $mdDialog, $interval, ClientService, DialogBox, Communication, growl,
+            DateHelperService, ReportPreviewService
+            ) {
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
 
@@ -7,8 +11,6 @@ app.controller('AccReportTrialBalanceFormCtrl', function ($scope, $http, $state,
     };
 
     $scope.formFieldValidation = function () {
-        var asOnDate = new Date($scope.search.asOnDate);
-
         if ($scope.search.asOnDate === '') {
             growl.error('As on date required', {title: 'Error!'});
             return false;
@@ -22,7 +24,20 @@ app.controller('AccReportTrialBalanceFormCtrl', function ($scope, $http, $state,
             return;
         }
 
-        var xhttp = new XMLHttpRequest();
+        const formattedDate = DateHelperService.formatDateLocal($scope.search.asOnDate);
+
+        var reportUrl = API.ACC_REPORT_TRIAL_BALANCE + '/' + formattedDate;
+        var token = _shskr_;
+
+        ReportPreviewService.previewPdf(reportUrl, token)
+            .then(function () {
+                console.log("PDF opened successfully.");
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        /*var xhttp = new XMLHttpRequest();
         xhttp.open("GET", API.ACC_REPORT_TRIAL_BALANCE + '/' + $scope.search.asOnDate , true);
         xhttp.setRequestHeader('x-aip-token', _shskr_);
         xhttp.responseType = 'blob';
@@ -36,7 +51,7 @@ app.controller('AccReportTrialBalanceFormCtrl', function ($scope, $http, $state,
                 link.click();
             }
         };
-        xhttp.send();
+        xhttp.send();*/
     };
 
 

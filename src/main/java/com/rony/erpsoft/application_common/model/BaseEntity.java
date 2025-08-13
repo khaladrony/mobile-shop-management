@@ -1,11 +1,13 @@
 package com.rony.erpsoft.application_common.model;
 
+import com.rony.erpsoft.configuration.security.SessionContext;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +29,8 @@ public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Column(name = "organization_id")
     private Long organizationId;
     
     @CreatedBy
@@ -45,4 +48,9 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name="updated_on")
     private LocalDateTime updatedOn;
+
+    @PrePersist
+    public void prePersist() {
+        this.organizationId = SessionContext.getOrganizationId();
+    }
 }

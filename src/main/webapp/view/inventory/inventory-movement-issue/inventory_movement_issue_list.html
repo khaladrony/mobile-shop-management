@@ -1,0 +1,148 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<style type="text/css">
+    table>tbody>tr>td{
+        padding: 3px !important;
+    }
+</style>
+<div class="row" ng-init="doFilter(1, itemPerPage)">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="filter-area">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10">
+
+                    <div class="input-group width170 date" id="fromDate" style="float: left; margin-right: 8px;">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="From Date"
+                               ng-model="fromDate"
+                               formatted-date-picker />
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                        </span>
+                    </div>
+
+                    <div class="input-group width170 date" id="toDate" style="float: left; margin-right: 8px;">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="To Date"
+                               ng-model="toDate"
+                               formatted-date-picker />
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                        </span>
+                    </div>
+
+                    <div class="input-group width200" style="float: left; margin-right: 8px;">
+                        <autocomplete ng-model="search.transactionId"
+                                      fetch-suggestions="getTransactionSuggestions(query)"
+                                      placeholder="Transaction No">
+                        </autocomplete>
+                        <span class="input-group-addon">
+                            <i class="fa fa-search" style="position: initial; top: 10px; left: 10px; color: gray;"></i>
+                        </span>
+                    </div>
+
+                    <div class="input-group width110"  style="float: left; margin-right: 8px;">
+                        <appcode-dropdown type="Inventory Status" model="search.status"></appcode-dropdown>
+                    </div>
+
+                    <div class="input-group width110" style="float: left; margin-right: 8px;">
+                        <div class="btn-group" style="float: right;">
+                            <button ng-click="doFilter(1, itemPerPage)" class="btn btn-warning btn-sm" title="Filter now">
+                                <i class="icon fa fa-search"></i> Filter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-2 col-lg-2">
+                    <div class="pull-right">
+                        <a class="btn btn-sm btn-success" ui-sref="{{JCOMPONENT.inventory_movement_issue_add_view}}">
+                            <i class="ace-icon fa fa-plus"></i> Issue Create
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Transaction No <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionId'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th>Transaction Date <button class="btn btn-sort pull-right" ng-click="orderByField = 'transactionDate'; reverseSort = !reverseSort"><i class="fa fa-sort" aria-hidden="true"></i></button></th>
+                        <th>warehouse</th>
+                        <th>Remarks</th>
+                        <th class="text-center">Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat-start="master in data.items track by $index"
+                        ng-click="toggleDetails(master)"
+                        ng-class="{'success': master.showDetails}"
+                        style="cursor: pointer;">
+                        <td style="width: 150px;text-align: center;">
+                            <i class="fa" ng-class="{'fa-chevron-down': master.showDetails, 'fa-chevron-right': !master.showDetails}"></i>
+                            {{master.transactionId}}
+                        </td>
+                        <td style="width: 170px;text-align: center;">{{master.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                        <td style="width: 190px;text-align: left;">{{master.warehouse}}</td>
+                        <td>{{master.remarks}}</td>
+                        <td style="width: 140px;text-align: center;">{{master.status}}</td>
+                        <td style="width: 170px;text-align: center;">
+                            <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="$event.stopPropagation(); showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
+                            <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="$event.stopPropagation(); preview(master.id)"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
+                        </td>
+                    </tr>
+
+                    <tr ng-repeat-end ng-show="master.showDetails">
+                        <td colspan="6" style="text-align: center;">
+                            <div class="fixed-width-div">
+                                <table class="table table-sm table-striped table-bordered mb-0">
+                                    <thead class="bg-secondary text-white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Item Name & Code</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Unit</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="detail in master.details track by $index">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td class="text-left">{{ detail.itemNameCode }}</td>
+                                        <td>{{ detail.rate }}</td>
+                                        <td>{{ detail.quantity }}</td>
+                                        <td>{{ detail.unit || 'pcs' }}</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr style="font-weight:bold">
+                                        <td></td>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td align='center'><strong>{{ getItemDetailsTotalQty(master) }}</strong></td>
+                                        <td></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="data.items.length===0">
+                        <td colspan="7" class="text-center"><h3>No transaction found!!!</h3></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+            </div>
+        </div>
+
+    </div>
+</div>

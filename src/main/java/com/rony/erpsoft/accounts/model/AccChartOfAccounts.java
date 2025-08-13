@@ -37,7 +37,7 @@ public class AccChartOfAccounts implements Serializable {
 
     @NotNull(message = "Accounts type cannot be null")
     @Column(name="accounts_type")
-    private String accountsType;    //Asset,Liability,Expenditure,Income
+    private String accountsType;    //Asset,Liability,Equity,Expenditure,Income
     @NotNull(message = "Accounts usage cannot be null")
     @Column(name="accounts_usage")
     private String accountsUsage;   //Cash,Bank,Ledger,AP,AR

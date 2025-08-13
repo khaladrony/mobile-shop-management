@@ -3,7 +3,8 @@ var JCONTROLLER = {
     BANK_INFO:"bank_info",
     SUPPLIER_INFO:"supplier_info",
     CUSTOMER_INFO:"customer_info",
-    EMPLOYEE_INFO:"employee_info"
+    EMPLOYEE_INFO:"employee_info",
+    APP_CODES:"app_codes"
 
 };
 var JCOMPONENT = {
@@ -21,7 +22,11 @@ var JCOMPONENT = {
 
     employee_info_add_view: "employee_info_add_view",
     employee_info_update_view: "employee_info_update_view",
-    employee_info_list_view: "employee_info_list_view"
+    employee_info_list_view: "employee_info_list_view",
+
+    app_codes_add_view: "app_codes_add_view",
+    app_codes_update_view: "app_codes_update_view",
+    app_codes_list_view: "app_codes_list_view"
 };
 
 var API = {
@@ -49,4 +54,9 @@ var API = {
     EMPLOYEE_INFO_FILTER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.EMPLOYEE_INFO + "/filter",
     EMPLOYEE_LIST: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.EMPLOYEE_INFO + "/get/list",
 
+    APP_CODES_SAVE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.APP_CODES + "/save",
+    APP_CODES_UPDATE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.APP_CODES + "/update",
+    APP_CODES_GET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.APP_CODES + "/get",
+    APP_CODES_FILTER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.APP_CODES + "/filter",
+    APP_CODES_ALL: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.APP_CODES
 };

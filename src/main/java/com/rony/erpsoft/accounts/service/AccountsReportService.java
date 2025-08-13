@@ -1,19 +1,23 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.AccDefaultSetupDTO;
+import com.rony.erpsoft.accounts.dto.FinancialAccountDto;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
-import com.rony.erpsoft.accounts.model.AccDefaultSetup;
 import com.rony.erpsoft.accounts.model.AccLedgerDto;
 import com.rony.erpsoft.accounts.model.enums.AccountsSource;
 import com.rony.erpsoft.accounts.model.enums.AccountsUsage;
 import com.rony.erpsoft.accounts.model.enums.PaymentType;
 import com.rony.erpsoft.accounts.model.enums.VoucherType;
-import com.rony.erpsoft.accounts.repo.AccDefaultSetupRepo;
 import com.rony.erpsoft.user_auth.model.Organization;
 import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.NumberToBanglaTaka;
 import jakarta.servlet.http.HttpServletRequest;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +28,16 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.rony.erpsoft.utils.ApplicationConstants.ACCOUNTS_SUB_TYPE_BALANCE_SHEET;
+import static com.rony.erpsoft.utils.ApplicationConstants.ACCOUNTS_SUB_TYPE_REVENUE;
 
 @Service
 public class AccountsReportService {
@@ -47,7 +55,7 @@ public class AccountsReportService {
     @Autowired
     SessionService sessionService;
     @Autowired
-    AccDefaultSetupRepo accDefaultSetupRepo;
+    AccDefaultSetupService accDefaultSetupService;
 
     public static final String ACCOUNT_REPORTS_DIR = "/view/accounts/report/jrxml/";
 
@@ -56,7 +64,7 @@ public class AccountsReportService {
         try {
 
             String fileName = "voucherViewA5";
-            AccDefaultSetup accDefaultSetup = accDefaultSetupRepo.findById((long) 1);
+            AccDefaultSetupDTO accDefaultSetup = accDefaultSetupService.findByOrganizationId();
             if (accDefaultSetup != null && accDefaultSetup.getVoucherPrintView().equalsIgnoreCase("A4")) {
                 fileName = "voucherView";
             } else if (accDefaultSetup != null && accDefaultSetup.getVoucherPrintView().equalsIgnoreCase("A5")) {
@@ -130,7 +138,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Voucher preview report: " + e.getMessage());
+            logger.info("Account ledger report: {}", e.getMessage());
             return null;
         }
     }
@@ -143,6 +151,14 @@ public class AccountsReportService {
             List<AccLedgerDto> accountWiseLedgerData = accJournalMasterService.getSubAccountWiseLedger(fromDate, toDate, chartOfAccountsId, subAccountsId, accountsSource, accountsUsage);
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(accountWiseLedgerData);
 
+            double totalBalance = accountWiseLedgerData
+                    .stream()
+                    .mapToDouble(dto ->
+                            "Opening Balance :".equals(dto.getVoucherNo())
+                                    ? dto.getBalanceAmount()
+                                    : dto.getPrimeAmount()
+                    )
+                    .sum();
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("chartOfAccountsId", chartOfAccountsId);
@@ -151,6 +167,7 @@ public class AccountsReportService {
             parameters.put("accheadcodeparam", chartOfAccountsCodeName);
             parameters.put("organizationName", organization.getName());
             parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("totalBalance", totalBalance);
 
             String reportName = "Sub Account Ledger Report";
             String groupTitle = "Sub Account: ";
@@ -173,7 +190,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Voucher preview report: " + e.getMessage());
+            logger.info("Sub account ledger report: {}", e.getMessage());
             return null;
         }
     }
@@ -195,7 +212,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Trial balance report: " + e.getMessage());
+            logger.info("Trial balance report: {}", e.getMessage());
             return null;
         }
     }
@@ -216,7 +233,7 @@ public class AccountsReportService {
             return exportReportToPdf(dataSource, fileName, parameters);
 
         } catch (Exception e) {
-            logger.info("Chart of accounts report: " + e.getMessage());
+            logger.info("Chart of accounts report: {}", e.getMessage());
             return null;
         }
     }
@@ -226,6 +243,7 @@ public class AccountsReportService {
 
         try {
             URL resourceUrl = request.getSession().getServletContext().getResource(ACCOUNT_REPORTS_DIR + fileName + ".jrxml");
+            logger.info("Resource Url: {}", resourceUrl);
             File file = new File(resourceUrl.toURI());
 
             JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
@@ -241,9 +259,71 @@ public class AccountsReportService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception ex) {
-            logger.info("REPORT: " + ex.getMessage());
+            logger.info("REPORT: {}", ex.getMessage());
             return null;
         }
+    }
 
+    public ByteArrayResource getBalanceSheet(String asOnDate) {
+
+        try {
+            String fileName = "balanceSheet";
+            Organization organization = sessionService.getOrganization();
+            List<FinancialAccountDto> balanceSheetData = accJournalMasterService.getBalanceSheet(asOnDate, ACCOUNTS_SUB_TYPE_BALANCE_SHEET);
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(balanceSheetData);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("asOnDate", AppUtil.toDate(asOnDate));
+            parameters.put("organizationName", organization.getName());
+            parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("reportName", "Balance Sheet");
+            parameters.put("totalLiabilityAndEquity", getLiabilityAndEquity(balanceSheetData));
+
+            return exportReportToPdf(dataSource, fileName, parameters);
+
+        } catch (Exception e) {
+            logger.info("Balance sheet report: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private BigDecimal getLiabilityAndEquity(List<FinancialAccountDto> balanceSheetData) {
+        return balanceSheetData.stream()
+                .filter(a -> "Liability".equalsIgnoreCase(a.getAccountsType())
+                        || "Equity".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .abs();
+    }
+
+    public ByteArrayResource getIncomeStatement(String fromDate, String toDate) {
+        try {
+            String fileName = "incomeStatement";
+            Organization organization = sessionService.getOrganization();
+            List<FinancialAccountDto> incomeStatementData = accJournalMasterService.getIncomeStatement(fromDate, toDate, ACCOUNTS_SUB_TYPE_REVENUE);
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(incomeStatementData);
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("fromDate", AppUtil.toDate(fromDate));
+            parameters.put("toDate", AppUtil.toDate(toDate));
+            parameters.put("organizationName", organization.getName());
+            parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("reportName", "Income Statement");
+            parameters.put("netIncome", getNetIncome(incomeStatementData));
+
+            return exportReportToPdf(dataSource, fileName, parameters);
+
+        } catch (Exception e) {
+            logger.info("Income statement report: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private BigDecimal getNetIncome(List<FinancialAccountDto> incomeStatementData) {
+        return incomeStatementData.stream()
+                .filter(a -> "Income".equalsIgnoreCase(a.getAccountsType())
+                        || "Expenditure".equalsIgnoreCase(a.getAccountsType()))
+                .map(FinancialAccountDto::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

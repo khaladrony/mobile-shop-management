@@ -76,9 +76,46 @@ var app = angular.module('ApplicationCommonApp', ['rt.select2', 'ngPatternRestri
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/employee_info/employee_info_list.html',
             controller: 'EmployeeInfoListCtrl'
+        })
+
+        .state( JCOMPONENT.app_codes_add_view, {
+            url: '/app_codes_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.APP_CODES + '/app_codes_form.html',
+            controller: 'AppCodesFormCtrl'
+        }).state(JCOMPONENT.app_codes_update_view, {
+            url: '/app_codes_update_view/:id',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.APP_CODES + '/app_codes_form.html',
+            controller: 'AppCodesFormCtrl'
+        }).state(JCOMPONENT.app_codes_list_view, {
+            url: '/app_codes_list_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.APP_CODES + '/app_codes_list.html',
+            controller: 'AppCodesListCtrl'
         });
         
         $urlRouterProvider.otherwise('/' + JCOMPONENT.bank_info_list_view);
         
     });
-    
+
+app.run(function($transitions, $state, $timeout, growl, $rootScope) {
+
+    $transitions.onStart({}, function(transition) {
+        const toState = transition.to();
+        const module = toState.data?.module || JMODULE_NAME;
+        const component = toState.name;
+
+        if (typeof $rootScope.hasPermission === 'function') {
+            const hasAccess = $rootScope.hasPermission(module, component);
+
+            if (!hasAccess) {
+                growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
+
+                $timeout(function () {
+                    window.location.href = _baseurl_ + 'auth/login';
+                }, 1500);
+            }
+        }
+    });
+});

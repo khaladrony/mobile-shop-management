@@ -57,7 +57,7 @@ public class AccJournalMaster implements Serializable {
     @Column(name = "bank_account_id")
     private Long bankAccountId;
     @Column(name = "amount")
-    private double amount;
+    private Double amount;
     @Column(name = "posting_date")
     private Date postingDate;
 

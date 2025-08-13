@@ -1,4 +1,9 @@
-app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, encrypt, Communication,$filter,growl) {
+app.controller('AccCreditVoucherFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope, $sce,
+            $mdDialog, $interval, ClientService, DialogBox, encrypt,
+            Communication, $filter, growl, ToasterMessageQueueService, $q,
+            DateHelperService, AccountsService
+            ) {
 
     copyPasteStringRestrict('.pastedString');
     $rootScope.setPageName(JMODULE_NAME, $state.current.name);
@@ -6,12 +11,16 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
 
     $scope.table_debit_index = 3;
     $scope.table_credit_index = 4;
-    $scope.particularsDivClassVar = "col-xs-12 col-md-6";
+    $scope.particularsDivClassVar = "col-xs-12 col-md-4";
 
     $scope.coaList = [];
     $scope.subaccountList = [];
     $scope.bankList = [];
     $scope.voucher_details_list = [];
+    $scope.selectedCoa = null;
+    $scope.selectedSubCoa = null;
+    $scope.selectedBankAccount = null;
+
     $scope.cash_bank_coa_obj = {
         id: "",
         coaNameAndCode: ""
@@ -22,7 +31,7 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
         bankAccountId: "",
         voucherNo: "",
         reference: "",
-        voucherDate: "",
+        voucherDate: new Date(),
         particulars: "",
         year: "",
         month: "",
@@ -62,549 +71,275 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
 
 
     $scope.getCoaList = function () {
-        var req = Communication.request("GET", API.ACC_CHART_OF_ACCOUNTS_LIST_DROP_DOWN, {});
-        req.then(function (resp) {
-            log("Chart of accounts list: " + JSON.stringify(resp));
-
+        AccountsService.getCoaList().then(function (resp) {
             if (resp.code === 200) {
-                $scope.coaList = resp.body.filter((it) => it.accounts_usage!='Cash' && it.accounts_usage!='Bank');
-
+                $scope.coaList = resp.body.filter(it => it.accounts_usage !== 'Cash' && it.accounts_usage !== 'Bank');
                 $scope.getCashBankCoa();
             }
-
-        }, function (err) {
-            log("Chart of accounts error", JSON.stringify(err));
         });
     };
 
-    $scope.selectChartOfAccounts = function (coaId) {
+    $scope.getCashBankCoa = function () {
+        return AccountsService.getCashBankCoa($scope.voucher_details.chartOfAccountsUsage)
+            .then(function (resp) {
+                if (resp.code === 200) {
+                    $scope.cash_bank_coa_obj.id = resp.body.id;
+                    $scope.cash_bank_coa_obj.coaNameAndCode = resp.body.coa_code_name;
+                }
+            });
+    };
 
+    $scope.getSubAccountList = function (accountsSource, chartOfAccountsId) {
+        return AccountsService.getSubAccountList(accountsSource, chartOfAccountsId)
+            .then(function (resp) {
+                if (resp.code === 200) {
+                    $scope.selectedSubCoa = null;
+                    $scope.subaccountList = resp.body;
+                }
+            });
+    };
+
+    $scope.getBankAccountList = function () {
+        AccountsService.getBankAccountList().then(function (resp) {
+            if (resp.code === 200) {
+                $scope.bankAccountList = resp.body;
+            }
+        });
+    };
+
+    $scope.fetchChartOfAccounts = function(params) {
+        return AccountsService.fetchPaginatedData($scope.coaList, params, 'coa_code_name');
+    };
+
+    $scope.fetchSubAccounts = function(params) {
+        return AccountsService.fetchPaginatedData($scope.subaccountList, params, 'name');
+    };
+
+    $scope.fetchBankAccount = function(params) {
+        return AccountsService.fetchPaginatedData($scope.bankAccountList, params, 'name');
+    };
+
+    $scope.onChartOfAccountsChange = function (coa) {
         $scope.subaccountList = [];
-        var chartOfAccountsObj =  $scope.coaList.filter(item => item.id === coaId);
-        $scope.voucher_details.chartOfAccountsSource = chartOfAccountsObj[0].accounts_source;
-        if (chartOfAccountsObj.length > 0 && $scope.voucher_details.chartOfAccountsSource != 'None') {
+
+        var chartOfAccountsObj =  $scope.coaList.find(item => item.id === coa.id);
+        $scope.voucher_details.chartOfAccountsId = chartOfAccountsObj.id;
+        $scope.voucher_details.chartOfAccountsSource = chartOfAccountsObj.accounts_source;
+        if (chartOfAccountsObj  && $scope.voucher_details.chartOfAccountsSource != 'None') {
             $scope.isSubAccHide = false;
-            $scope.getSubAccountList($scope.voucher_details.chartOfAccountsSource, coaId);
-            $scope.particularsDivClassVar = "col-xs-12 col-md-3";
+
+            AccountsService.getSubAccountList(chartOfAccountsObj.accounts_source, coa.id)
+                .then(function (resp) {
+                    if (resp.code === 200) {
+                        $scope.subaccountList = resp.body;
+                        $scope.selectedSubCoa = null;
+                    }
+                });
         } else {
             $scope.isSubAccHide = true;
-            $scope.particularsDivClassVar = "col-xs-12 col-md-6";
+            $scope.particularsDivClassVar = "col-xs-12 col-md-4";
             $scope.voucher_details.subAccountsId = $scope.subaccountList[0];
         }
     };
 
-    $scope.getSubAccountList = function (accountsSource, chartOfAccountsId) {
+    $scope.onBankAccountChange = function (bankAccount) {
+        $scope.module.bankAccountId = bankAccount.id;
 
-        var req = Communication.request("GET", API.ACC_GET_SUB_ACCOUNTS_LIST + '/' + accountsSource + '/' + chartOfAccountsId, {});
-        req.then(function (resp) {
-            log("Sub account list: " + JSON.stringify(resp));
+        if($scope.module.details.length > 0) {
+            const details = $scope.module.details[0];
+            details.subAccountsId = bankAccount.id;
+            details.subAccountsCodeName = bankAccount.name;
 
-            if (resp.code === 200) {
-                $scope.subaccountList = resp.body;
-            }
-
-        }, function (err) {
-            log("Sub account list error", JSON.stringify(err));
-        });
-    };
-
-    $scope.getBankAccountList = function () {
-
-        var req = Communication.request("GET", API.BANK_ACCOUNT_LIST, {});
-        req.then(function (resp) {
-            log("bank account list: " + JSON.stringify(resp));
-
-            if (resp.code === 200) {
-                $scope.bankAccountList = resp.body;
-            }
-
-        }, function (err) {
-            log("Bank account list error", JSON.stringify(err));
-        });
-    };
+            $scope.voucher_details_list[0] = angular.copy(details);
+        }
+    }
 
     $scope.selectPaymentType = function (pay_typ) {
-
         $scope.voucher_details.chartOfAccountsUsage = pay_typ;
-        $scope.reset();
 
-        if (pay_typ === VOUCHER_KEY.PAYMENT_TYPE.BANK) {
-            $scope.isBankHide = false;
-            $scope.getBankAccountList();
-        } else {
-            $scope.isBankHide = true;
-        }
-        $scope.getCashBankCoa();
-    };
+        $scope.getCashBankCoa(pay_typ).then(function () {
+            $scope.isBankHide = (pay_typ !== VOUCHER_KEY.PAYMENT_TYPE.BANK);
 
-    $scope.getCashBankCoa = function () {
-        var req = Communication.request("GET", API.ACC_CHART_OF_ACCOUNTS_BY_USAGES_TYPE + '/' + $scope.voucher_details.chartOfAccountsUsage);
-        req.then(function (resp) {
-            log("Chart of accounts by usage type: " + JSON.stringify(resp));
-
-            if (resp.code === 200) {
-                $scope.cash_bank_coa_obj.id = resp.body.id;
-                $scope.cash_bank_coa_obj.coaNameAndCode = resp.body.coa_code_name;
+            if (pay_typ === VOUCHER_KEY.PAYMENT_TYPE.BANK) {
+                $scope.getBankAccountList();
             }
 
-        }, function (err) {
-            log("Chart of accounts by usage type error", JSON.stringify(err));
+            if ($scope.module.details.length > 0) {
+                const details = $scope.module.details[0];
+
+                // Always set these
+                details.chartOfAccountsId = $scope.cash_bank_coa_obj.id;
+                details.chartOfAccountsCodeName = $scope.cash_bank_coa_obj.coaNameAndCode;
+
+                // Conditionally set sub-account
+                if (pay_typ === VOUCHER_KEY.PAYMENT_TYPE.BANK && $scope.selectedBankAccount) {
+                    details.subAccountsId = $scope.selectedBankAccount.id;
+                    details.subAccountsCodeName = $scope.selectedBankAccount.name;
+                } else {
+                    details.subAccountsId = '';
+                    details.subAccountsCodeName = '';
+                    $scope.module.chequeNo = "";
+                    $scope.module.chequeDate = "";
+                }
+
+                // Reflect update in voucher_details_list[0]
+                if ($scope.voucher_details_list.length > 0) {
+                    $scope.voucher_details_list[0] = angular.copy(details);
+                }
+            }
         });
     };
 
     $scope.addToGrid = function () {
+        if (!$scope.gridDataValidation()) return;
 
-        if (!$scope.gridDataValidation()) {
-            return;
-        }
-
-        $scope.gridObj();
-
-        $scope.voucherObj();
-
-        $scope.amountInWords();
-
-        $scope.clearTaxBox();
-
+        $scope.addGridEntries();
+        $scope.addVoucherEntries();
+        $scope.updateAmountInWords();
+        $scope.clearVoucherInputFields();
     };
 
     $scope.gridDataValidation = function () {
-
-        if ($scope.voucher_details.chartOfAccountsId === '') {
-            growl.error('Please select chart of accounts',{title: 'Error!'});
-            return false;
-        }
-
-        var chartOfAccountsObj = $scope.coaList.filter(item => item.id === $scope.voucher_details.chartOfAccountsId);
-        $scope.voucher_details.chartOfAccountsSource = chartOfAccountsObj[0].accounts_source;
-        if (chartOfAccountsObj.length > 0 && $scope.voucher_details.chartOfAccountsSource != 'None'
-            && $scope.voucher_details.subAccountsId==='') {
-            growl.error('Please select sub-accounts',{title: 'Error!'});
-            return false;
-        }
-
-        if ($scope.voucher_details.particulars === '') {
-            growl.error('Please enter particulars',{title: 'Error!'});
-            return false;
-        }
-
-        if ($scope.voucher_details.amount === '') {
-            growl.error('Please enter amount',{title: 'Error!'});
-            return false;
-        }
-
-        return true;
+        return AccountsService.gridDataValidation(
+            $scope.voucher_details,
+            $scope.selectedCoa,
+            $scope.selectedSubCoa,
+            growl
+        );
     };
 
-
-    $scope.gridObj = function () {
-
-        $scope.gridCashBankObj();
-
-        $scope.gridNonCashBankObj();
-    };
-
-    $scope.voucherObj = function () {
-
-        $scope.voucherCashBankObj();
-
-        $scope.voucherNonCashBankObj();
-
-    };
-
-    $scope.gridCashBankObj = function () {
-        var details = [];
+    $scope.addGridEntries = function () {
+        const data = {
+            paymentType: $scope.module.paymentType,
+            cash_bank_coa_obj: $scope.cash_bank_coa_obj,
+            selectedCoa: $scope.selectedCoa,
+            selectedSubCoa: $scope.selectedSubCoa,
+            selectedBankAccount: $scope.selectedBankAccount,
+            voucher_details: $scope.voucher_details,
+        };
 
         if ($scope.voucher_details_list.length === 0) {
-            details.chartOfAccountsId = $scope.cash_bank_coa_obj.id;
-            details.chartOfAccountsCodeName = $scope.cash_bank_coa_obj.coaNameAndCode;
-            details.particulars = $scope.module.particulars;
-            details.amount = $scope.voucher_details.amount;
-            details.primeAmount =  $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-            details.baseAmount = $scope.voucher_details.amount;
-            if($scope.module.paymentType === VOUCHER_KEY.PAYMENT_TYPE.BANK){
-                details.subAccountsId = $scope.module.bankAccountId;
-                details.subAccountsCodeName = $scope.dropDownSelectText("bankAccountId");
-            }
-
-            $scope.voucher_details_list.push(details);
-
+            $scope.voucher_details_list.push(AccountsService.createEntryObject(true, data));
         } else {
-            // $scope.amountInWords();
-        }
-    };
-
-    $scope.gridNonCashBankObj = function () {
-        var details = [];
-
-        details.chartOfAccountsId = $scope.voucher_details.chartOfAccountsId;
-        details.chartOfAccountsCodeName = $scope.dropDownSelectText("chartOfAccountsId");
-
-        if ($scope.voucher_details.subAccountsId != "" && $scope.voucher_details.subAccountsId != undefined) {
-            details.subAccountsId = $scope.voucher_details.subAccountsId;
-            details.subAccountsCodeName = $scope.dropDownSelectText("subAccountsId");
+            $scope.updateAmountInWords();
         }
 
-        details.particulars = $scope.voucher_details.particulars;
-        details.amount = $scope.voucher_details.amount;
-        details.primeAmount = (-1) * $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-        details.baseAmount = (-1) * $scope.voucher_details.amount;
-
-        $scope.voucher_details_list.push(details);
-
+        $scope.voucher_details_list.push(AccountsService.createEntryObject(false, data));
     };
 
-    $scope.voucherCashBankObj = function () {
-        var vDetails = {
-            row:"",
-            chartOfAccountsId: "",
-            chartOfAccountsCodeName: "",
-            subAccountsId: "",
-            subAccountsCodeName: "",
-            particulars: "",
-            amount: "",
-            primeAmount: "",
-            baseAmount: "",
-            currencyType: "BDT",
-            currencyRate: 1
+    $scope.addVoucherEntries = function () {
+        const data = {
+            paymentType: $scope.module.paymentType,
+            cash_bank_coa_obj: $scope.cash_bank_coa_obj,
+            selectedCoa: $scope.selectedCoa,
+            selectedSubCoa: $scope.selectedSubCoa,
+            selectedBankAccount: $scope.selectedBankAccount,
+            voucher_details: $scope.voucher_details,
+            module: $scope.module,
         };
 
         if ($scope.module.details.length === 0) {
-            vDetails.chartOfAccountsId = $scope.cash_bank_coa_obj.id;
-            vDetails.chartOfAccountsCodeName = $scope.cash_bank_coa_obj.coaNameAndCode;
-
-            if ($scope.module.paymentType === VOUCHER_KEY.PAYMENT_TYPE.BANK) {
-                vDetails.subAccountsId = $scope.module.bankAccountId;
-                vDetails.subAccountsCodeName =  $scope.dropDownSelectText("bankAccountId");
-                $scope.module.chequeStatus = VOUCHER_KEY.CHEQUE_STATUS.NOT_CLEARED;
-            }
-            vDetails.particulars = $scope.voucher_details.particulars;
-            vDetails.amount = $scope.voucher_details.amount;
-            vDetails.primeAmount = $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-            vDetails.baseAmount = $scope.voucher_details.amount;
-            vDetails.row = 1;
-            $scope.module.details.push(vDetails);
-
+            const vEntry = AccountsService.createVoucherEntryObject(true, data);
+            vEntry.row = 1;
+            $scope.module.details.push(vEntry);
             $scope.module.amount = $scope.voucher_details.amount;
         } else {
-            var creditAmount = $scope.voucherAmount();
-
-            $scope.module.details[0].amount = creditAmount;
-            $scope.module.details[0].primeAmount = creditAmount * $scope.voucher_details.currencyRate;
-            $scope.module.details[0].baseAmount = creditAmount;
+            const creditAmount = $scope.voucherAmount();
+            const vEntry = $scope.module.details[0];
+            vEntry.amount = creditAmount;
+            vEntry.primeAmount = -creditAmount * $scope.voucher_details.currencyRate;
+            vEntry.baseAmount = -creditAmount;
             $scope.module.amount = creditAmount;
         }
-    };
 
-    $scope.voucherNonCashBankObj = function () {
-        vDetails = {
-            row:"",
-            chartOfAccountsId: "",
-            chartOfAccountsCodeName: "",
-            subAccountsId: "",
-            subAccountsCodeName: "",
-            particulars: "",
-            amount: "",
-            primeAmount: "",
-            baseAmount: "",
-            currencyType: "BDT",
-            currencyRate: 1
-        };
-        vDetails.chartOfAccountsId = $scope.voucher_details.chartOfAccountsId;
-        vDetails.chartOfAccountsCodeName = $scope.dropDownSelectText("chartOfAccountsId");
-
-        if ($scope.voucher_details.subAccountsId != "" && $scope.voucher_details.subAccountsId != undefined) {
-            vDetails.subAccountsId = $scope.voucher_details.subAccountsId;
-            vDetails.subAccountsCodeName =  $scope.dropDownSelectText("subAccountsId");
-        }
-        vDetails.particulars = $scope.voucher_details.particulars;
-        vDetails.amount = $scope.voucher_details.amount;
-        vDetails.primeAmount = (-1) * $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-        vDetails.baseAmount = (-1) * $scope.voucher_details.amount;
+        const vDetails = AccountsService.createVoucherEntryObject(false, data);
         vDetails.row = $scope.module.details.length + 1;
         $scope.module.details.push(vDetails);
     };
 
-    $scope.dropDownSelectText = function (elementid) {
-        var s1 = document.getElementById(elementid);
-        var text = s1.options[s1.selectedIndex].text.substring(0);
-        return text;
+    $scope.updateAmountInWords = function () {
+        const amount = $scope.voucherAmount();
+        $("#amountInWords").val(amountToTextWithDecimal(amount));
+        $('table tfoot td').eq($scope.table_debit_index).text(amount);
+        $('table tfoot td').eq($scope.table_credit_index).text(amount);
     };
 
-    $scope.amountInWords = function () {
-        var voucherAmount = $scope.voucherAmount();
-        var amountToConvert = amountToTextWithDecimal(voucherAmount);
-        $("#amountInWords").val(amountToConvert);
-
-        $('table tfoot td').eq($scope.table_debit_index).text(voucherAmount);
-        $('table tfoot td').eq($scope.table_credit_index).text(voucherAmount);
+    $scope.clearVoucherInputFields = function () {
+        AccountsService.clearVoucherInputFields($scope);
     };
 
-    $scope.clearTaxBox = function () {
-        $scope.voucher_details.chartOfAccountsId = "";
-        $scope.voucher_details.particulars = "";
-        $scope.voucher_details.amount = "";
-        $scope.isSubAccHide = true;
-        $scope.particularsDivClassVar = "col-xs-12 col-md-6";
-    };
-
-    $scope.voucherAmount = function(){
-        var voucherAmount = $scope.voucher_details_list.reduce(function (sum, voucherDetailObj) {
-            if (voucherDetailObj.primeAmount < 0) {
-                return sum + Math.abs(voucherDetailObj.primeAmount);
-            } else {
-                return Math.abs(sum);
-            }
-        }, 0);
-
-        $scope.voucher_details_list[0].amount = voucherAmount;
-        $scope.voucher_details_list[0].primeAmount = voucherAmount * $scope.voucher_details.currencyRate;
-        $scope.voucher_details_list[0].baseAmount = voucherAmount;
-        $scope.module.amount = voucherAmount;
-
-        return voucherAmount;
+    $scope.voucherAmount = function () {
+        return AccountsService.voucherAmount(
+            $scope.voucher_details_list,
+            $scope.voucher_details.currencyRate,
+            $scope.table_debit_index,
+            $scope.table_credit_index,
+            $scope.module
+        );
     };
 
 
     $scope.saveModule = function () {
+        const isValid = AccountsService.validateVoucherBeforeSave(
+            $scope.module,
+            $scope.selectedBankAccount,
+            growl,
+            VOUCHER_KEY
+        );
 
-        if(!$scope.saveValidation()){
-            return;
-        }
+        if (!isValid) return;
 
-        var req;
-        if($state.current.name === JCOMPONENT.acc_credit_voucher_update_view){
-            req = Communication.request("PUT", API.ACC_CREDIT_VOUCHER_UPDATE, $scope.module);
-        } else{
-            req = Communication.request("POST", API.ACC_CREDIT_VOUCHER_SAVE, $scope.module);
-        }
+        //Avoid time zone
+        DateHelperService.formatMultipleFields($scope.module, ['chequeDate', 'voucherDate']);
 
-        req.then(function (resp) {
-            log("Credit voucher: " + JSON.stringify(resp));
-            if (resp.code === 200) {
-                // $scope.module = resp.body;
-                growl.success('Successfully saved',{title: 'Success!'});
-                $scope.reset();
-                $scope.module.details = [];
-                $scope.module.paymentType = VOUCHER_KEY.PAYMENT_TYPE.CASH;
+        const method = ($state.current.name === JCOMPONENT.acc_credit_voucher_update_view) ? "PUT" : "POST";
+        const url = ($state.current.name === JCOMPONENT.acc_credit_voucher_update_view) ? API.ACC_CREDIT_VOUCHER_UPDATE : API.ACC_CREDIT_VOUCHER_SAVE;
 
-                if($state.current.name === JCOMPONENT.acc_credit_voucher_update_view){
-                    $state.go(JCOMPONENT.acc_credit_voucher_list_view);
-                    $rootScope.toastSuccess("Successfully saved");
+        Communication.request(method, url, $scope.module)
+            .then(function (resp) {
+                if (resp.code === 200) {
+                    growl.success('Successfully saved',{title: 'Success!'});
+                    $scope.reset();
+                    $scope.module.details = [];
+                    $scope.module.paymentType = VOUCHER_KEY.PAYMENT_TYPE.CASH;
+
+                    if($state.current.name === JCOMPONENT.acc_credit_voucher_update_view){
+                        $state.go(JCOMPONENT.acc_credit_voucher_list_view);
+                        ToasterMessageQueueService.addMessage('success', 'Successfully updated', 'Success!');
+                    } else {
+                        growl.success('Successfully saved',{title: 'Success!'});
+                    }
+                } else{
+                    $rootScope.toastError(resp.message);
                 }
-
-            } else{
-                $rootScope.toastError(resp.message);
-            }
-        }, function (err) {
-            log("Credit voucher error", JSON.stringify(err));
-            $rootScope.toastError(err.message);
-        });
+            }, function (err) {
+                log("Credit voucher error", JSON.stringify(err));
+                $rootScope.toastError(err.message);
+            }).finally(function () {
+                AccountsService.parseDatesIfString($scope.module, ['voucherDate', 'chequeDate']);
+            });
     };
 
-    $scope.saveValidation = function () {
-        if ($scope.module.paymentType === '') {
-            growl.error('Please select payment type',{title: 'Error!'});
-            return false;
-        }
-
-        if ($scope.module.particulars === '') {
-            growl.error('Please enter particulars',{title: 'Error!'});
-            return false;
-        }
-
-        if($scope.module.paymentType === VOUCHER_KEY.PAYMENT_TYPE.BANK){
-            if ($scope.module.bankAccountId === '') {
-                growl.error('Please select bank a/c',{title: 'Error!'});
-                return false;
-            }
-            if ($scope.module.chequeNo === '') {
-                growl.error('Please enter cheque no',{title: 'Error!'});
-                return false;
-            }
-            if ($scope.module.chequeDate === '') {
-                growl.error('Please enter cheque date',{title: 'Error!'});
-                return false;
-            }
-        }
-
-        if ($scope.module.details.length === 0) {
-            growl.error('Please enter voucher details',{title: 'Error!'});
-            return false;
-        }
-
-        var voucherAmount = $scope.module.details.reduce(function (sum, voucherDetailObj) {
-            return sum + Number(voucherDetailObj.baseAmount);
-        }, 0);
-        if (voucherAmount != 0) {
-            growl.error('Debit credit amount not equal',{title: 'Error!'});
-            return false;
-        }
-
-        return true;
-    };
-
-    if($state.current.name === JCOMPONENT.acc_credit_voucher_update_view){
-
-        $scope.$watch('module.chequeDate', function (newValue) {
-            $scope.module.chequeDate = $filter('date')(newValue, 'yyyy-MM-dd');
-        });
-
-        var req = Communication.request("GET", API.ACC_CREDIT_VOUCHER_GET + '/' + $stateParams.id, $scope.module);
-        req.then(function (resp) {
-            log("voucher edit: " + JSON.stringify(resp));
-
-            if (resp.code === 200) {
-                $scope.module = resp.body;
-
-                $scope.getGridVoucherDetailsForEdit($scope.module.details);
-
-                $scope.amountInWords();
-            }
-        }, function (err) {
-            log("voucher edit error", JSON.stringify(err));
-        });
+    if ($state.current.name === JCOMPONENT.acc_credit_voucher_update_view) {
+        $scope.getBankAccountList();
+        AccountsService.loadVoucherForEdit($scope, $stateParams, Communication, API, log);
     }
 
-    $scope.getGridVoucherDetailsForEdit = function (voucherDetails) {
-
-        var details = [];
-        angular.forEach(voucherDetails, function (value, key) {
-            details.chartOfAccountsId = value.chartOfAccountsId;
-            details.chartOfAccountsCodeName = value.chartOfAccountsCodeName;
-            details.chartOfAccountsSource = value.chartOfAccountsSource;
-
-            if (value.subAccountsId != null) {
-                details.subAccountsId = value.subAccountsId;
-                details.subAccountsCodeName = value.subAccountsCodeName;
-            }
-
-            details.particulars = value.particulars;
-            details.amount = value.amount;
-            details.primeAmount = value.primeAmount;
-            details.baseAmount = value.baseAmount;
-            details.id = value.id;
-
-            $scope.voucher_details_list.push(details);
-            details = [];
-        });
-
-        if ($scope.module.paymentType === VOUCHER_KEY.PAYMENT_TYPE.BANK) {
-            $scope.isBankHide = false;
-            $scope.getBankAccountList();
-        } else {
-            $scope.isBankHide = true;
-        }
-
-    };
-
     $scope.rowDataPopulate = function (rowData, rowIndex) {
-
-        $scope.rowIndex = rowIndex;
-        $scope.detailsAddBtnHide = true;
-        $scope.detailsEditBtnHide = false;
-
-        $scope.voucher_details.chartOfAccountsId = rowData.chartOfAccountsId;
-        $scope.voucher_details.chartOfAccountsSource = rowData.chartOfAccountsSource;
-        $scope.voucher_details.particulars = rowData.particulars;
-        $scope.voucher_details.amount = rowData.amount;
-        $scope.voucher_details.id = rowData.id;
-
-        if (rowData.subAccountsId === "" || rowData.subAccountsId === undefined) {
-            $scope.isSubAccHide = true;
-            $scope.particularsDivClassVar = "col-xs-12 col-md-6";
-            $scope.voucher_details.subAccountsId = $scope.subaccountList[0];
-        } else {
-            $scope.getSubAccountList(rowData.chartOfAccountsSource, rowData.chartOfAccountsId);
-            $scope.particularsDivClassVar = "col-xs-12 col-md-3";
-            $scope.isSubAccHide = false;
-            $scope.voucher_details.subAccountsId = rowData.subAccountsId;
-        }
-
+        AccountsService.populateRowData($scope, rowData, rowIndex);
     };
 
     $scope.editToGrid = function () {
-
-        $scope.detailsAddBtnHide = false;
-        $scope.detailsEditBtnHide = true;
-        var details = [];
-
-        details.chartOfAccountsId = $scope.voucher_details.chartOfAccountsId;
-        details.chartOfAccountsCodeName = $scope.dropDownSelectText("chartOfAccountsId");
-
-        if ($scope.voucher_details.subAccountsId != "" && $scope.voucher_details.subAccountsId != undefined) {
-            details.subAccountsId = $scope.voucher_details.subAccountsId;
-            details.subAccountsCodeName = $scope.dropDownSelectText("subAccountsId");
-        }
-
-        details.particulars = $scope.voucher_details.particulars;
-        details.amount = $scope.voucher_details.amount;
-        details.primeAmount = (-1) * $scope.voucher_details.amount * $scope.voucher_details.currencyRate;
-        details.baseAmount = (-1) * $scope.voucher_details.amount;
-        details.id = $scope.voucher_details.id;
-        $scope.voucher_details_list[$scope.rowIndex] = details;
-
-
-        $scope.voucherDetailsUpdate(details);
-
-        $scope.firstRowAmountUpdate();
-
-        $scope.amountInWords(details);
-
-        $scope.clearTaxBox();
-    };
-
-    $scope.voucherDetailsUpdate = function (details) {
-        var detailsObj;
-
-        if(details.id === undefined){
-            detailsObj = $scope.module.details[$scope.rowIndex];
-        } else {
-            detailsObj = $scope.module.details.find(function (v) {
-                return v.id == $scope.voucher_details.id;
-            });
-        }
-
-        detailsObj.chartOfAccountsId = details.chartOfAccountsId;
-        detailsObj.chartOfAccountsCodeName = details.chartOfAccountsCodeName;
-        detailsObj.particulars = details.particulars;
-        if (details.subAccountsId != "" && details.subAccountsId != undefined) {
-            detailsObj.subAccountsId = details.subAccountsId;
-            detailsObj.subAccountsCodeName = details.subAccountsCodeName;
-        }
-        detailsObj.particulars = details.particulars;
-        detailsObj.amount = details.amount;
-        detailsObj.primeAmount = details.primeAmount;
-        detailsObj.baseAmount = details.baseAmount;
-
-        $scope.module.details[$scope.rowIndex] = detailsObj
-    };
-
-    $scope.firstRowAmountUpdate = function () {
-
-        var voucherAmount = $scope.voucherAmount();
-        var voucherDetailFirstRowData = $scope.module.details[0];
-        voucherDetailFirstRowData.amount = voucherAmount;
-        voucherDetailFirstRowData.primeAmount = voucherAmount * $scope.voucher_details.currencyRate;
-        voucherDetailFirstRowData.baseAmount = voucherAmount;
-
-        $scope.module.details[0] = voucherDetailFirstRowData;
+        AccountsService.updateRow($scope);
     };
 
     $scope.deleteRow = function (index) {
-
-        $scope.voucher_details_list.splice(index, 1);
-
-        $scope.module.details.splice(index, 1);
-        $scope.firstRowAmountUpdate();
-        $scope.amountInWords();
-
+        AccountsService.deleteRow($scope, index);
     };
 
     $scope.resetTable = function () {
-        var table = document.getElementById("voucher-details-table");
-
-        while (table.rows.length-1 > 1) {
+        const table = document.getElementById("voucher-details-table");
+        while (table.rows.length - 1 > 1) {
             table.deleteRow(1);
         }
     };
@@ -616,13 +351,20 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
         $scope.subaccountList = [];
         $scope.isBankHide = true;
         $scope.isSubAccHide = true;
+
+        $scope.selectedCoa = null;
+        $scope.selectedSubCoa = null;
+        $scope.selectedBankAccount = null;
+
+        $scope.module.voucherDate = new Date();
         $scope.module.particulars = "";
         $scope.module.chequeNo = "";
         $scope.module.chequeDate = "";
+        $scope.particularsDivClassVar = "col-xs-12 col-md-4";
+
         $('#amountInWords').val("");
         $('table tfoot td').eq($scope.table_debit_index).text(0);
         $('table tfoot td').eq($scope.table_credit_index).text(0);
-        $scope.particularsDivClassVar = "col-xs-12 col-md-6";
 
         $scope.getCoaList();
         $scope.resetTable();
@@ -632,7 +374,4 @@ app.controller('AccCreditVoucherFormCtrl', function ($scope, $http, $state, $tim
         $scope.module.paymentType = VOUCHER_KEY.PAYMENT_TYPE.CASH;
         $scope.reset();
     };
-
-
-
 });

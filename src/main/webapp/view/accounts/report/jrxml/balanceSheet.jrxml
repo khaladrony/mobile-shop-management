@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="balanceSheet" pageWidth="595" pageHeight="842" columnWidth="505" leftMargin="70" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b249ac90-00ac-40fc-80b2-51a30134d21c">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="organizationName" class="java.lang.String"/>
+	<parameter name="orgAddress" class="java.lang.String"/>
+	<parameter name="asOnDate" class="java.util.Date"/>
+	<parameter name="reportName" class="java.lang.String"/>
+	<parameter name="totalLiabilityAndEquity" class="java.math.BigDecimal" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="accountsType" class="java.lang.String"/>
+	<field name="accountsName" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="group1" class="java.lang.String"/>
+	<variable name="totalByType" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="totalByAccountGroup" class="java.math.BigDecimal" resetType="Group" resetGroup="accountgroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{accountsType}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="320" height="19" uuid="42ce1840-f7cb-4d35-bdd7-a376f1ce74f9"/>
+					<box leftPadding="4">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{accountsType}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<textField>
+					<reportElement x="0" y="3" width="320" height="21" uuid="4dbba720-6305-4c3e-abdd-06d71fcb1fdf"/>
+					<box leftPadding="4">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL "+$F{accountsType}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="350" y="3" width="99" height="21" uuid="f0617b2c-38d4-4286-87de-2246fd6fd8f3"/>
+					<box rightPadding="4">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="2.0" lineStyle="Double"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($V{totalByType})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="accountgroup">
+		<groupExpression><![CDATA[$F{group1}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="320" height="19" uuid="501fbfea-e664-4d5c-a26f-2d5860987d97"/>
+					<box leftPadding="12"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{group1}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="350" y="0" width="99" height="21" uuid="6a2970ea-f296-4c7d-8cdf-744b9ea2ae86"/>
+					<box rightPadding="4">
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($V{totalByAccountGroup})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="0" width="320" height="21" uuid="cb8574bd-7167-463d-8128-b5992ad512ef"/>
+					<box leftPadding="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL "+$F{group1}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="92" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="12" width="447" height="20" uuid="c534abda-9208-4be1-a7ef-b476580fdd1a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organizationName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="31" width="447" height="15" uuid="172b771a-1308-44b6-b63a-59f0879faf04"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{orgAddress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="53" width="447" height="16" uuid="f3444039-5e0b-405f-863a-5e6b9f08b8eb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial Narrow" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement positionType="FixRelativeToBottom" x="2" y="69" width="447" height="16" uuid="1348dc53-5bcf-484f-b66d-f9f66aecbb7d"/>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["As on date: " + new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{asOnDate})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField>
+				<reportElement x="350" y="1" width="99" height="18" uuid="d70f41ed-fb7d-4d68-8efe-e92384869a4b"/>
+				<box topPadding="0" bottomPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial Narrow" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($F{amount})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="1" width="300" height="18" uuid="bd3f1e13-d0a2-4c7b-8883-fb40aa4ff4e1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4cad72a2-a4fa-44f6-96aa-136a392e0a56"/>
+				</reportElement>
+				<box leftPadding="15"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial Narrow" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{accountsName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="8" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="61" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="320" height="21" uuid="770573a9-113d-4cef-b731-5246c7bb7e46"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total Liabilities And Equity".toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="99" height="21" uuid="491cf0e2-5ba0-41db-b30f-59945bc2c977"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0;(#,##0)").format($P{totalLiabilityAndEquity})]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

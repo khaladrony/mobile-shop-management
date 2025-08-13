@@ -8,7 +8,8 @@ var JCONTROLLER = {
     ACC_CHART_OF_ACCOUNTS: "chart_of_accounts",
     ACC_SUB_ACCOUNTS: "sub_accounts",
     ACC_VOUCHER_POST: "voucher_post",
-    ACC_VOUCHER_REPORT: "report"
+    ACC_VOUCHER_REPORT: "report",
+    ACC_DEFAULT_SETUP: "default-setup"
 };
 var JCOMPONENT = {
     acc_debit_voucher_add_view: "acc_debit_voucher_add_view",
@@ -40,7 +41,9 @@ var JCOMPONENT = {
     acc_report_sub_account_wise_form_view: "acc_report_sub_account_wise_form_view",
     acc_report_cus_sup_emp_wise_form_view: "acc_report_cus_sup_emp_wise_form_view",
     acc_report_bank_form_view: "acc_report_bank_form_view",
-    acc_trial_balance_form_view: "acc_trial_balance_form_view"
+    acc_trial_balance_form_view: "acc_trial_balance_form_view",
+    acc_balance_sheet_form_view: "acc_balance_sheet_form_view",
+    acc_income_statement_form_view: "acc_income_statement_form_view"
 
 
 };
@@ -67,6 +70,7 @@ var API = {
     ACC_JOURNAL_VOUCHER_LIST: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_JOURNAL_VOUCHER + "/get/voucher_list",
     ACC_JOURNAL_VOUCHER_FILTER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_JOURNAL_VOUCHER + "/filter",
     ACC_VOUCHER_REPORT_VIEW: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_JOURNAL_VOUCHER + "/report",
+    ACC_VOUCHER_DETAILS: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_JOURNAL_VOUCHER + "/voucher-details",
 
     ACC_TRANSFER_VOUCHER_SAVE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_TRANSFER_VOUCHER + "/save",
     ACC_TRANSFER_VOUCHER_UPDATE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_TRANSFER_VOUCHER + "/update",
@@ -102,9 +106,11 @@ var API = {
     ACC_REPORT_SUB_ACCOUNT_WISE_LEDGER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/sub_account_ledger",
     ACC_REPORT_CUS_SUP_EMP_WISE_LEDGER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/sub_account_type_ledger",
     ACC_REPORT_BANK_LEDGER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/bank_ledger",
-    ACC_REPORT_TRIAL_BALANCE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/trial_balance"
+    ACC_REPORT_TRIAL_BALANCE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/trial_balance",
+    ACC_REPORT_BALANCE_SHEET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/balance_sheet",
+    ACC_REPORT_INCOME_STATEMENT: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/income_statement",
 
-
+    ACC_DEFAULT_SETUP_GET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_DEFAULT_SETUP + "/organization"
 };
 
 var VOUCHER_KEY = {

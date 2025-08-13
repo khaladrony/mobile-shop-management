@@ -72,6 +72,9 @@
 <script src="${NG_SRC}/application_common/employee_info/employee_info_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/application_common/employee_info/employee_info_list.controller.js?v=${SCRIPT_VERSION}"></script>
 
+<script src="${NG_SRC}/application_common/app_codes/app_codes_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/application_common/app_codes/app_codes_list.controller.js?v=${SCRIPT_VERSION}"></script>
+
 <%@include file="../common/close_page.jsp" %>
 
 

@@ -1,4 +1,7 @@
-app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $timeout, $rootScope, $mdDialog, DialogBox, $interval, Communication,growl) {
+app.controller('AccVoucherPostingListCtrl', function (
+            $scope, $http, $state, $timeout, $rootScope, $mdDialog, DialogBox,
+            $interval, Communication, growl, AccountsService
+            ) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.voucher_status = VOUCHER_KEY.STATUS.DRAFT;
@@ -10,7 +13,7 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
         voucher_no: "",
         payment_type: "",
         status: VOUCHER_KEY.STATUS.DRAFT,
-        voucher_type: ""
+        voucher_type: null
     };
 
     //filtering table column
@@ -25,57 +28,44 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
     $scope.itemPerPage = 10;
 
     $scope.getDataList = function (currentPage, itemPerPage) {
-
-        var fromDate = new Date($scope.search.from_date);
-        var toDate = new Date($scope.search.to_date);
-
-        if( fromDate > toDate ){
-            $rootScope.toastError("To date should be greater than or equal from date!");
-            return;
-        }
-
-        $scope.currentPage = currentPage;
-        $scope.data = {};
-        $scope.data.items = [];
-        $scope.data.itemCount = 0;
-
-        DialogBox.showProgress();
-        var req = Communication.request("POST", API.ACC_VOUCHER_POSTING_FILTER + "/" + currentPage + "/" + itemPerPage, $scope.search);
-        req.then(function (resp) {
-            DialogBox.hideProgress();
-            log("Debit voucher list: " + JSON.stringify(resp));
-
-            if (resp.code === 200) {
-                $scope.data = resp.body;
-                $scope.getVoucherStatusList();
-            }
-
-        }, function (err) {
-            log("Debit voucher error", JSON.stringify(err));
-        });
+        const api = API.ACC_VOUCHER_POSTING_FILTER;
+        AccountsService.getFilteredVouchers(api, $scope.search, currentPage, itemPerPage)
+            .then(function (data) {
+                $scope.currentPage = currentPage;
+                $scope.data = data;
+            }, function (err) {
+                if (typeof err === 'string') {
+                    $rootScope.toastError(err);
+                } else {
+                    log("Posting voucher error", JSON.stringify(err));
+                }
+            });
     };
 
-    $scope.getVoucherStatusList = function () {
+    $scope.toggleDetails = function (master) {
+        master.showDetails = !master.showDetails;
 
-        $scope.voucherStatusList = [];
+        if (master.showDetails && !master.details) {
+            AccountsService.getVoucherDetails(master.id).then(function (details) {
+                master.details = details;
 
-        var req = Communication.request("GET", API.ACC_VOUCHER_STATUS_LIST, {});
-        req.then(function (resp) {
-            log("voucher status list: " + JSON.stringify(resp));
-            if (resp.code === 200) {
-                $scope.voucherStatusList = resp.body;
-            }
-        }, function (err) {
-            log("voucher status list error", JSON.stringify(err));
-        });
+                var totals = AccountsService.calculateVoucherTotals(details);
+                master.debitTotal = totals.debitTotal;
+                master.creditTotal = totals.creditTotal;
+            });
+        }
+    };
+
+    $scope.getVoucherSuggestions = function (query) {
+        return AccountsService.getVoucherNoWithStatus(
+                $scope.search.voucher_type,
+                $scope.search.status,
+                query
+                );
     };
 
     $scope.doFilter = function (currentPage, itemPerPage) {
         $scope.getDataList(currentPage, itemPerPage);
-    };
-
-    $scope.voucherCreate = function () {
-        $state.go(JCOMPONENT.acc_debit_voucher_add_view);
     };
 
     $scope.checkAll = function () {
@@ -101,6 +91,11 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
             }
         }
 
+        if (ids.size === 0) {
+            growl.error('No voucher selected!',{title: 'Error!'});
+            return;
+        }
+
         var req;
 
         req = Communication.request("POST", API.ACC_VOUCHER_POSTING,{"voucherIds":Array.from(ids)});
@@ -122,22 +117,6 @@ app.controller('AccVoucherPostingListCtrl', function ($scope, $http, $state, $ti
     };
 
     $scope.voucherPreview = function (id) {
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", API.ACC_VOUCHER_REPORT_VIEW + '/' + id, true);
-        xhttp.setRequestHeader('x-aip-token', _shskr_);
-        xhttp.responseType = 'blob';
-        xhttp.onload = function (e) {
-            if (this.status === 200) {
-                var pdfResponse = new Blob([this.response], {type: 'application/pdf'});
-                var fileURL = URL.createObjectURL(pdfResponse);
-                var link = document.createElement('a');
-                link.href = fileURL;
-                link.target = '_blank';
-                link.click();
-            }
-        };
-        xhttp.send();
+        AccountsService.previewVoucher(id);
     };
-
 });

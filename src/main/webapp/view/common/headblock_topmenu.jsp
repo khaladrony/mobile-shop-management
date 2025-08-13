@@ -12,6 +12,45 @@
 <html lang="en">
     <head>
         <%@include file="resoucelink_head.jsp" %>
+
+        <style>
+            .top-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 20px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 16px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .organization-name {
+                font-weight: 700;
+                font-size: 18px;
+            }
+            .current-date {
+                font-style: italic;
+                font-size: 15px;
+                opacity: 0.85;
+            }
+            @media (max-width: 600px) {
+                .top-bar {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .organization-name,
+                .current-date {
+                    font-size: 14px;
+                }
+            }
+            .top-bar span {
+                margin: 0 10px;
+            }
+
+            .separator {
+                margin: 0 8px;
+                font-weight: bold;
+            }
+        </style>
     </head>
 
     <body class="no-skin">
@@ -20,8 +59,11 @@
                 <div class="navbar-header pull-left">
                     <a href="${APP}/auth/launcher" class="navbar-brand">
                         <small>
-                            <i class="fa fa-server"></i>
-                            ${fn:escapeXml(APP_NAME)}
+                            <div class="top-bar">
+                                <div class="organization-name">${fn:escapeXml(ORGANIZATION_NAME)}</div>
+                                <span class="separator">|</span>
+                                <div class="current-date">${fn:escapeXml(CURRENT_DATE)}</div>
+                            </div>
                         </small>
                     </a>
 

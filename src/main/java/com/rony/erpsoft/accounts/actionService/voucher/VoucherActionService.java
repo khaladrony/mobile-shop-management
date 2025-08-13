@@ -2,17 +2,18 @@ package com.rony.erpsoft.accounts.actionService.voucher;
 
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
-import com.rony.erpsoft.accounts.model.enums.VoucherType;
 import com.rony.erpsoft.accounts.service.AccJournalMasterService;
+import com.rony.erpsoft.application_common.service.TransactionNumberConfigService;
 import com.rony.erpsoft.configuration.AppResponse;
 import com.rony.erpsoft.user_auth.service.SessionService;
-import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.ModelValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+
+import static com.rony.erpsoft.utils.ApplicationConstants.MODULE_ACCOUNTS;
 
 @Service
 public class VoucherActionService {
@@ -22,6 +23,8 @@ public class VoucherActionService {
     SessionService sessionService;
     @Autowired
     AccJournalMasterService accJournalMasterService;
+    @Autowired
+    TransactionNumberConfigService transactionNumberConfigService;
 
     public AppResponse execute(AccJournalMaster journalMaster) {
 
@@ -32,7 +35,8 @@ public class VoucherActionService {
 
                 accJournalMasterService.journalMasterPropertySet(journalMaster);
 
-                String voucherNo = accJournalMasterService.voucherNoGeneration(journalMaster.getVoucherPrefix(), journalMaster.getYear(), journalMaster.getMonth());
+//                String voucherNo = accJournalMasterService.voucherNoGeneration(journalMaster.getVoucherPrefix(), journalMaster.getYear(), journalMaster.getMonth());
+                String voucherNo = transactionNumberConfigService.generateTransactionNumber(MODULE_ACCOUNTS, journalMaster.getVoucherType(), journalMaster.getVoucherDate());
                 journalMaster.setVoucherNo(voucherNo);
 
             } else {
@@ -60,17 +64,34 @@ public class VoucherActionService {
 
         try {
 
-            if(journalMaster.getDetails().size()==0){
+            if (journalMaster.getDetails().size() == 0) {
                 return AppResponse.build(HttpStatus.NOT_ACCEPTABLE).message("Voucher details not found!");
             }
 
+            double totalDebit = 0;
+            double totalCredit = 0;
             double voucherAmount = 0;
+
             for (AccJournalDetails journalDetails : journalMaster.getDetails()) {
+                double debitAmount = journalDetails.getPrimeAmount() > 0 ? journalDetails.getPrimeAmount() : 0;
+                double creditAmount = journalDetails.getPrimeAmount() < 0 ? journalDetails.getPrimeAmount() : 0;
+
+                totalDebit = totalDebit + debitAmount;
+                totalCredit = totalCredit + creditAmount;
+
                 voucherAmount = voucherAmount + journalDetails.getPrimeAmount();
             }
 
+            // Total debit > 0 and credit > 0
+            if (totalDebit == 0 || totalCredit == 0) {
+                return AppResponse.build(HttpStatus.NOT_ACCEPTABLE)
+                        .message("Total debit and credit amounts must be greater than 0.");
+            }
+
+            // Debit and credit must balance (i.e., net = 0)
             if (voucherAmount != 0) {
-                return AppResponse.build(HttpStatus.NOT_ACCEPTABLE).message("Debit credit amount mismatch!");
+                return AppResponse.build(HttpStatus.NOT_ACCEPTABLE)
+                        .message("Debit and credit amount mismatch!");
             }
 
             return AppResponse.build(HttpStatus.NOT_ACCEPTABLE).message(modelValidator.validationMessage(journalMaster));

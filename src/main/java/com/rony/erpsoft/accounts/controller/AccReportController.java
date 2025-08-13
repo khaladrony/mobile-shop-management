@@ -3,17 +3,21 @@ package com.rony.erpsoft.accounts.controller;
 import com.rony.erpsoft.accounts.actionService.CommonActionService;
 import com.rony.erpsoft.accounts.service.AccountsReportService;
 import com.rony.erpsoft.configuration.AppProperty;
+import com.rony.erpsoft.exception.ReportNotFoundException;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.KEY;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/accounts/report")
@@ -51,7 +55,7 @@ public class AccReportController extends AppProperty {
                                                          @PathVariable("chartOfAccountsId") long chartOfAccountsId,
                                                          @PathVariable("chartOfAccountsCodeName") String chartOfAccountsCodeName) {
 
-        ByteArrayResource resource = accountsReportService.accountLedger(fromDate,toDate,chartOfAccountsId, chartOfAccountsCodeName);
+        ByteArrayResource resource = accountsReportService.accountLedger(fromDate, toDate, chartOfAccountsId, chartOfAccountsCodeName);
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
@@ -59,16 +63,15 @@ public class AccReportController extends AppProperty {
     }
 
 
-
     @RequestMapping(value = "/sub_account_ledger/{fromDate}/{toDate}/{chartOfAccountsId}/{chartOfAccountsCodeName}/{subAccountsId}/{accountsSource}", method = RequestMethod.GET)
     public ResponseEntity<Resource> subAccountLedgerPreview(@PathVariable("fromDate") String fromDate,
-                                                         @PathVariable("toDate") String toDate,
-                                                         @PathVariable("chartOfAccountsId") long chartOfAccountsId,
-                                                         @PathVariable("chartOfAccountsCodeName") String chartOfAccountsCodeName,
-                                                         @PathVariable("subAccountsId") long subAccountsId,
-                                                         @PathVariable("accountsSource") String accountsSource) {
+                                                            @PathVariable("toDate") String toDate,
+                                                            @PathVariable("chartOfAccountsId") long chartOfAccountsId,
+                                                            @PathVariable("chartOfAccountsCodeName") String chartOfAccountsCodeName,
+                                                            @PathVariable("subAccountsId") long subAccountsId,
+                                                            @PathVariable("accountsSource") String accountsSource) {
 
-        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate,toDate,chartOfAccountsId, chartOfAccountsCodeName, subAccountsId, accountsSource, "");
+        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate, toDate, chartOfAccountsId, chartOfAccountsCodeName, subAccountsId, accountsSource, "");
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
@@ -77,11 +80,11 @@ public class AccReportController extends AppProperty {
 
     @RequestMapping(value = "/sub_account_type_ledger/{fromDate}/{toDate}/{subAccountsId}/{accountsSource}", method = RequestMethod.GET)
     public ResponseEntity<Resource> subAccountTypeWiseLedgerPreview(@PathVariable("fromDate") String fromDate,
-                                                         @PathVariable("toDate") String toDate,
-                                                         @PathVariable("subAccountsId") long subAccountsId,
-                                                         @PathVariable("accountsSource") String accountsSource) {
+                                                                    @PathVariable("toDate") String toDate,
+                                                                    @PathVariable("subAccountsId") long subAccountsId,
+                                                                    @PathVariable("accountsSource") String accountsSource) {
 
-        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate,toDate,0,"",subAccountsId, accountsSource, "");
+        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate, toDate, 0, "", subAccountsId, accountsSource, "");
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
@@ -90,13 +93,13 @@ public class AccReportController extends AppProperty {
 
     @RequestMapping(value = "/bank_ledger/{fromDate}/{toDate}/{chartOfAccountsId}/{bankAccountId}/{accountsUsage}/{accountsSource}", method = RequestMethod.GET)
     public ResponseEntity<Resource> bankLedgerPreview(@PathVariable("fromDate") String fromDate,
-                                                         @PathVariable("toDate") String toDate,
-                                                         @PathVariable("chartOfAccountsId") long chartOfAccountsId,
-                                                         @PathVariable("bankAccountId") long subAccountsId,
-                                                         @PathVariable("accountsUsage") String accountsUsage,
-                                                         @PathVariable("accountsSource") String accountsSource) {
+                                                      @PathVariable("toDate") String toDate,
+                                                      @PathVariable("chartOfAccountsId") long chartOfAccountsId,
+                                                      @PathVariable("bankAccountId") long subAccountsId,
+                                                      @PathVariable("accountsUsage") String accountsUsage,
+                                                      @PathVariable("accountsSource") String accountsSource) {
 
-        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate,toDate,chartOfAccountsId,"",subAccountsId, accountsSource, accountsUsage);
+        ByteArrayResource resource = accountsReportService.subAccountLedger(fromDate, toDate, chartOfAccountsId, "", subAccountsId, accountsSource, accountsUsage);
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
@@ -110,6 +113,37 @@ public class AccReportController extends AppProperty {
 
         String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
 
+        return commonActionService.reportHeader(fileName, resource);
+    }
+
+    @GetMapping(value = "/balance_sheet/{asOnDate}")
+    public ResponseEntity<Resource> balanceSheetPreview(
+            @PathVariable("asOnDate") String asOnDate
+    ) {
+
+        ByteArrayResource resource = accountsReportService.getBalanceSheet(asOnDate);
+
+        if (resource == null) {
+            throw new ReportNotFoundException("Balance sheet not found for date: " + asOnDate);
+        }
+
+        String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
+        return commonActionService.reportHeader(fileName, resource);
+    }
+
+    @GetMapping(value = "/income_statement/{fromDate}/{toDate}")
+    public ResponseEntity<Resource> incomeStatementPreview(
+            @PathVariable("fromDate") String fromDate,
+            @PathVariable("toDate") String toDate
+    ) {
+
+        ByteArrayResource resource = accountsReportService.getIncomeStatement(fromDate, toDate);
+
+        if (resource == null) {
+            throw new ReportNotFoundException("Income statement not found from date: " + fromDate + " to " + toDate);
+        }
+
+        String fileName = AppUtil.getStringBetweenTwoCharacters(resource.getDescription());
         return commonActionService.reportHeader(fileName, resource);
     }
 }

@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="inventoryItemLedger" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="40" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7920d24a-7aa9-4d2e-b66f-64bb4e5531e3">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="erpsoft/DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="from_date" class="java.util.Date"/>
+	<parameter name="to_date" class="java.util.Date"/>
+	<parameter name="organization_name" class="java.lang.String"/>
+	<parameter name="organization_address" class="java.lang.String"/>
+	<parameter name="report_title" class="java.lang.String"/>
+	<parameter name="report_type" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="warehouse" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="transactionDate" class="java.time.LocalDateTime">
+		<property name="com.jaspersoft.studio.field.name" value="transaction_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="transaction_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="inventory_transaction"/>
+	</field>
+	<field name="documentNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="document_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="document_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="inventory_transaction"/>
+	</field>
+	<field name="itemNameCode" class="java.lang.String"/>
+	<field name="receiveQty" class="java.math.BigDecimal"/>
+	<field name="closingQty" class="java.math.BigDecimal"/>
+	<field name="openingQty" class="java.math.BigDecimal"/>
+	<field name="issueQty" class="java.math.BigDecimal"/>
+	<sortField name="itemNameCode"/>
+	<sortField name="transactionDate"/>
+	<variable name="opening" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{openingQty}]]></variableExpression>
+	</variable>
+	<variable name="receive_qty" class="java.math.BigDecimal" resetType="Group" resetGroup="item">
+		<variableExpression><![CDATA[$F{receiveQty}]]></variableExpression>
+	</variable>
+	<variable name="issue_qty" class="java.math.BigDecimal" resetType="Group" resetGroup="item">
+		<variableExpression><![CDATA[$F{issueQty}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_receive" class="java.math.BigDecimal" resetType="Group" resetGroup="item" calculation="Sum">
+		<variableExpression><![CDATA[$F{receiveQty}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_issue" class="java.math.BigDecimal" resetType="Group" resetGroup="item" calculation="Sum">
+		<variableExpression><![CDATA[$F{issueQty}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_closing" class="java.math.BigDecimal" resetType="Group" resetGroup="item">
+		<variableExpression><![CDATA[$F{closingQty}]]></variableExpression>
+	</variable>
+	<variable name="closing" class="java.math.BigDecimal" resetType="Group" resetGroup="item">
+		<variableExpression><![CDATA[$F{openingQty}.add($F{receiveQty}.subtract($F{issueQty}))]]></variableExpression>
+	</variable>
+	<variable name="sub_total_opening" class="java.math.BigDecimal" resetType="Group" resetGroup="item" calculation="Sum">
+		<variableExpression><![CDATA[$F{openingQty}]]></variableExpression>
+	</variable>
+	<group name="item">
+		<groupExpression><![CDATA[$F{itemNameCode}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField>
+					<reportElement x="0" y="0" width="520" height="17" backcolor="#FFFFFF" uuid="2088d68d-7190-47b9-852f-12212f92bb56"/>
+					<box padding="3">
+						<pen lineWidth="1.0" lineStyle="Dotted" lineColor="#E5E4E4"/>
+						<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					</box>
+					<textElement>
+						<font fontName="Arial Narrow" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{itemNameCode}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField>
+					<reportElement x="250" y="-1" width="90" height="17" uuid="7e4680d8-6410-4893-a207-fd05ab9456ff"/>
+					<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+						<topPen lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial Narrow" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_receive}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{sub_total_receive}.toString() 
+    : ""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="340" y="-1" width="90" height="17" uuid="22dd2f3f-fd3c-4770-96dc-5143579ebbcc"/>
+					<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+						<topPen lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial Narrow" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_issue}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{sub_total_issue}.toString() 
+    : ""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="430" y="-1" width="90" height="17" uuid="62f0002d-5b9e-4de3-9092-c01b1e139de0"/>
+					<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+						<topPen lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial Narrow" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_closing}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{sub_total_closing}.toString() 
+    : ""]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="-1" width="250" height="17" uuid="967701ce-1c36-40cc-9e79-8babfbecb53d">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box padding="3">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted" lineColor="#FFFFFF"/>
+						<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+						<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial Narrow" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="128" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="520" height="20" uuid="bf9f7dc6-96f6-43ec-9742-c8fbe956e5b8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organization_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="520" height="20" uuid="1534f579-4dea-4b13-a222-471e3ba09330"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{organization_address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="520" height="20" uuid="c470418f-4cc7-430b-abd3-85c8f126a0ff"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{report_title}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="0" y="60" width="520" height="19" uuid="7d907b16-5f4d-4f09-9397-58419b86b327"/>
+				<textElement textAlignment="Center" rotation="None" markup="html">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>From Date:</b> " + 
+    new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{from_date}) + 
+    "    <b>To Date:</b> " + 
+    new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{to_date})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="79" width="520" height="19" uuid="473dfdfe-f73a-4e67-8bba-f741b2985c47"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Warehouse: </b> " + $P{warehouse}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="160" y="0" width="90" height="20" uuid="8b1bd64d-1bf9-443d-be39-24805a7d14c1"/>
+				<box padding="3">
+					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Opening Stock]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="90" height="20" uuid="09693e32-6468-4adb-ba62-575963cc1738"/>
+				<box padding="3">
+					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Receive]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="90" height="20" uuid="3d4575f6-9fef-481a-92bd-467ab83238f9"/>
+				<box padding="3">
+					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Issue]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="0" width="90" height="20" uuid="39ae6f26-1115-48f8-bd59-3b1e6499f38e"/>
+				<box padding="3">
+					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Closing Stock]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="0" width="90" height="20" uuid="c4d26d48-1e87-4afe-b3e0-33ee48bc526a"/>
+				<box padding="3">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Transaction No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="20" uuid="1e4cc569-2a17-4c29-af55-0f6790291dca">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box padding="3">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="70" y="0" width="90" height="16" uuid="695e7b13-08a1-405d-a6f9-e8124827e215">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c7f00dc9-4983-46ff-84cb-8f36dcecf5ee"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="3" bottomPadding="0" rightPadding="0">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement>
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documentNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="70" height="16" uuid="93df69a5-0726-41a3-98da-79fc30818af1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b4bdf137-7686-4b2c-9e8a-679bf657c8fc"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="3" bottomPadding="0" rightPadding="0">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement>
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transactionDate}.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="250" y="0" width="90" height="16" uuid="96a3a1b0-6521-4d45-a31b-e18b91f19d08"/>
+				<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{receive_qty}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{receive_qty}.toString() 
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="340" y="0" width="90" height="16" uuid="06106554-e514-49a5-b5cf-38261848754b"/>
+				<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{issue_qty}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{issue_qty}.toString() 
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="0" width="90" height="16" uuid="34ffca1d-bda1-47fb-9ecb-93206b914e38"/>
+				<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{closing}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{closing}.toString() 
+    : ""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="160" y="0" width="90" height="16" uuid="e34f7616-77e4-4f78-8b5d-c47f18392ca7"/>
+				<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="3">
+					<pen lineStyle="Dotted" lineColor="#E5E4E4"/>
+					<topPen lineWidth="0.75" lineStyle="Dotted" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<bottomPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+					<rightPen lineWidth="0.75" lineStyle="Dotted" lineColor="#B5B3B2"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{opening}.compareTo(java.math.BigDecimal.ZERO) != 0 
+    ? $V{opening}.toString() 
+    : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="18" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="232" y="40" width="37" height="14" uuid="b9c42236-4fdd-4827-9839-f1fef00bfcc2"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8"/>
+				</textElement>
+				<text><![CDATA[Print Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="269" y="40" width="91" height="14" uuid="bf3d4f5f-a7f7-4836-86a5-163f31ee50cd"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="40" width="77" height="14" uuid="b7057ba0-a46b-4446-80a6-aa125c65b9c0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="494" y="40" width="23" height="14" uuid="987a0c71-4c8d-41b6-9bd3-256f62852095"/>
+				<textElement>
+					<font fontName="Arial Narrow" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<noData>
+		<band height="24">
+			<staticText>
+				<reportElement x="1" y="1" width="523" height="20" uuid="e367298e-fae6-4b4f-8ad9-a9fa45674806"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Data Unavailable!!!]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

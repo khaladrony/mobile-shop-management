@@ -1,4 +1,5 @@
-app.run(function ($rootScope, $window, ClientService, $timeout) {
+app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q,
+                $compile, $http) {
     $rootScope.JMODULE_NAME = JMODULE_NAME;
     $rootScope.JCONTROLLER = JCONTROLLER;
     $rootScope.JCOMPONENT = JCOMPONENT;
@@ -57,7 +58,7 @@ app.run(function ($rootScope, $window, ClientService, $timeout) {
     };
     
     $timeout(function(){
-        $window.location.href = _baseurl_ + '/auth/login';
+        $window.location.href = _baseurl_ + 'auth/login';
     },_SESSION_TIMEOUT_);
 
 });
@@ -216,6 +217,66 @@ app.directive('datePicker', function () {
     };
 });
 
+app.directive('formattedDatePicker', function($timeout, $filter) {
+    return {
+        restrict: "EA",
+        require: "ng-model",
+        link: function (scope, element, attrs, ngModelCtrl) {
+            var parent = $(element).parent();
+            var dtp = parent.datetimepicker({
+                format: "DD-MM-YYYY",
+                showTodayButton: false,
+                sideBySide: false,
+                useStrict:true,
+                useCurrent: false
+            });
+
+            // Set model to real Date
+            dtp.on("dp.change", function (e) {
+                if (e.date && e.date.isValid()) {
+                    // Convert Moment object to JS Date
+                    const jsDate = e.date.toDate();
+                    ngModelCtrl.$setViewValue(jsDate);
+                } else {
+                    ngModelCtrl.$setViewValue(null);
+                }
+                scope.$apply();
+            });
+
+            // Format view value for display
+            ngModelCtrl.$formatters.push(function (modelValue) {
+                if (modelValue) {
+                    return $filter('date')(modelValue, 'dd-MM-yyyy');
+                }
+                return '';
+            });
+        }
+    };
+});
+
+app.directive('customDatePicker', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            placeholder: '@'
+        },
+        template: `
+            <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       placeholder="{{ placeholder }}"
+                       ng-model="ngModel"
+                       formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+        `
+    };
+});
+
+
 app.directive('fileModel', ['$parse', function ($parse) {
         return {
             restrict: 'A',
@@ -231,3 +292,553 @@ app.directive('fileModel', ['$parse', function ($parse) {
             }
         };
     }]);
+
+app.directive('appcodeDropdown', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '@',
+            model: '=',
+            placeholder: '@',
+            exclude: '=?'
+        },
+        template: `
+            <select class="form-control" ng-model="model"
+                    ng-options="option for option in filteredOptions">
+                <option value="">
+                    -- {{ placeholder ? placeholder : 'Select ' + type }} --
+                </option>
+            </select>
+        `,
+        controller: function ($scope, $http) {
+            $scope.options = [];
+
+            $http.get(COMMON_API.app_codes).then(function (resp) {
+                if (resp.data.code === 200) {
+                    const list = resp.data.body || [];
+
+                    $scope.options = [...new Set(
+                        list
+                            .filter(item => item.xtype === $scope.type)
+                            .map(item => item.xcode)
+                    )];
+                }
+            }, function (err) {
+                console.error("App codes error", err);
+            });
+
+            function updateFiltered() {
+                if ($scope.exclude) {
+                    $scope.filteredOptions = $scope.options.filter(opt => opt !== $scope.exclude);
+                } else {
+                    $scope.filteredOptions = $scope.options.slice();
+                }
+            }
+            $scope.$watchGroup(['options', 'exclude'], updateFiltered);
+        }
+    };
+});
+
+//appcode-dropdown-coa-group
+app.directive('appcodeDropdownCoaGroup', function($http) {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '=',
+            ngModel: '=',         // for two-way binding
+            placeholder: '@'
+        },
+        template: `
+            <select class="form-control" ng-model="ngModel">
+                <option value="">{{ placeholder }}</option>
+                <option ng-repeat="item in items" ng-value="item">{{ item.xcode }}</option>
+            </select>
+        `,
+        link: function(scope) {
+            scope.items = [];
+
+            function getByType(type) {
+                return $http.get(COMMON_API.app_codes +'/by-type/' + type);
+            }
+
+            // Load items when 'type' changes
+            scope.$watch('type', function(newType) {
+                if (newType) {
+                    getByType(newType).then(function(response) {
+                        scope.items = response.data.body;
+                    });
+                } else {
+                    scope.items = [];
+                }
+            });
+        }
+    };
+});
+
+
+app.directive('autocomplete', function($timeout, $sce) {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            fetchSuggestions: '&',
+            placeholder: '@'
+        },
+        template: `
+            <div>
+                <input type="text" class="form-control"
+                       ng-model="ngModel"
+                       ng-change="onInputChange()"
+                       ng-blur="hideDropdown()"
+                       ng-focus="onInputChange()"
+                       placeholder="{{ placeholder }}" />
+
+                <div class="autocomplete-dropdown" ng-show="suggestions.length && dropdownVisible">
+                    <div class="autocomplete-item"
+                         ng-repeat="suggestion in suggestions"
+                         ng-click="selectSuggestion(suggestion)">
+                        <span ng-bind-html="highlightMatch(suggestion, ngModel)"></span>
+                    </div>
+
+                </div>
+            </div>
+        `,
+        link: function(scope, element, attrs) {
+            scope.suggestions = [];
+            scope.dropdownVisible = false;
+
+            scope.onInputChange = function() {
+                if (!scope.ngModel) {
+                    scope.suggestions = [];
+                    scope.dropdownVisible = false;
+                    return;
+                }
+
+                var result = scope.fetchSuggestions({ query: scope.ngModel });
+                if (result && angular.isFunction(result.then)) {
+                    result.then(function(results) {
+                        scope.suggestions = results || [];
+                        scope.dropdownVisible = true;
+                    });
+                } else {
+                    console.error("fetchSuggestions must return a Promise.");
+                }
+            };
+
+            scope.selectSuggestion = function(suggestion) {
+                scope.ngModel = suggestion;
+                scope.suggestions = [];
+                scope.dropdownVisible = false;
+            };
+
+            scope.hideDropdown = function() {
+                setTimeout(function () {
+                    scope.dropdownVisible = false;
+                    scope.$apply();
+                }, 200);
+            };
+
+            scope.highlightMatch = function(text, query) {
+                if (!text) return $sce.trustAsHtml('');
+                if (!query) return $sce.trustAsHtml(text);
+
+                var safeQuery = query.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                var regex = new RegExp(safeQuery, 'gi');
+                var highlighted = text.toString().replace(regex, '<strong>$&</strong>');
+
+                return $sce.trustAsHtml(highlighted);
+            };
+        }
+    };
+});
+
+app.directive('lazyDropdown', function($timeout, $compile, $sce) {
+    return {
+        restrict: 'E',
+        scope: {
+            items: '=?',
+            selectedItem: '=',
+            placeholder: '@',
+            displayProperty: '@',
+            displaySubtext: '@',
+            searchProperty: '@',
+            itemTemplate: '@',
+            enableSearch: '=?',
+            loadItems: '&?',
+            onSelect: '&?'
+        },
+        template: `
+            <div class="lazy-dropdown">
+                <button type="button"
+                        class="btn btn-default btn-dropdown form-control"
+                        ng-click="toggleDropdown()"
+                        ng-class="{'btn-primary': isOpen}">
+                    <span ng-if="!selectedItem" class="placeholder">{{placeholder || 'Select...'}}</span>
+                    <div class="selected-item" ng-bind-html="getDisplayText(selectedItem)"></div>
+                    <span class="caret"></span>
+                </button>
+
+                <div class="dropdown-menu" ng-show="isOpen">
+                    <div ng-if="enableSearch !== false" class="search-input">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </span>
+                            <input type="text"
+                                   class="form-control input-sm"
+                                   placeholder="Search..."
+                                   ng-model="$parent.searchText"
+                                   ng-change="onSearch()"
+                                   ng-click="$event.stopPropagation()" />
+                        </div>
+                    </div>
+
+                    <div ng-if="!itemTemplate">
+                        <div class="dropdown-item"
+                             ng-repeat="item in displayedItems track by $index"
+                             ng-click="selectItem(item)">
+                            <span ng-bind-html="getDisplayText(item)"></span>
+                        </div>
+                    </div>
+
+                    <div ng-if="itemTemplate" id="custom-items-container">
+                        <!-- Custom template items will be compiled here -->
+                    </div>
+
+                    <div class="loading-item" ng-show="isLoading">
+                        <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+                        Loading more items...
+                    </div>
+
+                    <div class="no-results" ng-show="displayedItems.length === 0 && !isLoading">
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                        No items found
+                    </div>
+                </div>
+            </div>
+        `,
+        link: function(scope, element, attrs) {
+            // Initialize
+            scope.isOpen = false;
+            scope.displayedItems = [];
+            scope.filteredItems = [];
+            scope.searchText = '';
+            scope.isLoading = false;
+            scope.enableSearch = scope.enableSearch !== false;
+
+            // Pagination settings
+            const itemsPerPage = 10;
+            let currentPage = 0;
+            let hasMoreItems = true;
+
+            // Get display text for item
+            scope.getDisplayText = function(item) {
+                if (!item) return '';
+
+                const main = item[scope.displayProperty] || '';
+                const displaySubtext = item[scope.displaySubtext] || '';
+
+                // HTML-based output
+                return $sce.trustAsHtml(`
+                    <span class="main-text">${main}</span>
+                    <span class="meta-text"> - ${displaySubtext}</span>
+                `);
+            };
+
+            // Reset dropdown state
+            scope.resetDropdown = function() {
+                scope.displayedItems = [];
+                currentPage = 0;
+                hasMoreItems = true;
+
+                if (scope.loadItems) {
+                    scope.loadMoreItems();
+                } else {
+                    scope.filterItems();
+                    scope.loadMoreItems();
+                }
+            };
+
+            // Filter items locally
+            scope.filterItems = function() {
+                if (!scope.items) return;
+
+                if (scope.searchText) {
+                    const searchProp = scope.searchProperty || scope.displayProperty;
+                    scope.filteredItems = scope.items.filter(item => {
+                        const text = searchProp ? item[searchProp] : item;
+                        return text && text.toString().toLowerCase().includes(scope.searchText.toLowerCase());
+                    });
+                } else {
+                    scope.filteredItems = scope.items.slice();
+                }
+            };
+
+            // Load more items
+            scope.loadMoreItems = function() {
+                if (!hasMoreItems || scope.isLoading) return;
+
+                scope.isLoading = true;
+
+                if (scope.loadItems) {
+                    // API-based loading
+                    scope.loadItems({
+                        params: {
+                           page: currentPage,
+                           search: scope.searchText,
+                           limit: itemsPerPage
+                       }
+                   }).then(function(result) {
+                        if (result && result.items && result.items.length > 0) {
+                            if (currentPage === 0) {
+                                scope.displayedItems = result.items;
+                            } else {
+                                scope.displayedItems = scope.displayedItems.concat(result.items);
+                            }
+                            currentPage++;
+                            hasMoreItems = result.hasMore;
+                        } else {
+                            hasMoreItems = false;
+                        }
+                        scope.isLoading = false;
+                    });
+                } else {
+                    // Local array loading
+                    $timeout(function() {
+                        const startIndex = currentPage * itemsPerPage;
+                        const endIndex = startIndex + itemsPerPage;
+                        const newItems = scope.filteredItems.slice(startIndex, endIndex);
+
+                        if (newItems.length > 0) {
+                            scope.displayedItems = scope.displayedItems.concat(newItems);
+                            currentPage++;
+                            hasMoreItems = endIndex < scope.filteredItems.length;
+                        } else {
+                            hasMoreItems = false;
+                        }
+                        scope.isLoading = false;
+                    }, 200);
+                }
+            };
+
+            // Toggle dropdown
+            scope.toggleDropdown = function() {
+                scope.isOpen = !scope.isOpen;
+                if (scope.isOpen) {
+                    scope.resetDropdown();
+                    $timeout(function() {
+                        scope.setupScrollListener();
+                    }, 0);
+                }
+            };
+
+            // Select item
+            scope.selectItem = function(item) {
+                scope.selectedItem = item;
+                scope.isOpen = false;
+                if (scope.onSelect) {
+                    scope.onSelect({item: item});
+                }
+            };
+
+            // Search functionality
+            scope.onSearch = function() {
+                console.log("Search Text:", scope.searchText);
+                scope.resetDropdown();
+            };
+
+            // Setup scroll listener
+            scope.setupScrollListener = function() {
+                const dropdownMenu = element.find('.dropdown-menu')[0];
+                if (!dropdownMenu) return;
+
+                dropdownMenu.addEventListener('scroll', function() {
+                    const scrollTop = dropdownMenu.scrollTop;
+                    const scrollHeight = dropdownMenu.scrollHeight;
+                    const clientHeight = dropdownMenu.clientHeight;
+
+                    if (scrollTop + clientHeight >= scrollHeight - 5) {
+                        scope.$apply(function() {
+                            scope.loadMoreItems();
+                        });
+                    }
+                });
+            };
+
+            // Close dropdown when clicking outside
+            function handleOutsideClick(event) {
+                if (!element[0].contains(event.target)) {
+                    scope.$apply(function() {
+                        scope.isOpen = false;
+                    });
+                }
+            }
+
+            document.addEventListener('click', handleOutsideClick);
+
+            // Cleanup
+            scope.$on('$destroy', function() {
+                document.removeEventListener('click', handleOutsideClick);
+            });
+        }
+    };
+});
+
+app.directive('actionButton', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            label: '@',           // Button label: 'Add', 'Edit', etc.
+            icon: '@',            // Font Awesome icon class
+            type: '@',            // btn-primary, btn-yellow, etc.
+            visible: '=',         // Boolean flag to show/hide button
+            onClick: '&'          // Function to execute
+        },
+        template: `
+            <button type="button"
+                    class="btn-sm btn-round transition-fade"
+                    ng-class="'btn ' + type"
+                    ng-show="visible"
+                    ng-click="onClick()"
+                    style="padding: 5px 5px; position: absolute; top: 0; left: 0;">
+                <i class="ace-icon fa" ng-class="icon"></i> {{label}}
+            </button>
+        `
+    };
+});
+
+app.directive('dateRangePicker', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            fromDate: '=',
+            toDate: '='
+        },
+        template: `
+        <div class="date-range-group" style="display: flex; gap: 8px; margin-right: 8px; float: left;">
+            <div class="input-group width170 date">
+                <input type="text" class="form-control" placeholder="From Date" ng-model="fromDate" formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+            <div class="input-group width170 date">
+                <input type="text" class="form-control" placeholder="To Date" ng-model="toDate" formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+        </div>
+        `
+    };
+});
+
+app.directive('autocompleteInput', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            fetchSuggestions: '&',
+            placeholder: '@'
+        },
+        template: `
+            <div class="input-group width200" style="float: left; margin-right: 8px;">
+                <autocomplete ng-model="ngModel"
+                              fetch-suggestions="fetchSuggestions({query: query})"
+                              placeholder="{{placeholder}}">
+                </autocomplete>
+                <span class="input-group-addon">
+                    <i class="fa fa-search" style="position: initial; top: 10px; left: 10px; color: gray;"></i>
+                </span>
+            </div>
+        `,
+    };
+});
+
+app.directive('dropdownInput', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '@',
+            model: '='
+        },
+        template: `
+            <div class="input-group width110" style="float: left; margin-right: 8px;">
+                <appcode-dropdown
+                    type="{{type}}"
+                    model="model">
+                </appcode-dropdown>
+            </div>
+        `
+    };
+});
+
+app.directive('filterButton', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            clickAction: '&',
+            title: '@',
+            label: '@'
+        },
+        template: `
+            <div class="input-group width110" style="float: left; margin-right: 8px;">
+                <div class="btn-group" style="float: right;">
+                    <button ng-click="clickAction()" class="btn btn-warning btn-sm" title="{{title || 'Filter now'}}">
+                        <i class="icon fa fa-search"></i> {{label || 'Filter'}}
+                    </button>
+                </div>
+            </div>
+        `
+    };
+});
+
+// Register the directive in your app
+app.directive('voucherTable', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            data: '=',
+            toggleDetails: '&',
+            showEditForm: '&',
+            voucherPreview: '&',
+            voucherStatus: '='
+        },
+        templateUrl: _NG_SRC_ + '/accounts/directives/voucher-table.html'
+    };
+});
+
+app.directive('voucherCreateButton', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            state: '@' // passed as a string: ui-sref value
+        },
+        template: `
+            <div class="col-sm-12 col-md-2 col-lg-2">
+                <div class="pull-right">
+                    <a class="btn btn-sm btn-success" ui-sref="{{state}}">
+                        <i class="ace-icon fa fa-plus"></i> Voucher Create
+                    </a>
+                </div>
+            </div>
+        `
+    };
+});
+
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+

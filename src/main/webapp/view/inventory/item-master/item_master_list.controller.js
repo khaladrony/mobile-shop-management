@@ -20,20 +20,20 @@ app.controller('ItemMasterListCtrl', function ($scope, $http, $state, $timeout, 
 
     $scope.getDataList = function (currentPage, itemPerPage) {
 
-        $scope.currentPage = currentPage;
         $scope.data = {};
         $scope.data.items = [];
         $scope.data.itemCount = 0;
 
+        var url = API.ITEM_MASTER_FILTER + '?page=' + (currentPage - 1) + '&size=' + itemPerPage;
+
         DialogBox.showProgress();
         log("search obj: " + JSON.stringify($scope.search));
-        var req = Communication.request("POST", API.ITEM_MASTER_FILTER + "/" + currentPage + "/" + itemPerPage, $scope.search);
+        var req = Communication.request("POST", url, $scope.search);
         req.then(function (resp) {
             DialogBox.hideProgress();
-            log("user list: " + JSON.stringify(resp));
-
             if (resp.code === 200) {
-                $scope.data = resp.body;
+                $scope.data.items = resp.body.content;
+                $scope.data.itemCount = resp.body.totalElements;
             } else{
                 $rootScope.toastError(resp.message);
             }
@@ -45,7 +45,6 @@ app.controller('ItemMasterListCtrl', function ($scope, $http, $state, $timeout, 
     };
 
     $scope.showEditForm = function (obj) {
-
         $state.go(JCOMPONENT.item_master_update_view, {id: obj.id});
     };
 

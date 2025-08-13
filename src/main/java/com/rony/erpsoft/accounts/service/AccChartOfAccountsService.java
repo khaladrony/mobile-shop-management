@@ -123,7 +123,7 @@ public class AccChartOfAccountsService implements IAccChartOfAccountsService {
             sql.append("SELECT count(id) FROM acc_chart_of_accounts WHERE 1=1");
         } else {
             sql.append("SELECT id, accounts_code, accounts_name, accounts_type, accounts_usage, " +
-                    "accounts_source, is_active FROM acc_chart_of_accounts WHERE 1=1");
+                    "accounts_source, group1, master_type, is_active FROM acc_chart_of_accounts WHERE 1=1");
         }
 
         return sql;
@@ -132,7 +132,6 @@ public class AccChartOfAccountsService implements IAccChartOfAccountsService {
     public int getVoucherCountByChartOfAccountsId(long chartOfAccountsId){
         return accJournalDetailsRepo.getVoucherCountByChartOfAccountsId(chartOfAccountsId);
     }
-
 }
 
 

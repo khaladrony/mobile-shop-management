@@ -51,11 +51,11 @@
 
     </head>
 
-    <body class="login-layout light-login" ng-controller="LauncherScreenCtrl" style="background: #C1CDCD">
+    <body class="login-layout light-login" ng-controller="LauncherScreenCtrl" style="background: #434D55">
         <div class="main-container" ng-init="configUserData()">
-            <div class="main-content">
+            <!-- <div class="main-content">
                 <center><h2 style="color:#4683ea;">Loading "<b>${fn:escapeXml(USER.first_name)} ${fn:escapeXml(USER.last_name)}</b>" as ${fn:escapeXml(USER.role_name)}</h2></center>
-            </div><!-- /.main-content -->
+            </div>/.main-content -->
         </div><!-- /.main-container -->
 
         <!-- basic scripts -->
@@ -82,12 +82,16 @@
 
         
         <script type="text/javascript">
-            var app = angular.module('LauncherScreenApp', ['ngDialog', 'ngToast', 'ui.router','ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate']);                                                                              var _shskr_ = "${XATKN}";
+            var app = angular.module('LauncherScreenApp', ['ngDialog', 'ngToast', 'ui.router','ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate']);
+            var _shskr_ = "${XATKN}";
         </script>
         <script src="${ANGULAR}/app.services.js?v=${SCRIPT_VERSION}"></script>
         
         <script type="text/javascript">
-            app.controller('LauncherScreenCtrl', function($scope, $rootScope, $http, $timeout, $rootScope, $sce, $mdDialog, $interval, Communication, DialogBox, ClientService) {
+            app.controller('LauncherScreenCtrl', function(
+                $scope, $rootScope, $http, $timeout,
+                $sce, $mdDialog, $interval, Communication, DialogBox, ClientService
+                ) {
                 
                 $scope.configUserData = function(){
                     DialogBox.showProgress();
@@ -97,7 +101,16 @@
                     g.then(function (resp) {
                         //console.log("my data", JSON.stringify(resp));
                         //extract user info from response
-                        var usrObj = {"user_id":resp.body.user_id, "last_name":resp.body.first_name, "last_name":resp.body.last_name, "user_code":resp.body.user_code, "email":resp.body.email, "phone":resp.body.phone, "address":resp.body.address, "country":resp.body.country};
+                        var usrObj = {
+                            "user_id":resp.body.user_id,
+                            "first_name":resp.body.first_name,
+                            "last_name":resp.body.last_name,
+                            "user_code":resp.body.user_code,
+                            "email":resp.body.email,
+                            "phone":resp.body.phone,
+                            "address":resp.body.address,
+                            "country":resp.body.country
+                        };
                         ClientService.setUser(usrObj);
                         ClientService.setLocalStorage(KEY.LOCAL.menu, JSON.stringify(resp.body.menu));
                         ClientService.setLocalStorage(KEY.LOCAL.features, JSON.stringify(resp.body.features));

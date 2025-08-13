@@ -1,0 +1,112 @@
+<table id="simple-table" class="table  table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>Voucher No
+            <button class="btn btn-sort pull-right"
+                    ng-click="orderByField = 'voucher_no'; reverseSort = !reverseSort">
+                <i class="fa fa-sort" aria-hidden="true"></i>
+            </button>
+        </th>
+        <th>Voucher Date
+            <button class="btn btn-sort pull-right"
+                    ng-click="orderByField = 'voucher_date'; reverseSort = !reverseSort">
+                <i class="fa fa-sort" aria-hidden="true"></i>
+            </button>
+        </th>
+        <th>Particulars</th>
+        <th>Amount</th>
+        <th>Payment Type</th>
+        <th class="text-center">Status</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat-start="obj in data.items | orderBy:orderByField:reverseSort"
+        ng-click="toggleDetails({obj: obj})"
+        ng-class="{'success': obj.showDetails}"
+        style="cursor: pointer;">
+        <td style="width: 150px;text-align: center;">
+            <i class="fa" ng-class="{'fa-chevron-down': obj.showDetails, 'fa-chevron-right': !obj.showDetails}"></i>
+            {{obj.voucher_no}}
+        </td>
+        <td style="width: 150px;text-align: center;">{{obj.voucher_date | date: 'dd-MM-yyyy'}}</td>
+        <td>{{obj.particulars}}</td>
+        <td style="width: 140px;text-align: right;">{{obj.amount}}</td>
+        <td style="width: 140px;text-align: center;">{{obj.payment_type}}</td>
+        <td style="width: 140px;text-align: center;">
+            <span class="status-label"
+                  ng-class="{
+                        'draft': obj.status === 'DRAFT',
+                        'posted': obj.status === 'POSTED'
+                    }">
+                {{obj.status}}
+            </span>
+        </td>
+        <td style="width: 170px;text-align: center;">
+            <button
+                    class="btn btn-sm btn-warning btn-no-border btn-round"
+                    ng-click="$event.stopPropagation(); showEditForm({obj: obj})"
+                    ng-if="obj.status===voucherStatus">
+                <i class="ace-icon fa fa-edit"></i>
+                Edit
+            </button>
+            <button
+                    class="btn btn-sm btn-primary btn-no-border btn-round"
+                    ng-click="$event.stopPropagation(); voucherPreview({id: obj.id})">
+                <i class="ace-icon fa fa-check-circle"></i>
+                Preview
+            </button>
+        </td>
+    </tr>
+
+    <tr ng-repeat-end ng-show="obj.showDetails">
+        <td colspan="7" style="text-align: center;">
+            <div class="fixed-width-div" style="--max-width: 800px;">
+                <table id="voucher-details-table" class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>SL</th>
+                        <th>A/C Code & Name</th>
+                        <th>Particulars</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="details in obj.details">
+                        <td><label>{{$index + 1}}</label></td>
+                        <td style="text-align: left;">
+                            <label>
+                                {{details.subAccountsId>0 ?
+                                details.chartOfAccountsCodeName + " -> " + details.subAccountsCodeName :
+                                details.chartOfAccountsCodeName}}
+                            </label>
+                        </td>
+                        <td><label>{{details.particulars}}</label></td>
+                        <td style="text-align: right;"><label>{{details.primeAmount>0? details.amount: 0}}</label></td>
+                        <td style="text-align: right;"><label>{{details.primeAmount<0? details.amount: 0}}</label></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr style="font-weight:bold">
+                        <td></td>
+                        <td></td>
+                        <td>Total</td>
+                        <td style="text-align: right;">
+                            <label style="font-weight: bold;" >{{obj.debitTotal}}</label>
+                        </td>
+                        <td style="text-align: right;">
+                            <label style="font-weight: bold;" >{{obj.creditTotal}}</label>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </td>
+    </tr>
+
+    <tr ng-if="data.items.length===0">
+        <td colspan="7" class="text-center"><h3>No vouchers found!!!</h3></td>
+    </tr>
+    </tbody>
+</table>

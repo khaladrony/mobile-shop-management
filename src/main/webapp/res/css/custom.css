@@ -19,7 +19,81 @@
     margin:0px;
     padding:0px;
 }
-label{font-size: 13px;}
+label{
+    font-size: 15px;
+}
+
+.nav-list>li>a {
+    font-size: 15px;
+}
+
+.breadcrumb {
+    font-size: 15px;
+}
+
+body {
+    font-size: 15px;
+    color: #00689c
+}
+
+.btn-group-sm>.btn, .btn-sm {
+    font-size: 14px;
+}
+
+.form-control,input,
+              textarea {
+    font-size: 15px;
+    border-radius: 5px !important;
+}
+
+.form-control, select {
+    color: #080808;
+}
+
+.form-control:focus, select:focus {
+    color: #080808;
+}
+
+button, html, input, select, textarea {
+    font-family: unset;
+}
+
+input[type=email], input[type=url], input[type=search], input[type=tel], input[type=color], input[type=text], input[type=password], input[type=datetime], input[type=datetime-local], input[type=date], input[type=month], input[type=time], input[type=week], input[type=number], textarea {
+    color: #000000;
+    font-size: 15px;
+     border-radius: 5px !important;
+     padding: 6px 12px;
+}
+
+input[type=email]:focus, input[type=url]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=color]:focus, input[type=text]:focus, input[type=password]:focus, input[type=datetime]:focus, input[type=datetime-local]:focus, input[type=date]:focus, input[type=month]:focus, input[type=time]:focus, input[type=week]:focus, input[type=number]:focus, textarea:focus {
+    color: #000000;
+    font-size: 15px;
+     border-radius: 5px !important;
+     padding: 6px 12px;
+}
+
+.table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th {
+    color: #393939;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    color: #D15B47;
+    font-size: 20px;
+}
+
+.btn-divider {
+    display: inline-block;
+    height: 24px;
+    width: 1px;
+    background-color: #ccc;
+    margin: 0 8px;
+    vertical-align: middle;
+}
+
+.nav-list li.hover>.submenu {
+    width: 220px;
+}
+
 .service-group li {
     float:left;
     margin:0px;
@@ -92,6 +166,8 @@ label{font-size: 13px;}
 
 .filter-area{
     margin-bottom: 10px !important;
+    /*display: flex;
+    justify-content: flex-end;*/
 }
 
 .hospital{
@@ -461,3 +537,301 @@ input:checked + .toggle_anim .off
         min-height: 75vh;
     }
 }
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%; /* Place below input */
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.autocomplete-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #007bff;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f0f0;
+}
+
+.autocomplete-item strong {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Dropdown */
+
+.lazy-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.lazy-dropdown .dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.lazy-dropdown .dropdown-menu.ng-hide {
+    display: none !important;
+}
+
+.lazy-dropdown .search-input {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 0;
+}
+
+.lazy-dropdown .btn:hover {
+    background-color: white !important;
+}
+
+.lazy-dropdown .dropdown-item {
+    padding: 8px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lazy-dropdown .dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.lazy-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.lazy-dropdown .loading-item {
+    padding: 10px 20px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+.lazy-dropdown .no-results {
+    padding: 10px 20px;
+    text-align: center;
+    color: #999;
+}
+
+.lazy-dropdown .btn-default, .btn-default.focus, .btn-default:focus {
+    background-color: white !important;
+}
+
+.lazy-dropdown .btn {
+    color: black !important;
+}
+
+.lazy-dropdown .btn-dropdown {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lazy-dropdown .btn-dropdown .caret {
+    float: right;
+    margin-top: -12px;
+}
+
+.lazy-dropdown .btn-dropdown .placeholder {
+    color: #999;
+}
+
+.dropdown-menu .input-sm {
+    height: 30px;
+    line-height: 1.5;
+    border: none !important;
+    padding: 5px 20px 10px !important;
+    background-color: #f0f0f0 !important;
+}
+
+.dropdown-menu .input-group-addon:first-child {
+    border: none;
+}
+
+.demo-container {
+    margin: 30px 0;
+}
+
+.demo-section {
+    margin-bottom: 30px;
+}
+
+.glyphicon-refresh-animate {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/*Dropdown end */
+
+html {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+p.subtitle {
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    margin-top: -8px;
+    line-height: 2.2;
+}
+
+.widget-body .widget-primary{
+    /*background-color: #f6ffe0;*/
+}
+
+.widget-header.row {
+    margin: 0 !important;
+    padding: 8px 0px !important;
+}
+
+.widget-title {
+    color: indianred;
+     margin: 0;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.breadcrumbs .nav-search {
+    top: 2px;
+}
+
+/*Add & Edit button hide show in form*/
+.transition-fade.ng-hide-add,
+.transition-fade.ng-hide-remove {
+    transition: opacity 0.3s ease;
+    display: block !important;
+}
+
+.transition-fade.ng-hide {
+    opacity: 0;
+}
+
+.transition-fade {
+    opacity: 1;
+}
+/*===============*/
+
+/*lazy-dropdown directives*/
+.main-text {
+    font-weight: normal;
+    color: black;
+}
+
+.meta-text {
+    font-size: 12px;
+    color: #888;
+}
+/**/
+
+.fixed-width-div {
+    width: 100%;
+    max-width: var(--max-width, 540px);
+    margin: auto;
+}
+
+/*table status color*/
+.status-label {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-label.delivered {
+  background-color: #e6f4ea; /* light green background */
+  color: #2e7d32;            /* dark green text */
+}
+
+.status-label.open,
+.status-label.draft {
+  background-color: #fff8e1; /* light yellow background */
+  color: #f9a825;            /* amber text */
+}
+
+.status-label.issue {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.status-label.receipt,
+.status-label.posted {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-label.transfer {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Chart of accounts*/
+.radio-inline {
+    padding-left: 15px;
+    font-weight: normal;
+}
+
+.coa-tree {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+
+  .coa-tree li {
+    margin: 4px 0;
+  }
+
+  .coa-label {
+    font-weight: bold;
+  }
+
+  .coa-code {
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  .fa {
+      cursor: pointer;
+      margin-right: 6px;
+    }
+
+li::marker {
+  content: none;
+}
+
+
+/**/

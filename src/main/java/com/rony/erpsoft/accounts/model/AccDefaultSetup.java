@@ -24,4 +24,10 @@ public class AccDefaultSetup implements Serializable {
 
     @Column(name = "voucher_print_view")
     private String voucherPrintView;        //A4, A5
+
+    @Column(name = "master_particular_required")
+    private boolean masterParticularRequired;
+
+    @Column(name = "detail_particular_required")
+    private boolean detailParticularRequired;
 }

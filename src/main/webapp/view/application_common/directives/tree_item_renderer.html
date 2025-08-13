@@ -1,0 +1,24 @@
+<li>
+    <span ng-click="node.collapsed = !node.collapsed" style="cursor: pointer;">
+        <!-- Toggle icon -->
+        <i ng-if="node.children && node.children.length"
+           class="fa"
+           ng-class="{'fa-plus-square': node.collapsed, 'fa-minus-square': !node.collapsed}"
+           style="margin-right: 4px;"></i>
+
+        <!-- Leaf icon -->
+        <i ng-if="!node.children || !node.children.length"
+           class="fa fa-file-o"
+           style="margin-right: 4px;"></i>
+
+        <!-- Node label -->
+        <span style="color: #2c3e50;">{{ node.label }}</span>
+    </span>
+
+    <!-- Recursive child nodes -->
+    <ul ng-if="!node.collapsed && node.children && node.children.length">
+        <li ng-repeat="node in node.children"
+            ng-include="_NG_SRC_ + '/application_common/directives/tree_item_renderer.html'">
+        </li>
+    </ul>
+</li>

@@ -134,9 +134,50 @@ var app = angular.module('AccountsManagementApp', ['rt.select2', 'ngPatternRestr
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/trial_balance_report.form.html',
             controller: 'AccReportTrialBalanceFormCtrl'
+        }).state(JCOMPONENT.acc_balance_sheet_form_view, {
+              url: '/acc_balance_sheet_form_view',
+              cache: false,
+              templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/balance_sheet_report.form.html',
+              controller: 'AccReportBalanceSheetFormCtrl'
+        }).state(JCOMPONENT.acc_income_statement_form_view, {
+              url: '/acc_income_statement_form_view',
+              cache: false,
+              templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/report/income_statement_report.form.html',
+              controller: 'AccReportIncomeStatementFormCtrl'
+        })
+
+        .state('error.403', {
+              url: '/error.403',
+              templateUrl: _NG_SRC_ + '/error/403.html' // or HTML if you're using a compiled front-end
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.acc_debit_voucher_add_view);
         
     });
-    
+
+app.run(function($transitions, $state, $timeout, growl, $rootScope, AccountsService) {
+
+//  Load common setup once at app startup
+    AccountsService.getCommonSetup().then(function(data) {
+        $rootScope.commonSetup = data.body;
+        console.log("Common setup loaded:", data.body);
+    });
+
+    $transitions.onStart({}, function(transition) {
+        const toState = transition.to();
+        const module = toState.data?.module || JMODULE_NAME;
+        const component = toState.name;
+
+        if (typeof $rootScope.hasPermission === 'function') {
+            const hasAccess = $rootScope.hasPermission(module, component);
+
+            if (!hasAccess) {
+                growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
+
+                $timeout(function () {
+                    window.location.href = _baseurl_ + 'auth/login';
+                }, 1500);
+            }
+        }
+    });
+});

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AccSubAccountsService implements IAccSubAccountsService {
@@ -58,6 +59,18 @@ public class AccSubAccountsService implements IAccSubAccountsService {
         return accSubAccountsRepo.findLastSubAccountsCodeByCoaId(coaId);
     }
 
+    public List<SubCOADropdownDTO> getSubCOADropdown(Long coaId) {
+        return accSubAccountsRepo.findAllByStatusTrueAndChartOfAccountsId(coaId)
+                .stream()
+                .map(subAccounts -> SubCOADropdownDTO.builder()
+                        .id(subAccounts.getId())
+                        .name(subAccounts.getSubAccountsName() + " [" + subAccounts.getSubAccountsCode() + "]")
+                        .chartOfAccountsId(subAccounts.getChartOfAccountsId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
     @Override
     public AccSubAccounts save(AccSubAccounts subAccounts) {
         return accSubAccountsRepo.save(subAccounts);
@@ -65,14 +78,14 @@ public class AccSubAccountsService implements IAccSubAccountsService {
 
     @Override
     public List<SubCOADropdownDTO> findAllSubAccountListByAccountsSource(String accountsSource, Long chartOfAccountsId) {
-        if(accountsSource.equalsIgnoreCase(AccountsSource.CUSTOMER.code())){
+        if (accountsSource.equalsIgnoreCase(AccountsSource.CUSTOMER.code())) {
             return customerInfoService.getCustomerListForDropDown();
-        } else if(accountsSource.equalsIgnoreCase(AccountsSource.SUPPLIER.code())){
+        } else if (accountsSource.equalsIgnoreCase(AccountsSource.SUPPLIER.code())) {
             return supplierInfoService.getSupplierListForDropDown();
-        } else if(accountsSource.equalsIgnoreCase(AccountsSource.EMPLOYEE.code())){
+        } else if (accountsSource.equalsIgnoreCase(AccountsSource.EMPLOYEE.code())) {
             return employeeInfoService.getEmployeeListForDropDown();
         } else {
-            return accSubAccountsRepo.findAllSubCOAListForDropDown(chartOfAccountsId);
+            return getSubCOADropdown(chartOfAccountsId);
         }
     }
 
