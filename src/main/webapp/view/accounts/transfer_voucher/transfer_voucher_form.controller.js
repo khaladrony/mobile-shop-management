@@ -295,7 +295,7 @@ app.controller('AccTransferVoucherFormCtrl', function (
         if (!isValid) return;
 
         //Avoid time zone
-        $scope.module.chequeDate = DateHelperService.formatToLocalDateTimeString($scope.module.chequeDate);
+        DateHelperService.formatMultipleFields($scope.module, ['chequeDate', 'voucherDate']);
 
         const method = ($state.current.name === JCOMPONENT.acc_transfer_voucher_update_view) ? "PUT" : "POST";
         const url = ($state.current.name === JCOMPONENT.acc_transfer_voucher_update_view) ? API.ACC_TRANSFER_VOUCHER_UPDATE : API.ACC_TRANSFER_VOUCHER_SAVE;
@@ -321,9 +321,7 @@ app.controller('AccTransferVoucherFormCtrl', function (
                 log("Transfer voucher error", JSON.stringify(err));
                 $rootScope.toastError(err.message);
             }).finally(function () {
-                if (typeof $scope.module.chequeDate === 'string') {
-                    $scope.module.chequeDate = new Date($scope.module.chequeDate);
-                }
+                AccountsService.parseDatesIfString($scope.module, ['voucherDate', 'chequeDate']);
             });
     };
 
@@ -363,6 +361,7 @@ app.controller('AccTransferVoucherFormCtrl', function (
         $scope.selectedSubCoa = null;
         $scope.selectedBankAccount = null;
 
+        $scope.module.voucherDate = new Date();
         $scope.module.particulars = "";
         $scope.module.chequeNo = "";
         $scope.module.chequeDate = "";

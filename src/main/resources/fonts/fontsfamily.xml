@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="Arial">
+        <normal><![CDATA[fonts/ARIAL.TTF]]></normal>
+        <bold><![CDATA[fonts/ARIALBD.TTF]]></bold>
+        <italic><![CDATA[fonts/ARIALI.TTF]]></italic>
+        <boldItalic><![CDATA[fonts/ARIALBI.TTF]]></boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded>true</pdfEmbedded>
+    </fontFamily>
+
+    <fontFamily name="Arial Narrow">
+        <normal><![CDATA[fonts/arialnarrow.ttf]]></normal>
+        <bold><![CDATA[fonts/arialnarrow_bold.ttf]]></bold>
+        <italic><![CDATA[fonts/arialnarrow_italic.ttf]]></italic>
+        <boldItalic><![CDATA[fonts/arialnarrow_bolditalic.ttf]]></boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded>true</pdfEmbedded>
+    </fontFamily>
+</fontFamilies>

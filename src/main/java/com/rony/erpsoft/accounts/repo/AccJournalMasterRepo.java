@@ -1,6 +1,5 @@
 package com.rony.erpsoft.accounts.repo;
 
-import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -11,11 +10,8 @@ import java.util.Map;
 
 public interface AccJournalMasterRepo extends JpaRepository<AccJournalMaster, Long>,
         JpaSpecificationExecutor<AccJournalMaster> {
-//    List<AccJournalMaster> findAll();
 
     AccJournalMaster findById(long id);
-
-//    AccJournalMaster save(AccJournalMaster journalMaster);
 
     @Query("SELECT max(voucherNo) FROM AccJournalMaster WHERE voucherPrefix=?1 and year=?2 and month=?3 ")
     String findLastVoucherNoByVoucherPrefixAndYearAndMonth(String voucherPrefix, int year, int month);

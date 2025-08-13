@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- *
  * @author sarker
  */
 @PropertySource(value = "classpath:application.properties")
@@ -41,14 +41,17 @@ public class AppUtil {
 
     @Value("${app.name.hash}")
     private String SECRET_KEY;
-    
-    
+
+    @Value("${app.upload.dir}")
+    private String UPLOAD_DIR;
+
+
     @Autowired
     SessionService sessionService;
-    
+
     @Autowired
     AppSettingService appSettingService;
-    
+
     public String getDefaultPasskey() {
         try {
             return toString(appSettingService.getAppSettings().get("default_pkey"));
@@ -56,9 +59,9 @@ public class AppUtil {
         }
         return null;
     }
-    
-    
-    public synchronized long getMaxVersion(){
+
+
+    public synchronized long getMaxVersion() {
         return Calendar.getInstance().getTimeInMillis();
     }
 
@@ -95,15 +98,15 @@ public class AppUtil {
         }
         return generatedPaswrd;
     }
-    
+
     private static byte[] getSalt() throws NoSuchAlgorithmException {
         String saltVal = "1m8P3m@1lS3nd37";
         return saltVal.getBytes(StandardCharsets.UTF_8);
     }
-    
+
     public synchronized String retrievePaswd(String hasStr) {
         String plainStr = "";
-        String decNewPassword =  new String(Base64.getDecoder().decode(hasStr));
+        String decNewPassword = new String(Base64.getDecoder().decode(hasStr));
         AES aesUtil = new AES(128, 1000);
         if (decNewPassword != null && decNewPassword.split("::").length == 3) {
             plainStr = aesUtil.decrypt(decNewPassword.split("::")[1], decNewPassword.split("::")[0], KEY.AES_SECRET, decNewPassword.split("::")[2]);
@@ -153,7 +156,7 @@ public class AppUtil {
 
         return 0;
     }
-    
+
     public static int toInt(Object number) {
         try {
             return Integer.parseInt(number.toString().trim());
@@ -215,7 +218,7 @@ public class AppUtil {
 
         return new Date();
     }
-    
+
     public static Date toDateTime(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
@@ -243,7 +246,7 @@ public class AppUtil {
         Pattern ep = Pattern.compile("[a-z0-9._-]+@[a-z0-9.-]+\\.[a-z]+");
         return ep.matcher(email).matches();
     }*/
-    
+
     public static boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
@@ -253,7 +256,7 @@ public class AppUtil {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]$";
         return lanId.matches(regex);
     }
-    
+
     public static Date getDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -264,7 +267,7 @@ public class AppUtil {
 
         return new Date();
     }
-    
+
     public static String getDateString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -275,44 +278,45 @@ public class AppUtil {
 
         return null;
     }
-    
-    public static boolean isStrongPassword(String _str) throws Exception{
+
+    public static boolean isStrongPassword(String _str) throws Exception {
         boolean isUpr = false, isLwr = false, isNmr = false, isSpl = false;
         String upr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lwr = "abcdefghijklmnopqrstuvwxyz";
         String nmr = "0123456789";
         String spl = "!@#$%^&()_<>[]{}.+";
 
-        if( _str.length() < 8 ) throw  new Exception("Password length at least 8 characters");
-        for( int i=0 ; i<_str.length() ; i++ ){
-            if( upr.indexOf(_str.charAt(i)) > -1 ) isUpr = true;
-            if( lwr.indexOf(_str.charAt(i)) > -1 ) isLwr = true;
-            if( nmr.indexOf(_str.charAt(i)) > -1 ) isNmr = true;
-            if( spl.indexOf(_str.charAt(i)) > -1 ) isSpl = true;
+        if (_str.length() < 8) throw new Exception("Password length at least 8 characters");
+        for (int i = 0; i < _str.length(); i++) {
+            if (upr.indexOf(_str.charAt(i)) > -1) isUpr = true;
+            if (lwr.indexOf(_str.charAt(i)) > -1) isLwr = true;
+            if (nmr.indexOf(_str.charAt(i)) > -1) isNmr = true;
+            if (spl.indexOf(_str.charAt(i)) > -1) isSpl = true;
         }
 
-        if( !isUpr ) throw  new Exception("Password should contain at least one (A-Z) characters");
-        if( !isLwr ) throw  new Exception("Password should contain at least one (a-z) characters");
-        if( !isNmr ) throw  new Exception("Password should contain at least one (0-9) characters");
-        if( !isSpl ) throw  new Exception("Password should contain at least one (!@#$%^&()_<>[]{}.+) characters");
+        if (!isUpr) throw new Exception("Password should contain at least one (A-Z) characters");
+        if (!isLwr) throw new Exception("Password should contain at least one (a-z) characters");
+        if (!isNmr) throw new Exception("Password should contain at least one (0-9) characters");
+        if (!isSpl) throw new Exception("Password should contain at least one (!@#$%^&()_<>[]{}.+) characters");
 
         return true;
     }
-    
+
     public int getSessionTimeout() {
         try {
-            return toInt(appSettingService.getAppSettings().get("sess_timeout"))*60; //convert minute to seconds
-        } catch (Exception e) { }
+            return toInt(appSettingService.getAppSettings().get("sess_timeout")) * 60; //convert minute to seconds
+        } catch (Exception e) {
+        }
         return 300;
     }
-    
-    public String genToken(){
+
+    public String genToken() {
         String tmpToken = SHA512("SaRkEr" + UUID.randomUUID());
         sessionService.setToken(tmpToken);
         return tmpToken;
     }
-    
-    public String getToken(){
+
+    public String getToken() {
         return sessionService.getToken();
     }
 
@@ -342,30 +346,41 @@ public class AppUtil {
         }
         return "";
     }
-    
-    public Map<String, Object> processString(String str){
+
+    public String getUploadDir(String moduleName) {
+        try {
+            return UPLOAD_DIR + '/' + moduleName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public Map<String, Object> processString(String str) {
         Map<String, Object> resp = new HashMap<>();
-        
-        try{
+
+        try {
             JSONObject jSONObject = new JSONObject(str);
-            
-            try{
+
+            try {
                 resp.put("baseUnit", jSONObject.getString("baseUnit"));
-            } catch(Exception ex){}
-            
-            resp.put("actualVal", jSONObject.getJSONArray("measurements").getJSONObject(0).get("value") );
-            
-        } catch(Exception e){}
-        
+            } catch (Exception ex) {
+            }
+
+            resp.put("actualVal", jSONObject.getJSONArray("measurements").getJSONObject(0).get("value"));
+
+        } catch (Exception e) {
+        }
+
         return resp;
     }
-    
-    
+
+
     public static String getHeaderInfo(HttpServletRequest request, String keyName) {
         Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String key = (String) headerNames.nextElement();
-            if( key.equals(keyName) ){
+            if (key.equals(keyName)) {
                 return request.getHeader(key);
             }
         }
@@ -399,6 +414,7 @@ public class AppUtil {
 
     /**
      * Get previous date of the given date
+     *
      * @param date
      * @return date
      */
@@ -414,6 +430,7 @@ public class AppUtil {
 
     /**
      * Get next date of the given date
+     *
      * @param date
      * @return date
      */
@@ -429,6 +446,7 @@ public class AppUtil {
 
     /**
      * Get first date of the given date's month
+     *
      * @param date
      * @return date
      */
@@ -454,8 +472,8 @@ public class AppUtil {
 
     public static String getDateStringByPattern(Date pDate, String pattern) {
         String stringDate = "";
-        if(pattern.equals("")){
-            pattern="dd-MM-yyyy";
+        if (pattern.equals("")) {
+            pattern = "dd-MM-yyyy";
         }
 
         DateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -479,7 +497,7 @@ public class AppUtil {
         return new Date();
     }
 
-    public static String getStringBetweenTwoCharacters(String value){
+    public static String getStringBetweenTwoCharacters(String value) {
 
         value = value.substring(value.indexOf("[") + 1);
         value = value.substring(0, value.indexOf("]"));

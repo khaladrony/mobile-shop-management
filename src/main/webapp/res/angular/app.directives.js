@@ -254,6 +254,29 @@ app.directive('formattedDatePicker', function($timeout, $filter) {
     };
 });
 
+app.directive('customDatePicker', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            placeholder: '@'
+        },
+        template: `
+            <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       placeholder="{{ placeholder }}"
+                       ng-model="ngModel"
+                       formatted-date-picker />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+        `
+    };
+});
+
+
 app.directive('fileModel', ['$parse', function ($parse) {
         return {
             restrict: 'A',
@@ -781,7 +804,7 @@ app.directive('voucherTable', function () {
             voucherPreview: '&',
             voucherStatus: '='
         },
-        templateUrl: '/view/accounts/directives/voucher-table.html'
+        templateUrl: _NG_SRC_ + '/accounts/directives/voucher-table.html'
     };
 });
 
@@ -803,4 +826,19 @@ app.directive('voucherCreateButton', function() {
     };
 });
 
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
 

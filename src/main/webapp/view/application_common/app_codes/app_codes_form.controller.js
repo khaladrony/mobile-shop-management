@@ -58,6 +58,7 @@ app.controller('AppCodesFormCtrl', function (
     $scope.reset = function() {};
 
     $scope.getDataList = function () {
+        $scope._NG_SRC_ = _NG_SRC_;
         var url = API.APP_CODES_FILTER + '?page=' + ($scope.currentPage) + '&size=' + $scope.itemPerPage;
 
         DialogBox.showProgress();

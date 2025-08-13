@@ -30,4 +30,5 @@ public class ItemMasterResponseDTO {
     private String imei;
     private boolean active;
     private Long createdBy;
+    private String fileName;
 }

@@ -8,7 +8,8 @@ var JCONTROLLER = {
     ACC_CHART_OF_ACCOUNTS: "chart_of_accounts",
     ACC_SUB_ACCOUNTS: "sub_accounts",
     ACC_VOUCHER_POST: "voucher_post",
-    ACC_VOUCHER_REPORT: "report"
+    ACC_VOUCHER_REPORT: "report",
+    ACC_DEFAULT_SETUP: "default-setup"
 };
 var JCOMPONENT = {
     acc_debit_voucher_add_view: "acc_debit_voucher_add_view",
@@ -107,9 +108,9 @@ var API = {
     ACC_REPORT_BANK_LEDGER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/bank_ledger",
     ACC_REPORT_TRIAL_BALANCE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/trial_balance",
     ACC_REPORT_BALANCE_SHEET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/balance_sheet",
-    ACC_REPORT_INCOME_STATEMENT: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/income_statement"
+    ACC_REPORT_INCOME_STATEMENT: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_VOUCHER_REPORT + "/income_statement",
 
-
+    ACC_DEFAULT_SETUP_GET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ACC_DEFAULT_SETUP + "/organization"
 };
 
 var VOUCHER_KEY = {

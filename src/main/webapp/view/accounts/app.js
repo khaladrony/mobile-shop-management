@@ -155,7 +155,13 @@ var app = angular.module('AccountsManagementApp', ['rt.select2', 'ngPatternRestr
         
     });
 
-app.run(function($transitions, $state, $timeout, growl, $rootScope) {
+app.run(function($transitions, $state, $timeout, growl, $rootScope, AccountsService) {
+
+//  Load common setup once at app startup
+    AccountsService.getCommonSetup().then(function(data) {
+        $rootScope.commonSetup = data.body;
+        console.log("Common setup loaded:", data.body);
+    });
 
     $transitions.onStart({}, function(transition) {
         const toState = transition.to();

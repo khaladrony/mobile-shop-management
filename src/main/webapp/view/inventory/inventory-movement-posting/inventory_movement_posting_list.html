@@ -155,8 +155,17 @@
                             </span>
                         </td>
                         <td style="width: 170px;text-align: center;">
-                            <button class="btn btn-sm btn-warning btn-no-border btn-round" ng-click="showEditForm(master)" ng-if="master.status===receive_status"> <i class="ace-icon fa fa-edit"></i> Edit</button>
-                            <button class="btn btn-sm btn-primary btn-no-border btn-round" ng-click="preview()"> <i class="ace-icon fa fa-check-circle"></i> Preview</button>
+                            <button
+                                    class="btn btn-sm btn-warning btn-no-border btn-round"
+                                    ng-click="showEditForm(master)"
+                                    ng-if="master.status===receive_status">
+                                <i class="ace-icon fa fa-edit"></i> Edit
+                            </button>
+                            <button
+                                    class="btn btn-sm btn-primary btn-no-border btn-round"
+                                    ng-click="$event.stopPropagation(); preview()">
+                                <i class="ace-icon fa fa-check-circle"></i> Preview
+                            </button>
                         </td>
                     </tr>
 

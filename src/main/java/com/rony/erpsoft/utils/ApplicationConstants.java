@@ -15,4 +15,7 @@ public class ApplicationConstants {
 
     public static final String ACCOUNTS_SUB_TYPE_BALANCE_SHEET = "Balance Sheet";
     public static final String ACCOUNTS_SUB_TYPE_REVENUE = "Revenue";
+
+    public static final String MODULE_ACCOUNTS = "Accounts";
+    public static final String MODULE_INVENTORY = "Inventory";
 }

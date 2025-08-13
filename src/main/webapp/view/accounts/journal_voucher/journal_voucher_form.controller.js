@@ -19,6 +19,7 @@ app.controller('AccJournalVoucherFormCtrl', function (
     $scope.voucher_details_list = [];
     $scope.selectedCoa = null;
     $scope.selectedSubCoa = null;
+    $scope.isRequired = $rootScope.commonSetup.masterParticularRequired;
 
     $scope.cash_bank_coa_obj = {
         id: "",
@@ -181,7 +182,7 @@ app.controller('AccJournalVoucherFormCtrl', function (
             return false;
         }
 
-        if (!details.particulars) {
+        if (!details.particulars && $scope.isRequired) {
             growl.error('Please enter particulars', { title: 'Validation Error!' });
             return false;
         }
@@ -267,6 +268,8 @@ app.controller('AccJournalVoucherFormCtrl', function (
         if (!$scope.isModuleValid()) return;
         if (!$scope.validateBeforeSave())return;
 
+        DateHelperService.formatMultipleFields($scope.module, ['voucherDate']);
+
         const isUpdate = $state.current.name === JCOMPONENT.acc_journal_voucher_update_view;
         const method = isUpdate ? "PUT" : "POST";
         const url = isUpdate ? API.ACC_JOURNAL_VOUCHER_UPDATE : API.ACC_JOURNAL_VOUCHER_SAVE;
@@ -286,11 +289,13 @@ app.controller('AccJournalVoucherFormCtrl', function (
             }
         }, function (err) {
             $rootScope.toastError(err.message);
+        }).finally(function () {
+            AccountsService.parseDatesIfString($scope.module, ['voucherDate']);
         });
     };
 
     $scope.isModuleValid = function () {
-        if (!$scope.module.particulars) {
+        if (!$scope.module.particulars && $scope.isRequired) {
             growl.error('Please enter particulars', { title: 'Validation Error!' });
             return false;
         }
@@ -345,6 +350,7 @@ app.controller('AccJournalVoucherFormCtrl', function (
         Communication.request("GET", API.ACC_JOURNAL_VOUCHER_GET + '/' + $stateParams.id).then(function (resp) {
             if (resp.code === 200) {
                 $scope.module = resp.body;
+                $scope.module.voucherDate = new Date(resp.body.voucherDate);
                 $scope.loadVoucherGridFromModuleDetails($scope.module.details);
                 $scope.updateAmountInWords();
             }
@@ -455,6 +461,7 @@ app.controller('AccJournalVoucherFormCtrl', function (
         $scope.isSubAccHide = true;
         $scope.selectedCoa = null;
         $scope.selectedSubCoa = null;
+        $scope.module.voucherDate = new Date();
         $scope.module.particulars = "";
         $scope.module.chequeNo = "";
         $scope.module.chequeDate = "";

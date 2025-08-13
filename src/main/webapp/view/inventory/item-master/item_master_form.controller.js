@@ -1,6 +1,7 @@
 app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
                 $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
-                DialogBox, encrypt, Communication, growl, ItemService) {
+                DialogBox, encrypt, Communication, growl, ItemService, ImageService
+                ) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
@@ -19,7 +20,8 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
         standardPrice: "",
         standardCost: "",
         imei: "",
-        active: true
+        active: true,
+        fileName: ""
     };
 
     if($state.current.name === JCOMPONENT.item_master_update_view) {
@@ -29,6 +31,8 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
 
             if (resp.code === 200) {
                 $scope.module = resp.body;
+                $scope.imageUrl = ImageService.getImageUrl(JMODULE_NAME, $scope.module.fileName, API.IMAGE_FETCH);
+
             }
         }, function (err) {
             log("Item master edit error", JSON.stringify(err));
@@ -73,6 +77,17 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
             return false;
         }
         return true;
+     };
+
+     $scope.uploadFile = function() {
+        ImageService.upload(JMODULE_NAME, $scope.myFile, API.IMAGE_UPLOAD)
+            .then(function(response) {
+                $scope.module.fileName = response.data.body; // JSON from backend
+                $scope.imageUrl = ImageService.getImageUrl(JMODULE_NAME, $scope.module.fileName, API.IMAGE_FETCH);
+            })
+            .catch(function() {
+                alert("Error uploading image");
+            });
      };
 
     $scope.reset = function() {};

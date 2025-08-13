@@ -40,6 +40,7 @@ app.controller('AccChartOfAccountsFormCtrl', function (
     };
 
     $scope.getDataList = function (currentPage, itemPerPage) {
+        $scope._NG_SRC_ = _NG_SRC_;
         $scope.currentPage = currentPage;
         $scope.data = {};
         $scope.data.items = [];

@@ -4,9 +4,9 @@ import com.rony.erpsoft.configuration.AppResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,5 +29,24 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMostSpecificCause().getMessage());
 
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(ReportNotFoundException.class)
+    public ResponseEntity<String> handleReportNotFound(ReportNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidDateFormatException.class)
+    public ResponseEntity<String> handleInvalidDate(InvalidDateFormatException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Invalid date format: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex, WebRequest request) {
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred. Please try again later.");
     }
 }

@@ -82,7 +82,8 @@
 
         
         <script type="text/javascript">
-            var app = angular.module('LauncherScreenApp', ['ngDialog', 'ngToast', 'ui.router','ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate']);                                                                              var _shskr_ = "${XATKN}";
+            var app = angular.module('LauncherScreenApp', ['ngDialog', 'ngToast', 'ui.router','ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate']);
+            var _shskr_ = "${XATKN}";
         </script>
         <script src="${ANGULAR}/app.services.js?v=${SCRIPT_VERSION}"></script>
         

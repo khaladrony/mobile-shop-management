@@ -23,17 +23,17 @@
                                 <div class="row">
 
                                     <div class="input-group width150" id="from_date" style="float: left; margin-right: 8px;">
-                                        <input data-date-picker class="form-control" type="text" placeholder="From Date"  ng-model="search.fromDate" />
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                        </span>
+                                        <custom-date-picker
+                                                ng-model="search.fromDate"
+                                                placeholder="dd-mm-yyyy">
+                                        </custom-date-picker>
                                     </div>
 
                                     <div class="input-group width150" id="to_date" style="float: left; margin-right: 8px;">
-                                        <input data-date-picker class="form-control" type="text" placeholder="To Date"  ng-model="search.toDate" />
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                        </span>
+                                        <custom-date-picker
+                                                ng-model="search.toDate"
+                                                placeholder="dd-mm-yyyy">
+                                        </custom-date-picker>
                                     </div>
 
                                 </div><br>

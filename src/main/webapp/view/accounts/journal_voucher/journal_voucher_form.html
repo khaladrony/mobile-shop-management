@@ -24,10 +24,10 @@
                         <strong style="color: black;">{{module.voucherNo}}</strong>
                         &nbsp;&nbsp;
                     </span>
-                    <span class="widget-toolbar pull-left">
+                    <!--<span class="widget-toolbar pull-left">
                         <span style="color: #00689c; font-weight: normal;">Voucher Date:</span>
                         <strong style="color: black;">{{module.voucherDate | date: 'dd-MM-yyyy'}}</strong>
-                    </span>
+                    </span>-->
                 </div>
 
                 <!-- Right: Back Button -->
@@ -45,14 +45,17 @@
                     <form ng-submit="saveModule()">
                         <div class="widget-main">
                             <div class="row">
+                                <div class="col-xs-12 col-md-2">
+                                    <voucher-date-picker
+                                            ng-model="module.voucherDate"
+                                            label="Date"
+                                            required="true"
+                                            block-typing="true">
+                                    </voucher-date-picker>
+                                </div>
 
                                 <div class="col-xs-12 col-md-8">
-                                    <label>Particulars <span class="required">*</span></label>
-                                    <input class="form-control"
-                                           type="text"
-                                           id="masterParticulars"
-                                           ng-model="module.particulars"
-                                           placeholder="Particulars" />
+                                    <particulars-field ng-model="module.particulars"></particulars-field>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +84,7 @@
                                     </div>
 
                                     <div ng-class="particularsDivClassVar">
-                                        <label>Particulars <span class="required">*</span></label>
+                                        <label>Particulars <span ng-if="isRequired" class="required">*</span></label>
                                         <input class="form-control"
                                                type="text"
                                                id="particulars"

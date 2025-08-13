@@ -60,4 +60,7 @@ public class ItemMaster extends BaseEntity {
 
     @Column(name="active")
     private boolean active;
+
+    @Column(name="file_name")
+    private String fileName;
 }

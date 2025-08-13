@@ -1,20 +1,23 @@
 package com.rony.erpsoft.accounts.service;
 
+import com.rony.erpsoft.accounts.dto.AccDefaultSetupDTO;
 import com.rony.erpsoft.accounts.dto.FinancialAccountDto;
 import com.rony.erpsoft.accounts.model.AccChartOfAccounts;
-import com.rony.erpsoft.accounts.model.AccDefaultSetup;
 import com.rony.erpsoft.accounts.model.AccLedgerDto;
 import com.rony.erpsoft.accounts.model.enums.AccountsSource;
 import com.rony.erpsoft.accounts.model.enums.AccountsUsage;
 import com.rony.erpsoft.accounts.model.enums.PaymentType;
 import com.rony.erpsoft.accounts.model.enums.VoucherType;
-import com.rony.erpsoft.accounts.repo.AccDefaultSetupRepo;
 import com.rony.erpsoft.user_auth.model.Organization;
 import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.NumberToBanglaTaka;
 import jakarta.servlet.http.HttpServletRequest;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,7 @@ public class AccountsReportService {
     @Autowired
     SessionService sessionService;
     @Autowired
-    AccDefaultSetupRepo accDefaultSetupRepo;
+    AccDefaultSetupService accDefaultSetupService;
 
     public static final String ACCOUNT_REPORTS_DIR = "/view/accounts/report/jrxml/";
 
@@ -61,7 +64,7 @@ public class AccountsReportService {
         try {
 
             String fileName = "voucherViewA5";
-            AccDefaultSetup accDefaultSetup = accDefaultSetupRepo.findById((long) 1);
+            AccDefaultSetupDTO accDefaultSetup = accDefaultSetupService.findByOrganizationId();
             if (accDefaultSetup != null && accDefaultSetup.getVoucherPrintView().equalsIgnoreCase("A4")) {
                 fileName = "voucherView";
             } else if (accDefaultSetup != null && accDefaultSetup.getVoucherPrintView().equalsIgnoreCase("A5")) {
@@ -148,6 +151,14 @@ public class AccountsReportService {
             List<AccLedgerDto> accountWiseLedgerData = accJournalMasterService.getSubAccountWiseLedger(fromDate, toDate, chartOfAccountsId, subAccountsId, accountsSource, accountsUsage);
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(accountWiseLedgerData);
 
+            double totalBalance = accountWiseLedgerData
+                    .stream()
+                    .mapToDouble(dto ->
+                            "Opening Balance :".equals(dto.getVoucherNo())
+                                    ? dto.getBalanceAmount()
+                                    : dto.getPrimeAmount()
+                    )
+                    .sum();
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("chartOfAccountsId", chartOfAccountsId);
@@ -156,6 +167,7 @@ public class AccountsReportService {
             parameters.put("accheadcodeparam", chartOfAccountsCodeName);
             parameters.put("organizationName", organization.getName());
             parameters.put("orgAddress", organization.getAddress1());
+            parameters.put("totalBalance", totalBalance);
 
             String reportName = "Sub Account Ledger Report";
             String groupTitle = "Sub Account: ";
@@ -231,6 +243,7 @@ public class AccountsReportService {
 
         try {
             URL resourceUrl = request.getSession().getServletContext().getResource(ACCOUNT_REPORTS_DIR + fileName + ".jrxml");
+            logger.info("Resource Url: {}", resourceUrl);
             File file = new File(resourceUrl.toURI());
 
             JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());

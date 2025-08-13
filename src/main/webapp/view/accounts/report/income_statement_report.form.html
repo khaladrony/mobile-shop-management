@@ -21,25 +21,17 @@
                             <div class="col-md-4">&nbsp;</div>
                             <div class="col-md-12" style="padding-left: 80px;">
                                 <div class="input-group width170 date" id="fromDate" style="float: left; margin-right: 8px;">
-                                    <input type="text"
-                                           class="form-control"
-                                           placeholder="From Date"
-                                           ng-model="search.fromDate"
-                                           formatted-date-picker />
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                    </span>
+                                    <custom-date-picker
+                                            ng-model="search.fromDate"
+                                            placeholder="dd-mm-yyyy">
+                                    </custom-date-picker>
                                 </div>
 
                                 <div class="input-group width170 date" id="toDate" style="float: left; margin-right: 8px;">
-                                    <input type="text"
-                                           class="form-control"
-                                           placeholder="To Date"
-                                           ng-model="search.toDate"
-                                           formatted-date-picker />
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                    </span>
+                                    <custom-date-picker
+                                            ng-model="search.toDate"
+                                            placeholder="dd-mm-yyyy">
+                                    </custom-date-picker>
                                 </div>
                             </div>
 

@@ -124,7 +124,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
 
         StringBuilder sql;
         sql = voucherListQueryString(params, false);
-        sql.append(" ORDER BY voucher_no desc limit :offset, :limit ");
+        sql.append(" ORDER BY id desc limit :offset, :limit ");
 
         return nDB.queryForList(sql.toString(), params);
     }
@@ -196,7 +196,7 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     public String voucherNoGeneration(String voucherPrefix, int year, int month) {
         String voucherNo = "";
         String monthPadding = AppUtil.rightPad(String.valueOf(month), 2, '0');
-        String prefix = voucherPrefix + String.valueOf(year) + monthPadding;
+        String prefix = voucherPrefix + year + monthPadding;
 
         voucherNo = accJournalMasterRepo.findLastVoucherNoByVoucherPrefixAndYearAndMonth(voucherPrefix, year, month);
         if (voucherNo == null) {
@@ -213,7 +213,6 @@ public class AccJournalMasterService implements IAccJournalMasterService {
     public AccJournalMaster journalMasterPropertySet(AccJournalMaster journalMaster) {
 
         journalMaster.setStatus(VoucherStatus.DRAFT.code());
-        journalMaster.setVoucherDate(new Date());
         journalMaster.setYear(AppUtil.getYear(journalMaster.getVoucherDate()));
         journalMaster.setMonth(AppUtil.getMonth(journalMaster.getVoucherDate()));
         journalMaster.setVoucherType(getVoucherType(journalMaster.getVoucherPrefix()));

@@ -1,4 +1,8 @@
-app.controller('AccReportSubAccountLedgerFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, Communication, growl) {
+app.controller('AccReportSubAccountLedgerFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope, $sce,
+            $mdDialog, $interval, ClientService, DialogBox, Communication, growl,
+            DateHelperService, ReportPreviewService
+            ) {
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
 
@@ -57,14 +61,6 @@ app.controller('AccReportSubAccountLedgerFormCtrl', function ($scope, $http, $st
     };
 
     $scope.formFieldValidation = function () {
-        var fromDate = new Date($scope.search.fromDate);
-        var toDate = new Date($scope.search.toDate);
-
-        if( fromDate > toDate ){
-            growl.error('To date should be greater than or equal from date!', {title: 'Error!'});
-            return;
-        }
-        
         if ($scope.search.fromDate === '') {
             growl.error('From date required', {title: 'Error!'});
             return false;
@@ -93,21 +89,32 @@ app.controller('AccReportSubAccountLedgerFormCtrl', function ($scope, $http, $st
             return;
         }
 
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", API.ACC_REPORT_SUB_ACCOUNT_WISE_LEDGER + '/' + $scope.search.fromDate + '/' + $scope.search.toDate + '/' + $scope.search.chartOfAccountsId + '/' + $scope.search.chartOfAccountsCodeName + '/' + $scope.search.subAccountsId + '/' + $scope.search.accountsSource, true);
-        xhttp.setRequestHeader('x-aip-token', _shskr_);
-        xhttp.responseType = 'blob';
-        xhttp.onload = function (e) {
-            if (this.status === 200) {
-                var pdfResponse = new Blob([this.response], {type: 'application/pdf'});
-                var fileURL = URL.createObjectURL(pdfResponse);
-                var link = document.createElement('a');
-                link.href = fileURL;
-                link.target = '_blank';
-                link.click();
-            }
-        };
-        xhttp.send();
+        const result = DateHelperService.validateAndFormat (
+                        $scope.search.fromDate,
+                        $scope.search.toDate
+                        );
+        if (!result) return;
+
+        const fromDate = DateHelperService.formatDateLocal($scope.search.fromDate);
+        const toDate = DateHelperService.formatDateLocal($scope.search.toDate);
+
+        const encodedAccountName = encodeURIComponent($scope.search.chartOfAccountsCodeName);
+        var reportUrl = API.ACC_REPORT_SUB_ACCOUNT_WISE_LEDGER
+                        + '/' + fromDate
+                        + '/' + toDate
+                        + '/' + $scope.search.chartOfAccountsId
+                        + '/' + encodedAccountName
+                        + '/' + $scope.search.subAccountsId
+                        + '/' + $scope.search.accountsSource;
+        var token = _shskr_;
+
+        ReportPreviewService.previewPdf(reportUrl, token)
+            .then(function () {
+                console.log("PDF opened successfully.");
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     };
 
     $scope.reset = function () {

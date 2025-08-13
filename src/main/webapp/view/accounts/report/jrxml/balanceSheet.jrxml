@@ -117,21 +117,21 @@
 			<textField>
 				<reportElement x="2" y="12" width="447" height="20" uuid="c534abda-9208-4be1-a7ef-b476580fdd1a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true" pdfFontName="" pdfEncoding=""/>
+					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{organizationName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="2" y="31" width="447" height="15" uuid="172b771a-1308-44b6-b63a-59f0879faf04"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="Arial" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{orgAddress}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="2" y="53" width="447" height="16" uuid="f3444039-5e0b-405f-863a-5e6b9f08b8eb"/>
 				<textElement textAlignment="Center">
-					<font fontName="Arial Narrow" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="Arial Narrow" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportName}]]></textFieldExpression>
 			</textField>

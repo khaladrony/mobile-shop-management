@@ -22,14 +22,10 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="input-group width170 date" id="as_on_date" style="float: left; margin-right: 8px;">
-                                        <input type="text"
-                                               class="form-control"
-                                               placeholder="As On Date"
-                                               ng-model="search.asOnDate"
-                                               formatted-date-picker />
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
-                                        </span>
+                                        <custom-date-picker
+                                                ng-model="search.asOnDate"
+                                                placeholder="dd-mm-yyyy">
+                                        </custom-date-picker>
                                     </div>
 
                                 </div>

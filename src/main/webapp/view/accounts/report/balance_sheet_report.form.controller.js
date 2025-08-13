@@ -1,4 +1,8 @@
-app.controller('AccReportBalanceSheetFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, Communication, growl) {
+app.controller('AccReportBalanceSheetFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope, $sce,
+            $mdDialog, $interval, ClientService, DialogBox, Communication, growl,
+            DateHelperService, ReportPreviewService
+            ) {
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
 
@@ -7,8 +11,6 @@ app.controller('AccReportBalanceSheetFormCtrl', function ($scope, $http, $state,
     };
 
     $scope.formFieldValidation = function () {
-//        var asOnDate = new Date($scope.search.asOnDate);
-
         if ($scope.search.asOnDate === '') {
             growl.error('As on date required', {title: 'Error!'});
             return false;
@@ -22,30 +24,17 @@ app.controller('AccReportBalanceSheetFormCtrl', function ($scope, $http, $state,
             return;
         }
 
-        const formattedDate = formatDateLocal($scope.search.asOnDate);
+        const formattedDate = DateHelperService.formatDateLocal($scope.search.asOnDate);
 
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", API.ACC_REPORT_BALANCE_SHEET + '/' + formattedDate , true);
-        xhttp.setRequestHeader('x-aip-token', _shskr_);
-        xhttp.responseType = 'blob';
-        xhttp.onload = function (e) {
-            if (this.status === 200) {
-                var pdfResponse = new Blob([this.response], {type: 'application/pdf'});
-                var fileURL = URL.createObjectURL(pdfResponse);
-                var link = document.createElement('a');
-                link.href = fileURL;
-                link.target = '_blank';
-                link.click();
-            }
-        };
-        xhttp.send();
+        var reportUrl = API.ACC_REPORT_BALANCE_SHEET + '/' + formattedDate;
+        var token = _shskr_;
+
+        ReportPreviewService.previewPdf(reportUrl, token)
+            .then(function () {
+                console.log("PDF opened successfully.");
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     };
-
-    function formatDateLocal(date) {
-      const d = new Date(date);
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${year}-${month}-${day}`; // or `${day}-${month}-${year}` if needed
-    }
 });

@@ -20,6 +20,6 @@
     </span>
 
     <ul ng-if="!node.collapsed && node.children && node.children.length">
-        <li ng-repeat="node in node.children" ng-include="'/view/accounts/directives/tree_item_renderer.html'"></li>
+        <li ng-repeat="node in node.children" ng-include="_NG_SRC_ + '/accounts/directives/tree_item_renderer.html'"></li>
     </ul>
 </li>

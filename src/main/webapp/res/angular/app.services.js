@@ -83,6 +83,26 @@ app.factory('Communication', function ($http, $q, $timeout, CommunicationService
     };
 });
 
+app.service('ImageService', ['$http', function($http) {
+
+    // Upload image file
+    this.upload = function(moduleName, file, uploadUrl) {
+        var formData = new FormData();
+        formData.append("file", file);
+        formData.append("moduleName", moduleName);
+
+        return $http.post(uploadUrl, formData, {
+            transformRequest: angular.identity,
+            headers: { 'Content-Type': undefined }
+        });
+    };
+
+    // Build full image URL
+    this.getImageUrl = function(moduleName, fileName, baseUrl) {
+        return baseUrl + moduleName + '/' + fileName;
+    };
+
+}]);
 
 app.factory('autoCompleteDataService', [function () {
     return {
@@ -659,6 +679,22 @@ app.factory('DateHelperService', function(growl) {
         return `${yyyy}-${mm}-${dd}T00:00:00`;
     }
 
+    function formatMultipleFields (obj, fields) {
+        fields.forEach(function (field) {
+            obj[field] = this.formatToLocalDateTimeString(obj[field]);
+        }, this);
+        return obj;
+    }
+
+    function formatDateLocal(date) {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = pad(d.getDate());
+        const month = pad(d.getMonth() + 1);
+        const year = d.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+
     function validateAndFormat(fromDate, toDate) {
         const formattedFrom = formatToLocalDateTimeString(fromDate);
         const formattedTo = formatToLocalDateTimeString(toDate);
@@ -676,15 +712,45 @@ app.factory('DateHelperService', function(growl) {
 
     return {
         formatToLocalDateTimeString,
+        formatMultipleFields,
+        formatDateLocal,
         validateAndFormat
     };
 });
 
-/*app.factory('AppCodeByTypeService', function($http) {
-    getByType = function(type) {
-        return $http.get(COMMON_API.app_codes +'/by-type/' + type);
-    };
-});*/
+app.factory('ReportPreviewService', function () {
+    function previewPdf(apiUrl, token) {
+        return new Promise(function (resolve, reject) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", apiUrl, true);
+            xhttp.setRequestHeader('x-aip-token', token);
+            xhttp.responseType = 'blob';
 
+            xhttp.onload = function () {
+                if (this.status === 200) {
+                    var pdfResponse = new Blob([this.response], { type: 'application/pdf' });
+                    var fileURL = URL.createObjectURL(pdfResponse);
+                    var link = document.createElement('a');
+                    link.href = fileURL;
+                    link.target = '_blank';
+                    link.click();
+                    resolve();
+                } else {
+                    reject("Failed to preview report. Status: " + this.status);
+                }
+            };
+
+            xhttp.onerror = function () {
+                reject("Network error occurred while previewing report.");
+            };
+
+            xhttp.send();
+        });
+    }
+
+    return {
+        previewPdf
+    };
+});
 
 

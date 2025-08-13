@@ -163,7 +163,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.rony</groupId>
             <artifactId>arial-fonts</artifactId>
             <version>1.0</version>
@@ -176,7 +176,7 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/fonts/arial-narrow-fonts.jar</systemPath>
-        </dependency>
+        </dependency>-->
 
 
     </dependencies>

@@ -3,6 +3,7 @@ package com.rony.erpsoft.accounts.actionService.voucher;
 import com.rony.erpsoft.accounts.model.AccJournalDetails;
 import com.rony.erpsoft.accounts.model.AccJournalMaster;
 import com.rony.erpsoft.accounts.service.AccJournalMasterService;
+import com.rony.erpsoft.application_common.service.TransactionNumberConfigService;
 import com.rony.erpsoft.configuration.AppResponse;
 import com.rony.erpsoft.user_auth.service.SessionService;
 import com.rony.erpsoft.utils.ModelValidator;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static com.rony.erpsoft.utils.ApplicationConstants.MODULE_ACCOUNTS;
+
 @Service
 public class VoucherActionService {
     @Autowired
@@ -20,6 +23,8 @@ public class VoucherActionService {
     SessionService sessionService;
     @Autowired
     AccJournalMasterService accJournalMasterService;
+    @Autowired
+    TransactionNumberConfigService transactionNumberConfigService;
 
     public AppResponse execute(AccJournalMaster journalMaster) {
 
@@ -30,7 +35,8 @@ public class VoucherActionService {
 
                 accJournalMasterService.journalMasterPropertySet(journalMaster);
 
-                String voucherNo = accJournalMasterService.voucherNoGeneration(journalMaster.getVoucherPrefix(), journalMaster.getYear(), journalMaster.getMonth());
+//                String voucherNo = accJournalMasterService.voucherNoGeneration(journalMaster.getVoucherPrefix(), journalMaster.getYear(), journalMaster.getMonth());
+                String voucherNo = transactionNumberConfigService.generateTransactionNumber(MODULE_ACCOUNTS, journalMaster.getVoucherType(), journalMaster.getVoucherDate());
                 journalMaster.setVoucherNo(voucherNo);
 
             } else {

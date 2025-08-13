@@ -126,7 +126,7 @@ app.directive('bankInfoSection', function () {
 });
 
 //voucher-details-form
-app.directive('voucherDetailsForm', function () {
+app.directive('voucherDetailsForm', function ($rootScope) {
     return {
         restrict: 'E',
         scope: {
@@ -166,7 +166,7 @@ app.directive('voucherDetailsForm', function () {
                     </div>
 
                     <div ng-class="particularsDivClassVar">
-                        <label>Particulars <span class="required">*</span></label>
+                        <label>Particulars <span ng-if="isRequired" class="required">*</span></label>
                         <input class="form-control"
                                type="text"
                                id="particulars"
@@ -222,9 +222,35 @@ app.directive('voucherDetailsForm', function () {
                 </div>
 
             </div>
-        `
+        `,
+        link: function(scope) {
+            scope.isRequired = $rootScope.commonSetup.detailParticularRequired;
+        }
     };
 });
+
+app.directive('particularsField', function($rootScope) {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '=ngModel'
+        },
+        template: `
+            <label>
+                Particulars
+                <span class="required" ng-if="isRequired">*</span>
+            </label>
+            <input class="form-control"
+                 type="text"
+                 ng-model="model"
+                 placeholder="Particulars" />
+        `,
+        link: function(scope) {
+            scope.isRequired = $rootScope.commonSetup.masterParticularRequired;
+        }
+    };
+});
+
 
 // voucher-details-table.directive.js
 app.directive('voucherDetailsTable', function () {
@@ -335,23 +361,61 @@ app.directive('radioGroup', function () {
 });
 
 app.directive('coaTree', function () {
-  return {
-    restrict: 'E',
-    scope: {
-      data: '=' // Bind the tree data
-    },
-    template: `
-      <ul class="coa-tree">
-        <li ng-repeat="node in data" ng-include="'/view/accounts/directives/tree_item_renderer.html'"></li>
-      </ul>
-    `,
-    controller: function ($scope) {
-      $scope.toggle = function (node) {
-        node.collapsed = !node.collapsed;
-      };
-    }
-  };
+    return {
+        restrict: 'E',
+        scope: {
+            data: '=' // Bind the tree data
+        },
+        template: `
+            <ul class="coa-tree">
+                <li
+                    ng-repeat="node in data"
+                    ng-include="_NG_SRC_ + '/accounts/directives/tree_item_renderer.html'">
+                </li>
+            </ul>
+        `,
+        controller: function ($scope) {
+            $scope._NG_SRC_ = _NG_SRC_;
+            $scope.toggle = function (node) {
+                node.collapsed = !node.collapsed;
+            };
+        }
+    };
 });
+
+app.directive('voucherDatePicker', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '=',
+            label: '@',
+            required: '@',
+            blockTyping: '@?' // "true" or "false"
+        },
+        template: `
+            <label>{{label}} <span ng-if="required==='true'" class="required">*</span></label>
+            <div class="input-group date">
+                <input type="text"
+                       class="form-control"
+                       placeholder="{{label}}"
+                       ng-model="ngModel"
+                       formatted-date-picker
+                       ng-keydown="handleKeydown($event)" />
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                </span>
+            </div>
+        `,
+        link: function (scope) {
+            scope.handleKeydown = function (event) {
+                if (scope.blockTyping === 'true') {
+                    event.preventDefault();
+                }
+            };
+        }
+    };
+});
+
 
 
 

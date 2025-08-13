@@ -1,6 +1,8 @@
 app.factory('AccountsService', function (
         $http, $q, DialogBox, ToastService, Communication, $timeout
         ) {
+    var commonSetupCache = null;
+
     return {
 
         getFilteredVouchers: function (api, searchCriteria, currentPage, itemPerPage) {
@@ -245,8 +247,8 @@ app.factory('AccountsService', function (
                 return false;
             }
 
-            if (!voucherDetails.particulars) {
-                growl.error('Please enter particulars', { title: 'Error!' });
+            if (!voucherDetails.particulars && commonSetupCache.body.detailParticularRequired) {
+                growl.error('Please enter details particulars', { title: 'Error!' });
                 return false;
             }
 
@@ -273,8 +275,8 @@ app.factory('AccountsService', function (
                 return false;
             }
 
-            if (!module.particulars) {
-                growl.error('Please enter particulars', { title: 'Error!' });
+            if (!module.particulars && commonSetupCache.body.masterParticularRequired) {
+                growl.error('Please enter master particulars', { title: 'Error!' });
                 return false;
             }
 
@@ -335,6 +337,7 @@ app.factory('AccountsService', function (
                     if (resp.code === 200) {
                         $scope.module = resp.body;
                         $scope.module.chequeDate = new Date(resp.body.chequeDate);
+                        $scope.module.voucherDate = new Date(resp.body.voucherDate);
                         $scope.voucher_details_list = resp.body.details.map(self.buildDetailsObject);
                         $scope.updateAmountInWords();
 
@@ -473,7 +476,28 @@ app.factory('AccountsService', function (
                 { id: 'Employee', value: 'Employee' },
                 { id: 'Supplier', value: 'Supplier' }
             ];
-        }
+        },
 
+         getCommonSetup: function() {
+            if (commonSetupCache) {
+                return $q.resolve(commonSetupCache); // return cached data as resolved promise
+            }
+            return $http.get(API.ACC_DEFAULT_SETUP_GET)
+                .then(function(resp) {
+                    commonSetupCache = resp.data;
+                    return commonSetupCache;
+                });
+        },
+
+        parseDatesIfString: function (obj, fields) {
+            fields.forEach(function (field) {
+                if (typeof obj[field] === 'string' && obj[field].trim() !== '') {
+                    let parsedDate = new Date(obj[field]);
+                    if (!isNaN(parsedDate.getTime())) { // valid date
+                        obj[field] = parsedDate;
+                    }
+                }
+            });
+        }
     };
 });
