@@ -1,0 +1,39 @@
+<modal-base modal-id="paymentModal" modal-size="modal-sm" on-hide="resetPayment()" focus-on-show>
+    <div class="modal-header" style="background-color: #2ecc71;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" style="color: white;">
+            <span class="glyphicon glyphicon-credit-card"></span> Payment
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <p><strong>Payable:</strong> &#2547; {{totalAmount | number:2}}</p>
+
+        <div class="form-group">
+            <label>Payment Type:</label>
+            <select class="form-control" ng-model="payment.type">
+                <option value="CASH">Cash</option>
+                <option value="BANK">Bank</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Customer Given Amount:</label>
+            <input type="number" class="form-control" id="payGivenAmount" ng-model="payment.givenAmount">
+        </div>
+
+        <div class="form-group" ng-if="payment.givenAmount > totalAmount">
+            <label>Return Amount:</label>
+            <p class="text-success"><strong>&#2547; {{payment.givenAmount - totalAmount | number:2}}</strong></p>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success"
+                ng-click="confirmPayment()"
+                ng-disabled="payment.givenAmount < totalAmount">
+            Confirm
+        </button>
+    </div>
+</modal-base>

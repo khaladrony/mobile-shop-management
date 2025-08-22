@@ -1,0 +1,94 @@
+<modal-base modal-id="transactionModal" modal-size="modal-xl">
+    <div class="modal-header" style="height: 55px; background-color: #87B87F; color:white;">
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+        <h5 class="modal-title" style="color: white;">
+            <span class="glyphicon glyphicon-list"></span> Order List
+        </h5>
+    </div>
+
+    <div class="modal-body">
+        <div class="row" ng-init="getDataList(1, itemPerPage)">
+            <div class="col-12 pos-orders-table">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Order No</th><th>Date</th><th>Pay Type</th><th>Gross</th>
+                        <th>Discount</th><th>Net Amount</th><th>VAT</th>
+                        <th>Payable</th><th>Status</th><th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat-start="master in data.items track by $index"
+                        ng-click="toggleDetails(master)"
+                        ng-class="{'row-expanded': master.showDetails}">
+                        <td>
+                            <i class="fa toggle-icon"
+                               ng-class="{'fa-chevron-down': master.showDetails, 'fa-chevron-right': !master.showDetails}"></i>
+                            <span class="order-id">{{master.transactionId}}</span>
+                        </td>
+                        <td>{{master.transactionDate | date: 'dd-MM-yyyy HH:mm:ss'}}</td>
+                        <td>{{master.paymentType}}</td>
+                        <td>{{master.grossAmount | currency:"৳"}}</td>
+                        <td>{{master.discountValue | currency:"৳"}}</td>
+                        <td>{{master.netAmount | currency:"৳"}}</td>
+                        <td>{{master.vatAmount | currency:"৳"}}</td>
+                        <td>{{master.totalAmount | currency:"৳"}}</td>
+                        <td>
+                            <span class="status-badge"
+                                ng-class="{
+                                  'status-held': master.status === 'HELD',
+                                  'status-completed': master.status === 'COMPLETED',
+                                  'status-cancelled': master.status === 'CANCELLED',
+                                  'status-returned': master.status === 'RETURNED'
+                                }">
+                                {{master.status}}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning btn-rounded"
+                                    ng-click="$event.stopPropagation(); selectOrder(master)"
+                                    ng-if="master.status==='HELD'">
+                                <i class="fa fa-edit"></i> Select
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr ng-repeat-end ng-show="master.showDetails">
+                        <td colspan="10">
+                            <div class="fixed-width-div smart-table">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="detail in master.items track by $index">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{detail.itemName}}</td>
+                                        <td>{{detail.quantity}}</td>
+                                        <td>{{detail.price | currency:"৳":0}}</td>
+                                        <td>{{detail.total | currency:"৳":0}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="data.items.length===0">
+                        <td colspan="10" class="text-center"><h3>No transaction found!!!</h3></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div sarker-pagination
+                     item-count="data.itemCount"
+                     item-per-page="itemPerPage"
+                     selected-page="currentPage"
+                     get-items="getDataList(pageNumber, itemPerPage)">
+                </div>
+            </div>
+        </div>
+    </div>
+</modal-base>

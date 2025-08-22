@@ -130,6 +130,9 @@
                                 <c:when test="${fn:contains(module.feature_name, 'Inventory')}">
                                     <i class="menu-icon fa fa-archive"></i>
                                 </c:when>
+                                <c:when test="${fn:contains(module.feature_name, 'Sales')}">
+                                    <i class="menu-icon fa fa-shopping-cart"></i>
+                                </c:when>
                                 <c:otherwise>
                                     <i class="menu-icon fa fa-desktop"></i>
                                 </c:otherwise>

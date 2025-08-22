@@ -1,0 +1,66 @@
+
+<modal-base modal-id="posReturnModal" modal-size="modal-lg" on-hide="clearPosReturnForm()" focus-on-show>
+    <form name="returnForm" novalidate>
+        <div class="modal-header" style="background:#FFB752; color:white;">
+            <button type="button" class="close" data-dismiss="modal" ng-click="resetReturnForm()">&times;</button>
+            <h4 class="modal-title" style="color: white;">
+                <span class="glyphicon glyphicon-refresh"></span> POS Return
+            </h4>
+        </div>
+
+        <div class="modal-body">
+            <!-- Search -->
+            <div class="form-group">
+                <label>Search Order #</label>
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           id="searchTxn"
+                           ng-model="search.txnNumber"
+                           placeholder="Enter order number">
+                    <span class="input-group-btn">
+                        <button class="btn btn-sm btn-info" ng-click="searchTransaction()">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Transaction details -->
+            <div ng-if="transaction">
+                <h5 style="font-size: 16px; color:#FF6347;">
+                    Order #: {{transaction.transactionId}} | Date: {{transaction.transactionDate | date:'short'}} | Customer: {{transaction.customerName}}
+                </h5>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Return Qty</th><th>Refund</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in transaction.items">
+                        <td>{{item.itemName}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td>{{item.price | currency:'৳ '}}</td>
+                        <td>
+                            <input type="number" min="0" max="{{item.quantity}}" ng-model="item.returnQty"
+                                   ng-change="updateRefund(item)" class="form-control input-sm" style="width:80px;">
+                        </td>
+                        <td>{{item.returnQty * item.price | currency:'৳ '}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-warning">
+                    <strong>Return Policy:</strong> Items can only be returned within 7 days of purchase. Refunds processed back to original payment method.
+                </div>
+
+                <h5 style="color:#FF6347;">Total Refund: <strong>{{getTotalRefund() | currency:'৳ '}}</strong></h5>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" ng-click="resetReturnForm()">Cancel</button>
+            <button type="submit" class="btn btn-success btn-sm" ng-click="processReturn()"
+                    ng-disabled="!transaction || getTotalRefund() <= 0">Process Return</button>
+        </div>
+    </form>
+</modal-base>
