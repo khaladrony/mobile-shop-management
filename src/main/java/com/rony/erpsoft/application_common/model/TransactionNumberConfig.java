@@ -16,7 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "transaction_number_config",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_module_entity_name_transaction_type", columnNames = {"module", "entity_name", "transaction_type"})
+                @UniqueConstraint(
+                        name = "uq_module_entity_name_transaction_type",
+                        columnNames = {"module", "entity_name", "transaction_type"}
+                )
         })
 public class TransactionNumberConfig extends BaseEntity {
 

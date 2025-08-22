@@ -1,3 +1,4 @@
+/*
 package com.rony.erpsoft.configuration.security;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,3 +17,4 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.sendRedirect("/error?code=403");
     }
 }
+*/

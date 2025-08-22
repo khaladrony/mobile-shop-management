@@ -58,7 +58,7 @@ app.run(function ($rootScope, $window, ClientService, $timeout, $sce, $q,
     };
     
     $timeout(function(){
-        $window.location.href = _baseurl_ + 'auth/login';
+        $window.location.href = COMMON_API.login_url;
     },_SESSION_TIMEOUT_);
 
 });
@@ -842,3 +842,86 @@ app.directive('fileModel', ['$parse', function ($parse) {
     };
 }]);
 
+/*
+    Example Behavior:
+    - User types: khaled mosharaf
+    - Input immediately changes to: Khaled Mosharaf
+    - Saved in DB as: Khaled Mosharaf
+*/
+app.directive('capitalizeWords', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            ngModel.$parsers.push(function(input) {
+                if (input) {
+                    // Capitalize each word
+                    var capitalized = input.replace(/\b\w/g, function(char) {
+                        return char.toUpperCase();
+                    });
+
+                    // If changed, update view + model
+                    if (capitalized !== input) {
+                        ngModel.$setViewValue(capitalized);
+                        ngModel.$render();
+                    }
+                    return capitalized;
+                }
+                return '';
+            });
+        }
+    };
+});
+
+app.directive('focusOnShow', function($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $(element).on('shown.bs.modal', function () {
+                $timeout(function () {
+                    var input = element.find('input')[0]; // first input in modal
+                    if (input) {
+                        input.focus();
+                        input.select();
+                    }
+                }, 50); // small delay
+            });
+        }
+    };
+});
+
+app.directive('notificationWidget', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            messages: '=',       // bind messages array
+            closeMessage: '&'    // expose close function
+        },
+        template: `
+        <div class="notification-container">
+            <div class="notification-card"
+                 ng-repeat="msg in messages track by $index"
+                 ng-class="msg.type">
+
+                <div class="icon-wrap" style="--dur: {{msg.duration || 4000}}ms;">
+                    <div class="icon-circle" ng-class="msg.type">
+                        <span ng-if="msg.type==='success'">&#10003;</span>
+                        <span ng-if="msg.type==='failed'">&#10005;</span>
+                    </div>
+
+                    <!-- Circular progress -->
+                    <svg class="progress-ring" viewBox="0 0 44 44">
+                        <!-- track -->
+                        <circle class="ring-track" cx="22" cy="22" r="20"></circle>
+                        <!-- animated progress -->
+                        <circle class="ring-progress" cx="22" cy="22" r="20"></circle>
+                    </svg>
+                </div>
+
+                <h3>{{ msg.type | uppercase }}</h3>
+                <p ng-bind-html="msg.text"></p>
+                <button ng-click="closeMessage({index: $index})">Okay</button>
+            </div>
+        </div>
+        `
+    };
+});

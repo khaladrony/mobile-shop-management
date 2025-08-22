@@ -27,13 +27,13 @@ app.factory('Communication', function ($http, $q, $timeout, CommunicationService
 
                 $http(req).then(function (msg) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + 'auth/login';
+                        window.location.href = COMMON_API.login_url;
                     }
                     deferred.resolve(msg.data);
 
                 }, function (err) {
                     if( JSON.stringify(msg).includes("Please Enter Your Credential") && JSON.stringify(msg).includes("DOCTYPE html") ){ // this text is exist in login page
-                        window.location.href = _baseurl_ + 'auth/login';
+                        window.location.href = COMMON_API.login_url;
                     }
                     deferred.reject(err);
                 });
@@ -753,4 +753,49 @@ app.factory('ReportPreviewService', function () {
     };
 });
 
+app.factory('CustomerService', function($http) {
+    return {
+        search: function(query) {
+            return $http.get(COMMON_API.search_customer, { params: { query: query } });
+        },
+        saveCustomer: function(customerData) {
+            return $http.post(COMMON_API.save_customer, customerData);
+        }
+    };
+});
 
+app.factory('NotificationService', function($timeout) {
+    var messages = [];
+
+    return {
+        messages: messages,
+
+        // Show a new message
+        showMessage: function(type, text, duration = 4000) {
+            const msg = { type, text, duration };
+            messages.push(msg);
+
+            // auto-close after duration
+            const index = messages.length - 1;
+            $timeout(function() {
+                if (messages[index]) {
+                    this.closeMessage(index);
+                }
+            }.bind(this), duration);
+        },
+
+        // Close a message
+        closeMessage: function(i) {
+            const els = document.querySelectorAll('.notification-card');
+            const el = els[i];
+            if (el) {
+                el.classList.add('fade-out');
+                $timeout(function() {
+                    messages.splice(i, 1);
+                }, 350);
+            } else {
+                messages.splice(i, 1);
+            }
+        }
+    };
+});

@@ -1,3 +1,4 @@
+/*
 package com.rony.erpsoft.configuration.security;
 
 import com.rony.erpsoft.user_auth.service.SessionService;
@@ -10,7 +11,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class SessionInterceptor implements HandlerInterceptor {
 
-    /*@Autowired
+    */
+/*@Autowired
     private SessionService sessionService;
 
     @Override
@@ -21,5 +23,7 @@ public class SessionInterceptor implements HandlerInterceptor {
             return false;
         }
         return true;
-    }*/
+    }*//*
+
 }
+*/

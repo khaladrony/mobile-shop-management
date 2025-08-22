@@ -30,7 +30,7 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "organization_id")
+    @Column(name = "organization_id", nullable = false, updatable = false)
     private Long organizationId;
     
     @CreatedBy

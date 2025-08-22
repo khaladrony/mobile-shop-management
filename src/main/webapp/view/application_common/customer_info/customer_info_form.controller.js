@@ -9,7 +9,7 @@ app.controller('CustomerInfoFormCtrl', function ($scope, $http, $state, $timeout
         customerCode: "",
         customerName: "",
         email: "",
-        phone: "",
+        mobileNumber: "",
         address: "",
         chartOfAccountsId: "",
         status: ""

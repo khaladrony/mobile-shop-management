@@ -16,8 +16,8 @@ public class GenericLastNumberRepository {
     private final EntityManager entityManager;
 
     public String findLastNumber(TransactionNumberConfig config, String transactionType) {
-        String jpql = buildQuery(config);
-        var query = entityManager.createQuery(jpql, String.class)
+        String nativeQuery = buildQuery(config);
+        var query = entityManager.createNativeQuery(nativeQuery, String.class)
                 .setMaxResults(1);
 
         if (config.getTypeField() != null && !config.getTypeField().isEmpty()) {
@@ -32,16 +32,16 @@ public class GenericLastNumberRepository {
         String alias = "t";
         StringBuilder query = new StringBuilder();
 
-        query.append("SELECT ").append(alias).append(".").append(config.getNumberField())
+        query.append("SELECT ").append(config.getNumberField())
                 .append(" FROM ").append(config.getEntityName()).append(" ").append(alias)
-                .append(" WHERE 1=1"); // always true, so we can append conditions easily
+                .append(" WHERE 1=1");
 
-        // Add type filter if configured
         if (config.getTypeField() != null && !config.getTypeField().isEmpty()) {
             query.append(" AND ").append(alias).append(".").append(config.getTypeField())
                     .append(" = :transactionType");
         }
-        query.append(" ORDER BY ").append(alias).append(".").append("id").append(" DESC");
+
+        query.append(" ORDER BY ").append(alias).append(".id DESC");
 
         return query.toString();
     }

@@ -104,6 +104,7 @@ public class AuthService implements ApplicationRunner {
     public void createLoginSession(UserInfo ui, String pwd){
         UserLogin ul = new UserLogin();
         ul.setLogin_id(0L);
+        ul.setOrganization_id(ui.getOrganization_id());
         ul.setUser_id(ui.getUser_id());
         ul.setUsed_email(ui.getUsremail());
         ul.setLan_id(ui.getLan_id());

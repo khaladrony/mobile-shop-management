@@ -1,9 +1,13 @@
 package com.rony.erpsoft.application_common.service;
 
 import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
+import com.rony.erpsoft.application_common.dto.CustomerSearchDTO;
+import com.rony.erpsoft.application_common.mapper.CustomerInfoMapper;
 import com.rony.erpsoft.application_common.model.CustomerInfo;
 import com.rony.erpsoft.application_common.repo.CustomerInfoRepo;
+import com.rony.erpsoft.application_common.service.specification.CustomerInfoSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,8 @@ public class CustomerInfoService implements ICustomerInfoService {
     CustomerInfoRepo customerInfoRepo;
     @Autowired
     GeneralInfoCommonService generalInfoCommonService;
+    @Autowired
+    CustomerInfoMapper customerInfoMapper;
 
     @Override
     public List<CustomerInfo> findAll() {
@@ -48,7 +54,7 @@ public class CustomerInfoService implements ICustomerInfoService {
 
         String sqlStringOrderBy = " ORDER BY customer_code desc limit :offset, :limit ";
         String sqlStringCount = "SELECT count(id) FROM customer_info WHERE 1=1";
-        String sqlStringRowData = "SELECT id, customer_code, customer_name, email, phone, address, status FROM customer_info WHERE 1=1";
+        String sqlStringRowData = "SELECT id, customer_code, customer_name, email, mobile_number, address, status FROM customer_info WHERE 1=1";
 
         params.put("sqlStringOrderBy", sqlStringOrderBy);
         params.put("sqlStringCount", sqlStringCount);
@@ -59,12 +65,18 @@ public class CustomerInfoService implements ICustomerInfoService {
 
     }
 
-
     public String customerCodeGeneration() {
         String prefix = "CUS-";
         int length = 4;
         String lastBankAccountCode = customerInfoRepo.findLastCustomerCode();
 
         return generalInfoCommonService.autoCodeGeneration(prefix, length, lastBankAccountCode);
+    }
+
+    public List<CustomerSearchDTO> searchCustomers(String query) {
+        Specification<CustomerInfo> spec = CustomerInfoSpecification.matchesNameOrMobile(query);
+        return customerInfoRepo.findAll(spec).stream()
+                .map(c -> customerInfoMapper.entityToDto(c))
+                .toList();
     }
 }
