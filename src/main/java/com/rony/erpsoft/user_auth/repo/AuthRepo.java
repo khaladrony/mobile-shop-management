@@ -58,6 +58,23 @@ public class AuthRepo {
             return null;
         }
     }
+
+    public UserInfo findUserByLanId(String lanId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ui.user_id, ui.organization_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.lan_id, ui.phone, ui.address, ui.country_id, ui.active, sr.role_name, sr.role_code, sr.role_id  ");
+        sql.append(" FROM user_info ui  ");
+        sql.append(" join user_role ur on ui.user_id = ur.user_id ");
+        sql.append(" join system_role sr on sr.role_id=ur.role_id and sr.active=true ");
+        sql.append(" where ui.lan_id=:lanId and ui.active=true  ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("lanId", lanId);
+
+        try {
+            return (UserInfo) db.queryForObject(sql.toString(), params, new BeanPropertyRowMapper(UserInfo.class));
+        } catch (Exception ex) {
+            return null;
+        }
+    }
     
     private Map<String, Feature> roleWiseFeature = new HashMap<String, Feature>();
 

@@ -252,3 +252,25 @@ function formatToYMD(dateInput) {
     return `${yyyy}-${mm}-${dd}`;
 }
 
+/**
+ * Automatically sets focus on a target input when a modal/form is shown
+ * @param {string} containerSelector - Modal or form selector (e.g., '#customerModal')
+ * @param {string} inputSelector - Input selector inside the container (e.g., '#customerName')
+ */
+function setFocusOnShow(containerSelector, inputSelector) {
+    setTimeout(function () {
+        var input;
+        if (inputSelector.startsWith('#')) {
+            // Select by id
+            input = $(containerSelector).find(inputSelector);
+        } else {
+            // Select by name attribute
+            input = $(containerSelector).find('[name="' + inputSelector + '"]');
+        }
+
+        if (input.length) {
+            input.focus();
+            input.select();
+        }
+    }, 200); // slight delay gives Angular time to render
+}

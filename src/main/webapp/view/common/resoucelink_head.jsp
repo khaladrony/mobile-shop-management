@@ -13,7 +13,7 @@
     <title>${fn:escapeXml(ORGANIZATION_NAME)}</title>
     <% response.addHeader("x-frame-options","DENY"); %>
     
-    <link rel="icon" type="image/x-icon" href="${fn:escapeXml(STATIC_RES)}/images/favicon.ico" />
+    <!-- <link rel="icon" type="image/x-icon" href="${fn:escapeXml(STATIC_RES)}/images/favicon.ico" /> -->
     <link rel="icon" type="image/png" sizes="32x32" href="${fn:escapeXml(STATIC_RES)}/images/icon.png">
     <meta name="description" content="overview &amp; stats" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />

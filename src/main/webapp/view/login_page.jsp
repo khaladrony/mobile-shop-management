@@ -56,6 +56,33 @@
                                 </button>
                             </form>
 
+                            <div id="alerts-container" style="position: fixed; top: 20px; right: 20px; z-index: 1055; width: 300px;">
+                                <c:if test="${param.error != null}">
+                                    <div class="alert alert-danger alert-dismissible fade in shadow-sm rounded" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                        Invalid username or password
+                                    </div>
+                                </c:if>
+
+                                <c:if test="${param.logout != null}">
+                                    <div class="alert alert-success alert-dismissible fade in shadow-sm rounded" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+                                        You have been logged out
+                                    </div>
+                                </c:if>
+
+                                <c:if test="${param.errorMessage != null}">
+                                    <div class="alert alert-danger alert-dismissible fade in shadow-sm rounded" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                                        <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+                                        ${param.errorMessage}
+                                    </div>
+                                </c:if>
+                            </div>
+
+
                             <div class="text-center text-muted mt-4">
                                 &copy; finQsoft | Version: ${APP_VERSION}
                             </div>
@@ -105,6 +132,13 @@
                                 $("#usrpkeytxt").val(""); // clear sensitive hidden input
                             });
                         });
+
+                        setTimeout(function() {
+                            $("#alerts-container .alert").fadeTo(500, 0).slideUp(500, function(){
+                                $(this).remove();
+                            });
+                        }, 5000);
+
                     </script>
 
                 </body>

@@ -1,3 +1,4 @@
+/*
 package com.rony.erpsoft.configuration.security;
 
 import com.rony.erpsoft.user_auth.service.SessionService;
@@ -24,11 +25,14 @@ public class SessionValidationFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
 
         // If session is invalid and path is not already login page
-        /*if (sService.getUserId() == null && !uri.startsWith("/auth/")) {
+        */
+/*if (sService.getUserId() == null && !uri.startsWith("/auth/")) {
             response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
-        }*/
+        }*//*
+
 
         filterChain.doFilter(request, response);
     }
 }
+*/

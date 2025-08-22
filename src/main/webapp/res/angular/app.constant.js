@@ -90,7 +90,10 @@ var CORE_API = {
 };
 
 var COMMON_API = {
+    login_url: _baseurl_ + "auth/login",
     items: _baseurl_ + "inventory/item-master/items",
-    app_codes: _baseurl_ + "application_common/app_codes"
+    app_codes: _baseurl_ + "application_common/app_codes",
+    save_customer: _baseurl_ + "application_common/customer_info/save",
+    search_customer: _baseurl_ + "application_common/customer_info/customers/search"
 };
 

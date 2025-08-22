@@ -14,6 +14,7 @@ import lombok.Setter;
 public class UserLogin {
     private long login_id;
     private long user_id;
+    private long organization_id;
     
     private String used_email;
     private String lan_id;

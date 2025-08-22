@@ -34,8 +34,8 @@ public class CustomerInfo {
     private String customerName;
     @Column(name = "email")
     private String email;
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "mobile_number", unique = true)
+    private String mobileNumber;
     @Column(name = "address")
     private String address;
     @Column(name="chart_of_accounts_id")

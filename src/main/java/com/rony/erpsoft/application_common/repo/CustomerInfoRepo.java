@@ -2,11 +2,13 @@ package com.rony.erpsoft.application_common.repo;
 
 import com.rony.erpsoft.application_common.model.CustomerInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CustomerInfoRepo extends JpaRepository<CustomerInfo, Long> {
+public interface CustomerInfoRepo extends JpaRepository<CustomerInfo, Long>,
+        JpaSpecificationExecutor<CustomerInfo> {
 
     CustomerInfo findById(long id);
 

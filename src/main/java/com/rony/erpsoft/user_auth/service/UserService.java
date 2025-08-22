@@ -92,7 +92,8 @@ public class UserService {
             }
             
             model.setCreated_by(sessionService.getUserId());
-            
+            model.setOrganization_id(sessionService.getOrganizationId());
+
             model.setUser_id(0);
             if (modelValidator.isValid(model)) {
                 String encrPsKy = appUtil.SHA512(appUtil.getDefaultPasskey());

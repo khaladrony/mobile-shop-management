@@ -28,36 +28,52 @@ public class AccJournalMaster implements Serializable {
 
     @Column(name = "voucher_no", unique = true)
     private String voucherNo;
+
     @Column(name = "reference")
     private String reference;
+
     @Column(name = "voucher_date")
     private Date voucherDate;
+
     @Column(name = "particulars")
     private String particulars;
+
     @Column(name = "year")
     private int year;
+
     @Column(name = "month")
     private int month;
+
     @Column(name = "status")
     private String status;          // Draft, Submitted, Approved, Posted, Cancelled
+
     @Column(name = "voucher_type")
     private String voucherType;     // Debit Voucher, Credit Voucher, Journal Voucher, Transfer Voucher
+
     @Column(name = "payment_type")
     private String paymentType;     // Cash, Bank(bankName, chequeNo, chequeDate), Card, *N/A
+
     @Column(name = "voucher_prefix")
     private String voucherPrefix;   // JV, CV, DV, TV, OB
+
     @Column(name = "action")
     private String action;          // Journal, Opening Balance, Receipt, Payment
+
     @Column(name = "cheque_no")
     private String chequeNo;
+
     @Column(name = "cheque_date")
     private Date chequeDate;
+
     @Column(name = "cheque_status")
     private String chequeStatus;    // Not Cleared, Cleared, Bounced
+
     @Column(name = "bank_account_id")
     private Long bankAccountId;
+
     @Column(name = "amount")
     private Double amount;
+
     @Column(name = "posting_date")
     private Date postingDate;
 
