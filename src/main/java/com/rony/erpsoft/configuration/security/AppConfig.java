@@ -1,24 +1,30 @@
+/*
 package com.rony.erpsoft.configuration.security;
 
+*/
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+ *//*
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+*/
 /**
  * created 23 Oct 2017
  *
  * @author Sarker
- */
+ *//*
+
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
 
-    /* @Autowired
+    */
+/* @Autowired
     private AuthInterceptor authInterceptor;
 
     @Override
@@ -26,9 +32,11 @@ public class AppConfig implements WebMvcConfigurer {
        registry.addInterceptor(authInterceptor)
                .addPathPatterns("/**")
                .excludePathPatterns("/resources/**","/res/**","/auth/**");
-    } */
+    } *//*
 
-   /* @Override
+
+   */
+/* @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.
@@ -54,5 +62,7 @@ public class AppConfig implements WebMvcConfigurer {
         web
                 .ignoring()
                 .antMatchers("/resources/**");
-    }*/
+    }*//*
+
 }
+*/

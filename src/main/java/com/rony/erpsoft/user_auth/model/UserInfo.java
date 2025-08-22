@@ -15,6 +15,7 @@ import java.util.Map;
 @Getter
 public class UserInfo {
     private long user_id;
+    private long organization_id;
     private String full_name;
     private String first_name;
     private String last_name;

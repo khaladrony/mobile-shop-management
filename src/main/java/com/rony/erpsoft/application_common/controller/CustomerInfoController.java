@@ -2,6 +2,7 @@ package com.rony.erpsoft.application_common.controller;
 
 import com.rony.erpsoft.accounts.dto.SubCOADropdownDTO;
 import com.rony.erpsoft.application_common.actionService.CustomerInfoActionService;
+import com.rony.erpsoft.application_common.dto.CustomerSearchDTO;
 import com.rony.erpsoft.application_common.model.BankInfo;
 import com.rony.erpsoft.application_common.model.CustomerInfo;
 import com.rony.erpsoft.application_common.service.CustomerInfoService;
@@ -83,5 +84,13 @@ public class CustomerInfoController extends AppProperty {
         } catch (Exception ex) {
             return AppResponse.build(HttpStatus.INTERNAL_SERVER_ERROR).message(ex.getMessage());
         }
+    }
+
+    @GetMapping(value = "/customers/search")
+    public AppResponse<Object> searchCustomers(
+            @RequestParam("query") String query
+    ) {
+        List<CustomerSearchDTO> result = customerInfoService.searchCustomers(query);
+        return AppResponse.build(HttpStatus.OK).body(result);
     }
 }

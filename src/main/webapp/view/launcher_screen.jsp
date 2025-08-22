@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta charset="utf-8" />
-        <link rel="icon" type="image/x-icon" href="${STATIC_RES}/images/favicon.ico" />
+        <!-- <link rel="icon" type="image/x-icon" href="${STATIC_RES}/images/favicon.ico" /> -->
         <title>Loading Home - <spring:message code="app_name" text="ERP"/></title>
 
         <meta name="description" content="User login page" />

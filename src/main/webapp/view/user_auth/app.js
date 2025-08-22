@@ -114,7 +114,7 @@ app.run(function($transitions, $state, $timeout, growl, $rootScope) {
                 growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
 
                 $timeout(function () {
-                    window.location.href = _baseurl_ + 'auth/login';
+                    window.location.href = COMMON_API.login_url;
                 }, 1500);
             }
         }

@@ -32,12 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
  * @author sarker
  */
 @RestController
 public class AuthController extends AppProperty {
-    
+
     Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
@@ -76,13 +75,13 @@ public class AuthController extends AppProperty {
         appUtil.genToken();
         UserInfo userInfo = sessionService.getUser();
         ModelAndView modelAndView = null;
-        
+
         if (userInfo != null) {
             modelAndView = new ModelAndView("redirect:/auth/launcher");
         } else {
             modelAndView = new ModelAndView("login_page");
         }
-        
+
         modelAndView.addObject(KEY.JSPVIEWKEY, appUtil.getToken());
         return modelAndView;
     }
@@ -99,7 +98,7 @@ public class AuthController extends AppProperty {
             return new ModelAndView("redirect:/auth/login");
         }
     }
-    
+
     @RequestMapping(value = {"/auth/success"}, method = {RequestMethod.GET})
     public ModelAndView loginSuccess() {
         return new ModelAndView("redirect:/auth/launcher");
@@ -136,41 +135,41 @@ public class AuthController extends AppProperty {
         }
     }
 
-    
 
     @RequestMapping(value = {"/auth/login"}, method = {RequestMethod.POST})
     public ModelAndView doLogin(@RequestParam("lanId") String lanId,
                                 @RequestParam("usrpkeycnv") String usrpkeycnv) {
 
-        if(lanId.trim().isEmpty()){
+        if (lanId.trim().isEmpty()) {
             return new ModelAndView("login_page").addObject("status", "User Id is required!");
         }
-        
-        if(usrpkeycnv.trim().isEmpty()){
+
+        if (usrpkeycnv.trim().isEmpty()) {
             return new ModelAndView("login_page").addObject("status", "Password is required!");
         }
-        
-        if( !AppUtil.isValidLanId(lanId) ){
+
+        if (!AppUtil.isValidLanId(lanId)) {
             return new ModelAndView("login_page").addObject("status", "Enter valid user id!");
         }
 
         /*if(!authService.licenseKeyCheck()){
             return new ModelAndView("login_page").addObject("status", "Please contact your vendor. You have a licence problem!!!");
         }*/
-        
+
         String plainStr = appUtil.retrievePaswd(usrpkeycnv);
-        
+
         try {
             UserInfo user = authRepo.findUserByLanId(lanId, appUtil.SHA512(plainStr));
             if (user != null) {
-                
-                if( !user.getRole_name().equalsIgnoreCase("SuperAdmin") && !user.getRole_name().equalsIgnoreCase("Admin") && authRepo.getLoginSessionLog(user.getUser_id()) > 0 ){
+
+                if (!user.getRole_name().equalsIgnoreCase("SuperAdmin") && !user.getRole_name().equalsIgnoreCase("Admin") && authRepo.getLoginSessionLog(user.getUser_id()) > 0) {
                     return new ModelAndView("login_page").addObject("status", "Please, logout from all other devices at first!");
                 }
-                
-                try{
+
+                try {
                     authService.createLoginSession(user, usrpkeycnv);
-                } catch(Exception ex){}
+                } catch (Exception ex) {
+                }
                 session.setAttribute(KEY.USER, user);
                 session.setAttribute(KEY.ORGANIZATION, organizationRepo.findById(1));
                 session.setMaxInactiveInterval(appUtil.getSessionTimeout());

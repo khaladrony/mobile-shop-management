@@ -164,6 +164,15 @@ app.run(function($transitions, $state, $timeout, growl, $rootScope, AccountsServ
     });
 
     $transitions.onStart({}, function(transition) {
+        // If user is not logged in
+        if (!$rootScope._USER_ID_ || $rootScope._USER_ID_ === '') {
+            $timeout(function () {
+                window.location.href = COMMON_API.login_url;
+            }, 0);
+            return false; // cancel transition
+        }
+
+        // Permission check
         const toState = transition.to();
         const module = toState.data?.module || JMODULE_NAME;
         const component = toState.name;
@@ -175,7 +184,7 @@ app.run(function($transitions, $state, $timeout, growl, $rootScope, AccountsServ
                 growl.error('You do not have permission to access this page.', { title: 'Access Denied' });
 
                 $timeout(function () {
-                    window.location.href = _baseurl_ + 'auth/login';
+                    window.location.href = COMMON_API.login_url;
                 }, 1500);
             }
         }

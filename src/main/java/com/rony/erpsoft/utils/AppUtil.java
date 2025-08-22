@@ -412,6 +412,12 @@ public class AppUtil {
         return (calendar.get(Calendar.MONTH) + 1);
     }
 
+    public static int getDay(Date date) {
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_MONTH); // returns 1..31
+    }
+
     /**
      * Get previous date of the given date
      *
