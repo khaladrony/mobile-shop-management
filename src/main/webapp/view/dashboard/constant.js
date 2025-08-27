@@ -1,9 +1,9 @@
 var JMODULE_NAME = "dashboard";
 var JCONTROLLER = {
     statics:"statics",
-    component:"component",
-
+    component:"component"
 };
+
 var JCOMPONENT = {
     dashboard_static_view:"dashboard_static_view",
     

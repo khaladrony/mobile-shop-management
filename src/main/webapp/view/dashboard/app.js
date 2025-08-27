@@ -3,7 +3,10 @@
  * Author     : sarker
  */
 
-var app = angular.module('DashboardViewApp', ['rt.select2','720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router','ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate'])
+var app = angular.module(
+            'DashboardViewApp',
+            ['rt.select2','720kb.datepicker', 'ngDialog', 'ngToast', 'ui.router',
+            'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngSanitize', 'ngAnimate', 'angular-growl'])
     
     .config(function($stateProvider, $urlRouterProvider, ngToastProvider) {
         ngToastProvider.configure({

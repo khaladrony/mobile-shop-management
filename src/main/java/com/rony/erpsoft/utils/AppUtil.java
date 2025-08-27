@@ -503,6 +503,17 @@ public class AppUtil {
         return new Date();
     }
 
+    public static String getLocalDateTimeToString(LocalDateTime localDateTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            return localDateTime.format(formatter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     public static String getStringBetweenTwoCharacters(String value) {
 
         value = value.substring(value.indexOf("[") + 1);
