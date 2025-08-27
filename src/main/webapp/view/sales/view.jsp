@@ -46,11 +46,17 @@
 <script src="${ANGULAR}/app.directives.js?v=${SCRIPT_VERSION}"></script>
 <script src="${ANGULAR}/app.services.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/sales/pos.directives.js?v=${SCRIPT_VERSION}"></script>
-<script src="${NG_SRC}/sales/pos.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/service/customer.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/service/payment.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/service/order.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/service/return.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-report/report.service.js?v=${SCRIPT_VERSION}"></script>
 
 
 <!-- include here rest of your ng app controller -->
 <script src="${NG_SRC}/sales/pos/pos_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-dashboard/pos_dashboard_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-report/daily_sales_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
 
 <!-- include here rest of your ng app controller -->
 

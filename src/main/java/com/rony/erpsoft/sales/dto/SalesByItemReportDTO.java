@@ -9,14 +9,11 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemRequestDTO {
-    private int lineNumber;
-    private Long itemMasterId;
+@NoArgsConstructor
+public class SalesByItemReportDTO {
     private String itemCode;
     private String itemName;
-    private Integer quantity;
-    private BigDecimal price;
-    private BigDecimal total;
+    private Long totalQuantity;
+    private BigDecimal totalSales;
 }

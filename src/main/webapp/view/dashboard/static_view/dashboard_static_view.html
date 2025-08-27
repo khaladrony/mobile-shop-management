@@ -4,13 +4,13 @@
     <div class="col-sm-8 col-md-8 col-lg-8">
         <img src="{{_STATIC_RES_}}/images/accounts-01.jpg" />
     </div>
-    
+
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.atm_list_detail_component)" >
         <img ng-if="stat.atmListMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
         <div ng-if="stat.atmListMode===1" id="atmStatPieChart"></div>
     </div>
-    
-    
+
+
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.system_statistics_component)">
         <img ng-if="stat.sysStatMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
         <div ng-if="stat.sysStatMode===1" class="widget-box widget-color-blue" id="widget-box-2" style="opacity: 1;">
@@ -24,7 +24,7 @@
 
             <div class="widget-body">
                 <div class="widget-main no-padding">
-                    
+
                     <table class="table table-striped table-bordered table-hover">
                         <thead class="thin-border-bottom">
                             <tr>
@@ -44,17 +44,17 @@
                             </tr>
                         </tbody>
                     </table>
-                    
+
                 </div>
             </div>
-            
+
         </div>
-        
+
     </div>
-    
+
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.atm_file_stats_component)">
         <img ng-if="stat.fileStatMode===0" src="{{_STATIC_RES_}}/images/working.gif" class="req_working" />
         <div ng-if="stat.fileStatMode===1" id="atmFileStatChart"></div>
     </div>
-    
+
 </div>

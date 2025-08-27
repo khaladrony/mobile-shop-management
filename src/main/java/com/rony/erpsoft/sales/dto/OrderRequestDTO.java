@@ -1,6 +1,5 @@
 package com.rony.erpsoft.sales.dto;
 
-import com.rony.erpsoft.sales.model.OrderItem;
 import com.rony.erpsoft.sales.model.enums.DiscountType;
 import com.rony.erpsoft.sales.model.enums.OrderStatus;
 import com.rony.erpsoft.sales.model.enums.PaymentType;
@@ -36,5 +35,8 @@ public class OrderRequestDTO {
     private String customerName;
     private String mobileNumber;
     private String referenceNo;
+    private String remarks;
+    private String branch;
+
     private List<OrderItemRequestDTO> items;
 }

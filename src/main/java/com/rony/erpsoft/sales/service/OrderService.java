@@ -7,6 +7,7 @@ import com.rony.erpsoft.sales.dto.OrderItemRequestDTO;
 import com.rony.erpsoft.sales.dto.OrderRequestDTO;
 import com.rony.erpsoft.sales.dto.OrderResponseDTO;
 import com.rony.erpsoft.sales.dto.OrderSearchDTO;
+import com.rony.erpsoft.sales.dto.SalesByItemReportDTO;
 import com.rony.erpsoft.sales.mapper.OrderMapper;
 import com.rony.erpsoft.sales.model.Order;
 import com.rony.erpsoft.sales.model.enums.OrderStatus;
@@ -21,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -87,9 +89,9 @@ public class OrderService {
                             AppUtil.getLocalDateTimeToDate(orderRequest.getTransactionDate())
                     )
             );
-            orderRequest.setTransactionDate(LocalDateTime.now());
         }
 
+        orderRequest.setTransactionDate(LocalDateTime.now());
         List<OrderItemRequestDTO> details = orderRequest.getItems();
         if (details != null) {
             for (int i = 0; i < details.size(); i++) {
@@ -168,4 +170,12 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }*/
+
+    /* Report */
+
+    public List<SalesByItemReportDTO> getSalesByItem(String startDate, String endDate) {
+        LocalDateTime from = LocalDate.parse(startDate).atStartOfDay();
+        LocalDateTime to = LocalDate.parse(endDate).atTime(23, 59, 59);
+        return orderRepository.getSalesByItemReport(from, to);
+    }
 }

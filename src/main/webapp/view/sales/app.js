@@ -27,6 +27,20 @@ var app = angular.module('PosApp', ['rt.select2', 'ngPatternRestrict',
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS + '/' + 'pos_list.html',
             controller: 'PosFormCtrl'
+        })
+
+        .state(JCOMPONENT.pos_dashboard_view, {
+            url: '/pos_dashboard_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_DASHBOARD + '/' + 'pos_dashboard_form.html',
+            controller: 'PosDashboardFormCtrl'
+        })
+
+        .state(JCOMPONENT.pos_daily_sales_report_view, {
+            url: '/pos_daily_sales_report_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'daily_sales_report.form.html',
+            controller: 'PosReportFormCtrl'
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.pos_list_view);

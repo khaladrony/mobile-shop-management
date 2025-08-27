@@ -86,6 +86,12 @@ public class Order extends BaseEntity {
     @Column(name = "reference_no")
     private String referenceNo;
 
+    @Column(name = "remarks")
+    private String remarks;
+
+    @Column(name = "branch")
+    private String branch;
+
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "order_id")

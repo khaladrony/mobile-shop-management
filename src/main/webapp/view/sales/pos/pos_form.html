@@ -4,23 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-
 <body>
 
-<!--<div id="topmenu" class="w-100 p-3 border">
-    <button class="btn btn-default btn-sm">New Order</button>
-    <button class="btn btn-default btn-sm">Order Status</button>
-    <a href="#" class="btn btn-default btn-sm pull-right">Dashboard</a>
-</div>-->
 <div class="row">
 
     <notification-widget
             messages="messages"
             close-message="closeMessage(index)">
     </notification-widget>
-
-
-
 
     <!-- Menu Section -->
     <div class="col-md-9">
@@ -107,7 +98,7 @@
             </div>
             <div class="col-md-2">
                 <button class="btn btn-sm btn-success pull-right"
-                        ng-click="openTransactionModal()">
+                        ng-click="openOrderModal()">
                     <span class="glyphicon glyphicon-list"></span> Order Status
                 </button>
             </div>
@@ -264,7 +255,7 @@
 
 
 <payment-modal></payment-modal>
-<transaction-modal></transaction-modal>
+<order-modal></order-modal>
 <customer-modal></customer-modal>
 <pos-return-modal></pos-return-modal>
 

@@ -343,11 +343,11 @@ body {
 	text-align: right;
 }
 
-/*html {
+html {
      overflow-y: hidden;
      overflow-x: hidden;
 }
-*/
+
 .modal {
 	overflow: hidden !important;
 }
@@ -511,11 +511,15 @@ table>tbody>tr>td,
 }
 
 /*Customer modal*/
+.modal-body.customer {
+    max-height: 485px;  /* adjust for your design */
+    overflow-y: auto;
+}
 /* Make the list scrollable if too long */
 .search-results {
-    max-height: 130px;       /* Adjust height as needed */
+    max-height: 150px;       /* Adjust height as needed */
     overflow-y: auto;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
@@ -548,31 +552,6 @@ table>tbody>tr>td,
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-/* Order list status color*/
-/*.status {
-  color: #333;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  display: inline-block; *//* keeps consistent pill look *//*
-}
-
-.status-held {
-  background-color: #FFE082; *//* Soft Yellow *//*
-}
-
-.status-completed {
-  background-color: #A5D6A7; *//* Soft Green *//*
-}
-
-.status-cancelled {
-  background-color: #EF9A9A; *//* Soft Red *//*
-}
-
-.status-returned {
-  background-color: #81D4FA; *//* Soft Blue *//*
-}*/
 
 /* soft outlined button*/
 
@@ -683,5 +662,128 @@ table>tbody>tr>td,
 }
 
 
+/* POS Dashboard */
+
+.main-content {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background: #fff;
+}
 
 
+.summary-section {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 6px;
+    background: #fff;            /* keeps it clean */
+}
+
+.summary-section h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.summary-card {
+  flex: 1 1 200px;
+  padding: 20px;
+  border-radius: 8px;
+  color: white;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.summary-card h5 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  opacity: 0.9;
+  color: white;
+  font-weight: 600;
+}
+
+.summary-card p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Today Summary Colors */
+.summary-card.sold {
+  background: #2d3e50;
+}
+.summary-card.purchase {
+  background: #f06292;
+}
+.summary-card.expense {
+  background: #ef5350;
+}
+.summary-card.profit {
+  background: #42a5f5;
+}
+
+/* Monthly Summary Colors */
+.summary-card.month-sold {
+  background: #26a69a;
+}
+.summary-card.month-purchase {
+  background: #6d4c41;
+}
+.summary-card.month-expense {
+  background: #ef5350;
+}
+.summary-card.month-return {
+  background: #4dd0e1;
+}
+.summary-card.month-profit {
+  background: #7e57c2;
+}
+
+/* Daily sales report*/
+.container {
+    max-width: 900px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+.table.daily-sales {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table.daily-sales th {
+    background: #4e73df;
+    color: white;
+    text-align: center;
+}
+
+.table.daily-sales td {
+    text-align: center;
+}
+
+.daily-sales tfoot tr {
+    background-color: #e9ecef; /* Bootstrap's table-secondary color */
+    font-weight: bold;
+}
+
+/* Daily sales report*/

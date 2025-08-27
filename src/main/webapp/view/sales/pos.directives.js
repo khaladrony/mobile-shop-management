@@ -36,10 +36,10 @@ app.directive('paymentModal', function () {
 });
 
 /*Transaction Modal*/
-app.directive('transactionModal', function () {
+app.directive('orderModal', function () {
     return {
         restrict: 'E',
-        templateUrl: _NG_SRC_ +  '/' + JMODULE_NAME + '/'  + 'templates/transaction-modal.html',
+        templateUrl: _NG_SRC_ +  '/' + JMODULE_NAME + '/'  + 'templates/order-modal.html',
         scope: false   // shares parent controller scope
     };
 });
