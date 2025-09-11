@@ -89,8 +89,8 @@ public class Order extends BaseEntity {
     @Column(name = "remarks")
     private String remarks;
 
-    @Column(name = "branch")
-    private String branch;
+    @Column(name = "branch_code")
+    private String branchCode;
 
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)

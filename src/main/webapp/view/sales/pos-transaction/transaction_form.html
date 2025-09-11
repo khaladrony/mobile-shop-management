@@ -1,0 +1,198 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row">
+
+    <div class="col-sm-1 col-md-1 col-lg-1" >&nbsp;</div>
+    
+    <div class="col-sm-4 col-md-4 col-lg-4">
+        
+        <div class="card">
+            <div class="card-header row">
+                <div class="col-sm-10">
+                    <h4 class="card-title">
+                        {{page_name}}
+                    </h4>
+                    <p class="subtitle">POS Expenses/Income entry</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row" style="padding-left: 40px; padding-right: 40px;">
+
+                            <div class="form-group pull-left">
+                                <label>Date <span class="required">*</span></label>
+                                <div class="input-group date" id="transactionDatePicker">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="dd/mm/yyyy"
+                                           ng-model="module.transactionDate"
+                                           formatted-date-picker
+                                           ng-keydown="$event.preventDefault()" />
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar-check-o" style="color:#3C8DBC;"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Type:<span class="required">*</span></label>
+                                <select class="form-control" ng-model="module.type" ng-click="getType()">
+                                    <option value="">-- Select Type --</option>
+                                    <option ng-repeat="t in types" value="{{t.value}}">
+                                        {{t.label}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Category <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <appcode-dropdown
+                                            type="getType()"
+                                            model="module.category"
+                                            placeholder="Select Category"
+                                            on-change="filterData(value)"
+                                            id="categoryDropdown">
+                                    </appcode-dropdown>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="plus-btn-tooltip"
+                                                ng-click="openAddCategoryModal()"
+                                                ng-disabled="module.type === ''">
+                                            <i class="fa fa-plus"></i>
+                                            <div class="tooltip">Add new category</div>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Amount <span class="required">*</span></label>
+                                <input class="form-control" type="number" ng-model="module.amount" placeholder="Amount"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Reference Id </label>
+                                <input class="form-control" type="text" ng-model="module.referenceId" placeholder="Reference Id"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Remarks</label>
+                                <textarea class="form-control" ng-model="module.remarks" placeholder="Remarks"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.pos_transaction_add_view}}" ng-show="true" class="btn btn-sm btn-danger" ng-click="resetModule()">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.pos_transaction_add_view"></span>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.pos_transaction_add_view" class="btn btn-sm btn-warning" ng-click="resetModule()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <span class="btn-divider"></span>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.pos_transaction_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.pos_transaction_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Expenses/Income List</h3>
+                <span class="card-toolbar"></span>
+            </div>
+            <div class="card-body">
+                <div class="card-main">
+
+
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <table id="simple-table" class="table  table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th style="width: 100px; text-align: center;">Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="obj in data.items" ng-click="editRow(obj, $event)">
+                                    <td style="width: 100px; text-align: center;">{{obj.transactionDate | date: 'dd-MM-yyyy'}}</td>
+                                    <td style="width: 100px;">{{obj.type}}</td>
+                                    <td style="width: 200px;">{{obj.category}}</td>
+                                    <td style="width: 100px;text-align: right;">{{obj.amount  | currency:"৳ ":2 }}</td>
+                                    <td class="truncate-2"
+                                        ng-attr-data-tooltip="{{obj.remarks}}">
+                                        {{obj.remarks}}
+                                    </td>
+                                </tr>
+
+                                <tr ng-if="data.items.length===0">
+                                    <td colspan="7" class="text-center"><h3>No transaction found!!!</h3></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<modal-base modal-id="categoryModal" modal-size="modal-sm">
+    <div class="modal-header" style="background-color: #2ecc71;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" style="color: white;">
+            Add Category
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label> Type:</label>
+            <input type="text" class="form-control" ng-model="module.type" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" id="category" class="form-control" ng-model="categoryModal.posCategory">
+        </div>
+
+        <!-- Success message -->
+        <div class="alert alert-success mt-2" ng-show="successMessage">
+            {{ successMessage }}
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success"
+                ng-click="addCategory()"
+                ng-disabled="module.type === '' || categoryModal.posCategory === ''">
+            Save
+        </button>
+    </div>
+</modal-base>

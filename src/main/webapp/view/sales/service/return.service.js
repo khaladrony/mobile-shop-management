@@ -79,6 +79,7 @@ app.service("ReturnService", function($q, Communication) {
                     itemName: item.itemName,
                     quantity: parseFloat(item.returnQty),
                     price: parseFloat(item.price),
+                    costPrice: parseFloat(item.costPrice),
                     total: parseFloat(item.returnQty) * parseFloat(item.price)
                 }))
         };

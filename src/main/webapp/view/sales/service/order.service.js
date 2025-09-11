@@ -2,7 +2,10 @@ app.service("OrderService", function($q, Communication) {
     var service = this;
 
     // State
-    service.data = [];
+    service.data = {
+        items: [],
+        itemCount: 0
+    };
     service.currentPage = 1;
     service.itemPerPage = 10;
     service.selectedOrder = null;
@@ -24,10 +27,8 @@ app.service("OrderService", function($q, Communication) {
     service.getDataList = function (page, size) {
         return Communication.request("POST", API.POS_FILTER + "?page=" + (page - 1) + "&size=" + size, service.searchFilter)
             .then(function(res) {
-//                service.data = res.body || [];
-
-                service.data.items = res.body.content;
-                service.data.itemCount = res.body.totalElements;
+                service.data.items = res.body.content || [];
+                service.data.itemCount = res.body.totalElements || 0;
 
                 service.data.items.forEach(function(master) {
                     master.showDetails = false;
@@ -71,6 +72,7 @@ app.service("OrderService", function($q, Communication) {
                 id: item.id,
                 name: item.itemName,
                 price: item.price,
+                costPrice: item.costPrice,
                 quantity: item.quantity,
                 total: item.total,
                 itemMasterId: item.itemMasterId,

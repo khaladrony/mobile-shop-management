@@ -46,6 +46,9 @@ public class OrderItem extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price = BigDecimal.ZERO;
 
+    @Column(name = "cost_price", nullable = false)
+    private BigDecimal costPrice = BigDecimal.ZERO;
+
     @Column(nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
 }

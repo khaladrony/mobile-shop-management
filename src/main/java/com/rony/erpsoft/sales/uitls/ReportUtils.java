@@ -49,6 +49,20 @@ public class ReportUtils {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setFixedHeight(fixedHeight);
+        cell.setPaddingRight(5f);
+        cell.setPaddingLeft(5f);
+        cell.setBorder(PdfPCell.NO_BORDER);
+        cell.setCellEvent(new DottedCellBorder(ASH_COLOR));
+        return cell;
+    }
+
+    public PdfPCell createPdfCell(String content, Font font, float fixedHeight, int alignment) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, font));
+        cell.setHorizontalAlignment(alignment);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setFixedHeight(fixedHeight);
+        cell.setPaddingRight(5f);
+        cell.setPaddingLeft(5f);
         cell.setBorder(PdfPCell.NO_BORDER);
         cell.setCellEvent(new DottedCellBorder(ASH_COLOR));
         return cell;
@@ -60,6 +74,20 @@ public class ReportUtils {
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBackgroundColor(bgColor);
         cell.setFixedHeight(20f);
+        cell.setPaddingRight(5f);
+        cell.setPaddingLeft(5f);
+        cell.setCellEvent(new DottedCellBorder(ASH_COLOR));
+        return cell;
+    }
+
+    public PdfPCell createPdfFooterCell(String content, Font font, Color bgColor, int alignment) {
+        PdfPCell cell = new PdfPCell(new Phrase(content, font));
+        cell.setHorizontalAlignment(alignment);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBackgroundColor(bgColor);
+        cell.setFixedHeight(20f);
+        cell.setPaddingRight(5f);
+        cell.setPaddingLeft(5f);
         cell.setCellEvent(new DottedCellBorder(ASH_COLOR));
         return cell;
     }

@@ -36,11 +36,43 @@ var app = angular.module('PosApp', ['rt.select2', 'ngPatternRestrict',
             controller: 'PosDashboardFormCtrl'
         })
 
+        .state(JCOMPONENT.pos_transaction_add_view, {
+            url: '/pos_transaction_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_TRANSACTION + '/' + 'transaction_form.html',
+            controller: 'PosTransactionFormCtrl'
+        }).state(JCOMPONENT.pos_transaction_update_view, {
+            url: '/pos_transaction_update_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_TRANSACTION + '/' + 'transaction_form.html',
+            controller: 'PosTransactionFormCtrl'
+        })
+
         .state(JCOMPONENT.pos_daily_sales_report_view, {
             url: '/pos_daily_sales_report_view',
             cache: false,
-            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'daily_sales_report.form.html',
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'sales_report.form.html',
             controller: 'PosReportFormCtrl'
+        })
+
+        .state(JCOMPONENT.pos_receipt_view, {
+            url: '/pos_receipt_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'pos_receipt.form.html',
+            controller: 'PosReceiptFormCtrl'
+        })
+
+        /*.state(JCOMPONENT.invoice_view, {
+            url: '/invoice_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'invoice.form.html',
+            controller: 'InvoiceFormCtrl'
+        })*/
+
+        .state(JCOMPONENT.invoice_view, {
+            url: '/invoice_view/:invoiceId',
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/' + JCONTROLLER.POS_REPORT + '/' + 'invoice.form.html',
+            controller: 'InvoiceFormCtrl'
         });
 
         $urlRouterProvider.otherwise('/' + JCOMPONENT.pos_list_view);

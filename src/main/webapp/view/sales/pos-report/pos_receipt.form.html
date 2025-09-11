@@ -1,0 +1,182 @@
+<div>
+    <div class="receipt-wrapper" ng-class="{compact: compactMode}">
+        <div class="toolbar no-print">
+            <button ng-click="printReceipt()">Print</button>
+            <button ng-click="toggleCompact()">Toggle Compact</button>
+        </div>
+
+        <div class="paper">
+            <div class="center header-block">
+                <div class="store-name bold">{{ store.name }}</div>
+                <div>{{ store.address }}</div>
+                <div class="muted">Tel: {{ store.phone }}</div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="meta-row">
+                <div>Date: {{ sale.date | date:'dd-MMM-yyyy' }}</div>
+                <div>Time: {{ sale.date | date:'hh:mm a' }}</div>
+            </div>
+            <div class="meta-row">
+                <div>Cashier: {{ sale.cashier }}</div>
+            </div>
+            <div class="meta-row">
+                <div>Txn#: {{ sale.txnNo }}</div>
+            </div>
+
+            <div class="hr"></div>
+
+            <table class="items">
+                <thead>
+                <tr class="muted">
+                    <th>Item</th>
+                    <th class="qty">Qty</th>
+                    <th class="price">Price</th>
+                    <th class="total">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="it in sale.items">
+                    <td>
+                        {{ it.name }}
+                        <div class="muted" ng-if="it.note">{{ it.note }}</div>
+                        <div class="muted" ng-if="it.discount && it.discount>0">Disc: {{ it.discount | number:2 }}</div>
+                    </td>
+                    <td class="qty">{{ it.qty }}</td>
+                    <td class="price">{{ it.price | number:2 }}</td>
+                    <td class="total">{{ it.total | number:2 }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="hr light"></div>
+
+            <div class="totals">
+                <div class="row"><span>Subtotal</span><span>{{ subtotal() | number:2 }}</span></div>
+                <div class="row" ng-if="sale.discount && sale.discount>0"><span>Discount</span><span>-{{ sale.discount | number:2 }}</span></div>
+                <div class="row"><span>VAT ({{ sale.vatRate }}%)</span><span>{{ vatAmount() | number:2 }}</span></div>
+                <div class="row" ng-if="sale.serviceCharge && sale.serviceCharge>0"><span>Service</span><span>{{ sale.serviceCharge | number:2 }}</span></div>
+                <div class="row bold"><span>TOTAL</span><span>{{ grandTotal() | number:2 }}</span></div>
+                <div class="row" ng-if="sale.paid != null"><span>Paid ({{ sale.paymentMethod }})</span><span>{{ sale.paid | number:2 }}</span></div>
+                <div class="row" ng-if="sale.paid != null"><span>Change</span><span>{{ change() | number:2 }}</span></div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="footer">
+                <div>Thank you for shopping with us!</div>
+                <div class="muted">Return within 7 days with receipt</div>
+                <div class="muted" ng-if="store.footerNote">{{ store.footerNote }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    :root {
+        --paper-width: 80mm;
+        --font-size: 12px;
+    }
+
+
+    * { box-sizing: border-box; }
+    body { font-family: monospace; background:#f6f7f9; padding: 20px; }
+
+
+    .receipt-wrapper { max-width: 420px; margin: 0 auto; }
+
+
+    .toolbar { display:flex; gap:8px; margin-bottom: 12px; }
+    .toolbar button { padding: 8px 12px; border:1px solid #ddd; border-radius: 10px; background:#fff; cursor:pointer; }
+    .toolbar button:hover { background:#f1f1f1; }
+
+
+    .paper {
+    width: var(--paper-width);
+    background: #fff;
+    color: #111;
+    margin: 0 auto;
+    padding: 10px 8px;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    font-size: var(--font-size);
+    line-height: 1.35;
+    }
+
+
+    .center { text-align: center; }
+    .muted { color:#666; }
+    .bold { font-weight: 700; }
+    .hr { border-top: 1px dashed #000; margin: 8px 0; }
+    .hr.light { border-top-color:#444; }
+
+
+    .store-name { font-size: 1.15rem; letter-spacing: .5px; }
+    .header-block { margin-bottom: 6px; }
+
+
+    .meta-row { display:flex; justify-content:space-between; }
+
+
+    .items { width: 100%; border-collapse: collapse; }
+    .items th, .items td { text-align: left; padding: 2px 0; }
+    .items th.qty, .items td.qty { width: 28px; text-align:right; }
+    .items th.price, .items td.price { width: 70px; text-align:right; }
+    .items th.total, .items td.total { width: 80px; text-align:right; }
+
+
+    /* .totals { width: 100%; }
+    .totals .row { display:flex; justify-content: space-between; padding: 2px 0; }
+    .totals .row.bold { font-weight: 700; } */
+
+    .totals .row {
+        display: flex;
+        justify-content: space-between; /* label left, value right */
+        align-items: center;
+        padding: 2px 0;
+        margin-left: 60px;
+        margin-right: 50px;
+    }
+
+    .totals .row span:first-child {
+      flex: 1;
+      text-align: left;
+    }
+
+    .totals .row span:last-child {
+      flex: 0 0 auto;
+      min-width: 90px;       /* ensures numbers line up neatly */
+      text-align: right;
+    }
+
+    .totals .row.bold {
+      font-weight: 700;
+      /* border-top: 1px solid #000;
+      margin-top: 6px;
+      padding-top: 8px; */
+    }
+
+
+    .footer {
+        margin-top: 8px;
+        text-align: center;
+        padding-top: 75px;
+        height: unset;
+        width: unset;
+    }
+
+
+    .compact .paper { --font-size: 11px; padding: 8px 6px; }
+
+
+    @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar { display: none !important; }
+    .receipt-wrapper { max-width: none; }
+    .paper { box-shadow: none; border-radius: 0; margin: 0; }
+    @page { margin: 0; size: var(--paper-width) auto; }
+    }
+</style>
+

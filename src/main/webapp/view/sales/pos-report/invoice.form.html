@@ -1,0 +1,240 @@
+<div class="invoice"
+     ng-class="{'a4': printMode === 'a4', 'a4-half': printMode === 'a4-half'}">
+
+    <header>
+        <h2>{{ store.name }}</h2>
+        <p>{{ store.address }} | Phone: {{ store.phone }}</p>
+    </header>
+
+    <div class="company-info">
+        <div class="info-row">
+            <span><strong>Invoice No:</strong> {{ invoice.txnNo }}</span>
+            <span><strong>Date:</strong> {{ invoice.date | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+    </div>
+
+    <div class="customer-info">
+        <div class="info-row">
+            <span><strong>Customer:</strong> {{ invoice.customerName }}</span>
+        </div>
+        <div class="info-row">
+            <span><strong>Mobile:</strong> {{ invoice.customerPhone }}</span>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="it in invoice.items track by $index">
+            <td>{{$index+1}}</td>
+            <td>{{ it.name }}</td>
+            <td>{{ it.qty }}</td>
+            <td>{{ it.price | number:2 }}</td>
+            <td>{{ (it.qty * it.price - (it.discount || 0)) | number:2 }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <div class="row">
+            <span>Subtotal</span>
+            <span>{{ subtotal() | number:2 }}</span>
+        </div>
+        <div class="row" ng-if="invoice.discount > 0">
+            <span>Discount</span>
+            <span>{{ invoice.discount | number:2 }}</span>
+        </div>
+        <div class="row">
+            <span>VAT ({{ invoice.vatRate }}%)</span>
+            <span>{{ vatAmount() | number:2 }}</span>
+        </div>
+
+        <div class="row bold">
+            <span>TOTAL</span>
+            <span>{{ grandTotal() | number:2 }}</span>
+        </div>
+        <div class="row">
+            <span>Paid ({{ invoice.paymentMethod }})</span>
+            <span>{{ invoice.paid | number:2 }}</span>
+        </div>
+        <div class="row">
+            <span>Change</span>
+            <span>{{ change() | number:2 }}</span>
+        </div>
+    </div>
+
+    <footer>
+        <p>{{ store.footerNote }}</p>
+    </footer>
+
+    <div class="no-print">
+        <button ng-click="printInvoice()">Print</button>
+        <button ng-click="togglePageSize()">Toggle A4 / Half A4</button>
+    </div>
+</div>
+
+
+<style>
+
+    /* base */
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; background:#f2f2f2; padding: 20px; }
+
+    /* Invoice container */
+    .invoice {
+      width: 100%;
+      max-width: 210mm;        /* fits A4 width */
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      color: #222;
+    }
+
+    /* preview size modifiers (apply on-screen too) */
+    .invoice.a4 {
+      max-width: 210mm;
+      padding: 20mm;
+    }
+    .invoice.a4-half {
+      max-width: 210mm;
+      padding: 10mm;
+      max-height: 148mm;
+    }
+
+    /* header */
+    .invoice header { text-align:center; margin-bottom:18px; }
+    .invoice header h2 { margin:0; font-size:20px; }
+
+    /* company & customer blocks */
+    .company-info,
+    .customer-info {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    /* info-row: left + right items */
+    .info-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      padding: 2px 0;
+    }
+    .info-row span:first-child { font-weight: 600; color: #111; }
+    .info-row span:last-child { color: #333; }
+
+    /* table */
+    .invoice table {
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .invoice table th,
+    .invoice table td {
+      border:1px solid #ddd;
+      padding:6px;
+      text-align:left;
+    }
+    .invoice table th { background:#fafafa; }
+
+    /* Table alignment */
+    .invoice table th:nth-child(4),
+    .invoice table td:nth-child(4), /* Price */
+    .invoice table th:nth-child(5),
+    .invoice table td:nth-child(5)  /* Total */
+    {
+      text-align: right;
+    }
+
+    .invoice table th:nth-child(1), /* SL */
+    .invoice table td:nth-child(1),
+    .invoice table th:nth-child(3), /* Qty */
+    .invoice table td:nth-child(3)
+    {
+      text-align: center;
+    }
+
+    /* totals: grid alignment */
+    /* Totals section */
+    .invoice .totals {
+      margin-top: 18px;
+      width: 100%;
+      max-width: 300px;     /* keeps it compact */
+      margin-left: auto;    /* push section to right */
+      font-size: 14px;
+    }
+
+    .invoice .totals .row {
+      display: flex;
+      justify-content: space-between; /* label left, value right */
+      align-items: center;
+      padding: 4px 0;
+      margin-right: 0;
+    }
+
+    .invoice .totals .row span:first-child {
+      flex: 1;
+      text-align: left;
+    }
+
+    .invoice .totals .row span:last-child {
+      flex: 0 0 auto;
+      min-width: 90px;       /* ensures numbers line up neatly */
+      text-align: right;
+    }
+
+    .invoice .totals .row.bold {
+      font-weight: 700;
+      border-top: 1px solid #000;
+      margin-top: 6px;
+      padding-top: 8px;
+    }
+
+
+
+    /* footer */
+    .invoice footer { text-align:center; margin-top:22px; color:#666; font-size:12px; }
+
+    /* buttons / UI that should not print */
+    .no-print { margin-top:18px; text-align:center; }
+    .no-print button { margin: 0 6px; padding: 8px 12px; }
+
+    /* PRINT rules */
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+    @media print {
+      body { background: #fff; padding:0; }
+      .no-print { display: none !important; }
+      /* ensure page sizes match selected preview class */
+      .invoice.a4 {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+      }
+      .invoice.a4-half {
+        width: 210mm;
+        min-height: 148mm;
+        padding: 10mm;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
+
+</style>

@@ -1,0 +1,76 @@
+:root {
+--paper-width: 80mm;
+--font-size: 12px;
+}
+
+
+* { box-sizing: border-box; }
+body { font-family: monospace; background:#f6f7f9; padding: 20px; }
+
+
+.receipt-wrapper { max-width: 420px; margin: 0 auto; }
+
+
+.toolbar { display:flex; gap:8px; margin-bottom: 12px; }
+.toolbar button { padding: 8px 12px; border:1px solid #ddd; border-radius: 10px; background:#fff; cursor:pointer; }
+.toolbar button:hover { background:#f1f1f1; }
+
+
+.paper {
+width: var(--paper-width);
+background: #fff;
+color: #111;
+margin: 0 auto;
+padding: 10px 8px;
+border-radius: 10px;
+box-shadow: 0 10px 24px rgba(0,0,0,.08);
+font-size: var(--font-size);
+line-height: 1.35;
+}
+
+
+.center { text-align: center; }
+.muted { color:#666; }
+.bold { font-weight: 700; }
+.hr { border-top: 1px dashed #000; margin: 8px 0; }
+.hr.light { border-top-color:#444; }
+
+
+.store-name { font-size: 1.15rem; letter-spacing: .5px; }
+.header-block { margin-bottom: 6px; }
+
+
+.meta-row { display:flex; justify-content:space-between; }
+
+
+.items { width: 100%; border-collapse: collapse; }
+.items th, .items td { text-align: left; padding: 2px 0; }
+.items th.qty, .items td.qty { width: 28px; text-align:right; }
+.items th.price, .items td.price { width: 70px; text-align:right; }
+.items th.total, .items td.total { width: 80px; text-align:right; }
+
+
+.totals { width: 100%; }
+.totals .row { display:flex; justify-content: space-between; padding: 2px 0; }
+.totals .row.bold { font-weight: 700; }
+
+
+.footer {
+    margin-top: 8px;
+    text-align: center;
+    padding-top: 75px;
+    height: unset;
+    width: unset;
+}
+
+
+.compact .paper { --font-size: 11px; padding: 8px 6px; }
+
+
+@media print {
+body { background: #fff; padding: 0; }
+.toolbar { display: none !important; }
+.receipt-wrapper { max-width: none; }
+.paper { box-shadow: none; border-radius: 0; margin: 0; }
+@page { margin: 0; size: var(--paper-width) auto; }
+}

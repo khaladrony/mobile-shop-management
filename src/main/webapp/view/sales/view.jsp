@@ -13,7 +13,8 @@
     </script>
 
     <%-- <%@include file="../common/top_menu.jsp" %>
-    <%@include file="../common/left_menu.jsp" %>--%>
+    <%@include file="../common/left_menu.jsp" %>
+    <%@ include file="left_menu.jsp" %> --%>
 
     <div class="main-content">
         <div class="main-content-inner" style="background: #FFF;" ng-app="PosApp">
@@ -35,7 +36,7 @@
         </div>
     </div><!-- /.main-content -->
 
-<%@include file="../common/footblock.jsp" %>
+<%-- <%@include file="../common/footblock.jsp" %> --%>
 </div><!-- /.main-container -->
 <%@include file="../common/resoucelink_footer.jsp" %>
 
@@ -50,13 +51,17 @@
 <script src="${NG_SRC}/sales/service/payment.service.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/sales/service/order.service.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/sales/service/return.service.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/service/transaction.service.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/sales/pos-report/report.service.js?v=${SCRIPT_VERSION}"></script>
 
 
 <!-- include here rest of your ng app controller -->
 <script src="${NG_SRC}/sales/pos/pos_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/sales/pos-dashboard/pos_dashboard_form.controller.js?v=${SCRIPT_VERSION}"></script>
-<script src="${NG_SRC}/sales/pos-report/daily_sales_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-report/sales_report.form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-transaction/transaction_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-report/pos_receipt.form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/sales/pos-report/invoice.form.controller.js?v=${SCRIPT_VERSION}"></script>
 
 <!-- include here rest of your ng app controller -->
 

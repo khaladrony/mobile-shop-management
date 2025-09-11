@@ -1,6 +1,7 @@
 package com.rony.erpsoft.exception;
 
 import com.rony.erpsoft.configuration.AppResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,12 +24,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleJsonErrors(HttpMessageNotReadableException ex) {
+    public ResponseEntity<AppResponse<Object>> handleJsonErrors(HttpMessageNotReadableException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", "Invalid JSON input");
         error.put("message", ex.getMostSpecificCause().getMessage());
 
-        return ResponseEntity.badRequest().body(error);
+        AppResponse<Object> response = AppResponse
+                .build(HttpStatus.NOT_FOUND)
+                .message(error.toString());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ReportNotFoundException.class)

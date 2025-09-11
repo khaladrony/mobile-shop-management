@@ -16,5 +16,9 @@ public class DailySalesReportDTO {
     private PaymentType paymentType;
     private Long numberOfInvoices;
     private Long totalQuantity;
+    private BigDecimal grossAmount;
+    private BigDecimal discountValue;
+    private BigDecimal netAmount;
+    private BigDecimal vatAmount;
     private BigDecimal totalSales;
 }

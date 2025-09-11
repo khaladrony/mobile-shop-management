@@ -14,243 +14,249 @@
     </notification-widget>
 
     <!-- Menu Section -->
+
     <div class="col-md-9">
-        <div class="scroll-style panel panel-default" style="height:590px; padding:15px;">
+        <div class="card" style="margin: 20px 20px;">
+            <div class="scroll-style panel panel-default" style="height:590px; padding:15px;border: 0;margin: 0;">
+                <div class="row">
+                    <div class="col-xs-9 tab-container" style="margin-left: 10px;">
+                        <ul class="nav nav-tabs">
+
+                            <li ng-repeat="brand in brands"
+                                ng-class="{active: activeTab === brand}">
+                                <a href="" ng-click="setActiveTab(brand)">
+                                    {{ brand && brand.length ? brand : 'Unknown' }}
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="col-xs-2 text-right" style="padding-left: 2px;">
+                        <div class="searchbar">
+                            <input class="form-control search_input" type="text" ng-model="searchQuery" placeholder="Search items here...">
+                            <i class="search_icon fa fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" style="margin-top:15px;border: 0;">
+                    <div class="tab-pane"
+                         ng-repeat="brand in brands"
+                         ng-class="{active: activeTab === brand}">
+
+                        <div class="row">
+                            <!--<div class="col-xs-6 col-sm-4 col-md-2"
+                                 ng-repeat="item in menuItems[brand]"
+                                 ng-click="addOrder(item)">
+                                <div class="thumbnail">
+                                    <img ng-src="{{item.fileName ? item.fileName : '/res/images/no-image.png'}}"
+                                         alt="{{item.name}}">
+                                    <div class="caption">
+                                        <p class="text-truncate">{{item.name}}</p>
+                                        <p class="text-success" ng-if="item.price">
+                                            &#2547;{{item.price | number:2}}
+                                        </p>
+                                        <p class="text-muted" ng-if="!item.price">Price N/A</p>
+                                    </div>
+                                </div>
+                            </div>-->
+
+
+                            <div class="pos-container">
+                                <div class="pos-card" ng-repeat="item in menuItems[brand]" ng-click="addOrder(item)">
+                                    <div class="pos-card-image">
+                                        <img ng-src="{{item.fileName ? item.fileName : '/res/images/no-image.png'}}"
+                                             alt="{{item.name}}">
+                                    </div>
+                                    <div class="pos-card-content">
+                                        <h5 class="pos-card-title">{{item.name}}</h5>
+                                        <p class="pos-card-brand">{{item.brand}}</p>
+                                        <p class="pos-card-spec">{{item.specification}}</p>
+                                        <p class="pos-card-price">&#2547; {{item.price | number:2}}</p>
+                                        <button class="btn btn-primary btn-sm" ng-click="addOrder(item); $event.stopPropagation();">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card" style="margin: 20px 20px;">
             <div class="row">
-                <div class="col-xs-9 tab-container" style="margin-left: 10px;">
-                    <ul class="nav nav-tabs">
-                        <li ng-class="{active: activeTab==='coffee'}">
-                            <a href="" ng-click="setActiveTab('coffee')">Coffee</a>
-                        </li>
-                        <li ng-class="{active: activeTab==='milkTea'}">
-                            <a href="" ng-click="setActiveTab('milkTea')">Milk Tea</a>
-                        </li>
-                        <li ng-class="{active: activeTab==='fruitTea'}">
-                            <a href="" ng-click="setActiveTab('fruitTea')">Fruit Tea</a>
-                        </li>
-                    </ul>
+                <div class="col-md-8">
+                    <button type="button"
+                            class="btn btn-warning pull-right"
+                            data-toggle="modal"
+                            data-target="#posReturnModal">
+                        <span class="glyphicon glyphicon-refresh"></span> POS Return
+                    </button>
                 </div>
-                <div class="col-xs-2 text-right" style="padding-left: 2px;">
-                    <div class="searchbar">
-                        <input class="form-control search_input" type="text" ng-model="searchQuery" placeholder="Search items here...">
-                        <i class="search_icon fa fa-search"></i>
-                    </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success pull-right"
+                            ng-click="openOrderModal()">
+                        <span class="glyphicon glyphicon-list"></span> Order Status
+                    </button>
                 </div>
-            </div>
-
-            <div class="tab-content" style="margin-top:15px;">
-                <!-- Coffee -->
-                <div class="tab-pane" ng-class="{active: activeTab==='coffee'}">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="item in filteredItems(menuItems.coffee)" ng-click="addOrder(item)">
-                            <div class="thumbnail">
-                                <img ng-src="{{item.image}}" alt="{{item.name}}">
-                                <div class="caption">
-                                    <p class="text-truncate">{{item.name}}</p>
-                                    <p class="text-success">&#2547;{{item.price | number:2}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Milk Tea -->
-                <div class="tab-pane" ng-class="{active: activeTab==='milkTea'}">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="item in filteredItems(menuItems.milkTea)" ng-click="addOrder(item)">
-                            <div class="thumbnail">
-                                <img ng-src="{{item.image}}" alt="{{item.name}}">
-                                <div class="caption">
-                                    <p class="text-truncate">{{item.name}}</p>
-                                    <p class="text-success">&#2547;{{item.price | number:2}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fruit Tea -->
-                <div class="tab-pane" ng-class="{active: activeTab==='fruitTea'}">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="item in filteredItems(menuItems.fruitTea)" ng-click="addOrder(item)">
-                            <div class="thumbnail">
-                                <img ng-src="{{item.image}}" alt="{{item.name}}">
-                                <div class="caption">
-                                    <p class="text-truncate">{{item.name}}</p>
-                                    <p class="text-success">&#2547;{{item.price | number:2}}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary pull-right"
+                            ng-click="addCustomerModal()"
+                            ng-disabled="totalAmount <= 0">
+                        <span class="glyphicon glyphicon-user"></span> Add Customer
+                    </button>
                 </div>
 
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-8">
-                <button type="button"
-                        class="btn btn-warning btn-sm pull-right"
-                        data-toggle="modal"
-                        data-target="#posReturnModal">
-                    <span class="glyphicon glyphicon-refresh"></span> POS Return
-                </button>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-sm btn-success pull-right"
-                        ng-click="openOrderModal()">
-                    <span class="glyphicon glyphicon-list"></span> Order Status
-                </button>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-sm btn-primary pull-right"
-                        ng-click="addCustomerModal()"
-                        ng-disabled="totalAmount <= 0">
-                    <span class="glyphicon glyphicon-user"></span> Add Customer
-                </button>
-            </div>
-
-        </div>
-
     </div>
 
     <!-- Checkout Section -->
-    <div class="col-md-3">
-        <div class="panel panel-default" style="height:555px; padding:0; margin-bottom: 0px;">
-            <div class="panel-heading" style="background-color: #dc3545; color: #fff; border: none; text-align: center; font-weight: bold; font-size: 18px;">
-                <!-- Top row -->
-                <div style="margin-bottom: 5px; font-size: 14px; font-weight: normal;">
-                    <span class="glyphicon glyphicon-user"></span>
-                    <span ng-if="order.customer.customerName" style="font-weight: 600;">
-                        {{order.customer.customerName}}
-                    </span>
+    <div class="card" style="margin: 20px 20px;">
+            <div class="panel panel-default" style="height:555px; padding:0; margin-bottom: 0px;border: 0;">
+                <div class="panel-heading" style="background-color: #dc3545; color: #fff; border: none; text-align: center; font-weight: bold; font-size: 18px;">
+                    <!-- Top row -->
+                    <div style="margin-bottom: 5px; font-size: 14px; font-weight: normal;">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <span ng-if="order.customer.customerName" style="font-weight: 600;">
+                            {{order.customer.customerName}}
+                        </span>
 
-                    <span ng-if="order.customer.customerName && order.customer.mobileNumber" style="margin: 0 4px;">
-                      -
-                    </span>
+                        <span ng-if="order.customer.customerName && order.customer.mobileNumber" style="margin: 0 4px;">
+                          -
+                        </span>
 
-                    <span ng-if="order.customer.mobileNumber">
-                        {{order.customer.mobileNumber}}
-                    </span>
-                </div>
+                        <span ng-if="order.customer.mobileNumber">
+                            {{order.customer.mobileNumber}}
+                        </span>
+                    </div>
 
-                <!-- Bottom row -->
-                <div>
-                    <span class="glyphicon glyphicon-shopping-cart"></span>
-                    CHECKOUT
-                    <small style="font-size: 12px; font-weight: normal;">({{totalProducts}} items)</small>
-                </div>
-            </div>
-
-            <div class="panel-heading" style="background-color: #f7f7f7; text-align: center; color: #393939; font-size: 13px; font-weight: bold; padding: 8px 0;border-bottom: 0;">
-                <span style="position: relative; left: -80px;">Name</span>
-                <span style="position: relative; left: 66px;">Qty</span>
-                <span style="position: relative; left: 105px;">Price(&#2547;)</span>
-            </div>
-
-
-            <!-- Order List -->
-            <div id="orderList" style="height:290px; overflow-y:auto; font-size:12px; padding:5px;">
-                <div class="order-item" ng-repeat="item in orderItems">
-                    <div class="row" style="padding-right: 10px;">
-                        <div class="col-xs-1" style="padding-left: 6px;">
-                            <button class="btn btn-xs btn-danger" ng-click="removeItem($index)">
-                                <i class="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </div>
-                        <div class="col-xs-6 text-truncate" style="padding-left: 12px;">{{item.name}}</div>
-                        <div class="col-xs-1" style="padding-left: 0px;">
-                            <div class="quantity-controls">
-                                <button class="quantity-btn" ng-click="updateQuantity(item, -1)"><i class="fa fa-minus-circle"></i></button>
-                                <span>{{item.quantity}}</span>
-                                <button class="quantity-btn" ng-click="updateQuantity(item, 1)"><i class="fa fa-plus-circle"></i></button>
-                            </div>
-                        </div>
-                        <div class="ng-binding" style="padding-top: 2px;text-align: right;">{{item.total | number:2}}</div>
+                    <!-- Bottom row -->
+                    <div>
+                        <span class="glyphicon glyphicon-shopping-cart"></span>
+                        CHECKOUT
+                        <small style="font-size: 12px; font-weight: normal;">({{totalProducts}} items)</small>
                     </div>
                 </div>
-            </div>
 
-            <!-- Totals -->
-            <!-- First footer -->
-            <div class="panel-footer" style="background-color: #f7f7f7; border-bottom: 1px solid #ddd; color: gray; font-size: 14px; font-weight: bold;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;">
-                <ul id="subtotal" style="list-style: none; padding: 0; margin: 0;">
+                <div class="panel-heading" style="background-color: #f7f7f7; text-align: center; color: #393939; font-size: 13px; font-weight: bold; padding: 8px 0;border-bottom: 0;">
+                    <span style="position: relative; left: -80px;">Name</span>
+                    <span style="position: relative; left: 66px;">Qty</span>
+                    <span style="position: relative; left: 105px;">Price(&#2547;)</span>
+                </div>
 
-                    <li>
-                        <span>Gross Amount</span>
-                        <span>&#2547; {{grossAmount | number:2}}</span>
-                    </li>
 
-                    <!-- Discount Row -->
-                    <li class="discount-inline">
-                        <span>Discount</span>
-
-                        <div class="discount-toggle">
-                            <button type="button" ng-click="discount.type='PERCENT'" ng-class="{'active': discount.type==='PERCENT'}">%</button>
-                            <button type="button" ng-click="discount.type='AMOUNT'" ng-class="{'active': discount.type==='AMOUNT'}">&#2547;</button>
+                <!-- Order List -->
+                <div id="orderList" style="height:290px; overflow-y:auto; font-size:12px; padding:5px;">
+                    <div class="order-item" ng-repeat="item in orderItems">
+                        <div class="row" style="padding-right: 10px;">
+                            <div class="col-xs-1" style="padding-left: 6px;">
+                                <button class="btn btn-xs btn-danger" ng-click="removeItem($index)">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </div>
+                            <div class="col-xs-6 text-truncate" style="padding-left: 12px;">{{item.name}}</div>
+                            <div class="col-xs-1" style="padding-left: 0px;">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" ng-click="updateQuantity(item, -1)"><i class="fa fa-minus-circle"></i></button>
+                                    <span>{{item.quantity}}</span>
+                                    <button class="quantity-btn" ng-click="updateQuantity(item, 1)"><i class="fa fa-plus-circle"></i></button>
+                                </div>
+                            </div>
+                            <div class="ng-binding" style="padding-top: 2px;text-align: right;">{{item.total | number:2}}</div>
                         </div>
+                    </div>
+                </div>
 
-                        <input type="number" ng-model="discount.value" ng-change="calculateTotals()" placeholder="0" style="font-size: 14px;">
-                    </li>
+                <!-- Totals -->
+                <!-- First footer -->
+                <div class="panel-footer" style="background-color: #f7f7f7; border-bottom: 1px solid #ddd; color: gray; font-size: 14px; font-weight: bold;border-bottom-right-radius: 0px;border-bottom-left-radius: 0px;">
+                    <ul id="subtotal" style="list-style: none; padding: 0; margin: 0;">
 
-                    <!-- Net Amount Row -->
-                    <li>
-                        <span>Net Amount</span>
-                        <span>&#2547; {{netAmount | number:2}}</span>
-                    </li>
+                        <li>
+                            <span>Gross Amount</span>
+                            <span>&#2547; {{grossAmount | number:2}}</span>
+                        </li>
 
-                    <!-- VAT Row -->
-                    <li>
-                        <span>VAT</span>
-                        <span>&#2547; {{vatAmount | number:2}}</span>
-                    </li>
+                        <!-- Discount Row -->
+                        <li class="discount-inline">
+                            <span>Discount</span>
 
-                </ul>
+                            <div class="discount-toggle">
+                                <button type="button" ng-click="discount.type='PERCENT'" ng-class="{'active': discount.type==='PERCENT'}">%</button>
+                                <button type="button" ng-click="discount.type='AMOUNT'" ng-class="{'active': discount.type==='AMOUNT'}">&#2547;</button>
+                            </div>
+
+                            <input type="number" ng-model="discount.value" ng-change="calculateTotals()" placeholder="0" style="font-size: 14px;">
+                        </li>
+
+                        <!-- Net Amount Row -->
+                        <li>
+                            <span>Net Amount</span>
+                            <span>&#2547; {{netAmount | number:2}}</span>
+                        </li>
+
+                        <!-- VAT Row -->
+                        <li>
+                            <span>VAT</span>
+                            <span>&#2547; {{vatAmount | number:2}}</span>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+                <!-- Second footer -->
+                <div class="panel-footer" style="background-color: #fff; border-top: none; font-size: 14px; font-weight: bold; height: 40px; border: 0px solid #ddd; border-top: 0; padding-top: 4px;">
+                    <ul id="totalorder" style="list-style: none; padding: 0; margin: 0; color: #393939;">
+                        <li>
+                            <span>Total Payable</span>
+                            <span>&#2547; {{totalAmount | number:2}}</span>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
 
+            <button class="btn btn-block pay-btn"
+                    style="display:flex; justify-content:space-between; align-items:center; color:white;"
+                    ng-click="openPaymentModal()"
+                    ng-disabled="totalAmount <= 0">
 
-            <!-- Second footer -->
-            <div class="panel-footer" style="background-color: #fff; border-top: none; font-size: 14px; font-weight: bold; height: 40px; border: 0px solid #ddd; border-top: 0; padding-top: 4px;">
-                <ul id="totalorder" style="list-style: none; padding: 0; margin: 0; color: #393939;">
-                    <li>
-                        <span>Total Payable</span>
-                        <span>&#2547; {{totalAmount | number:2}}</span>
-                    </li>
-                </ul>
+                <span style="display:flex; align-items:center; gap:5px;">
+                    <span class="glyphicon glyphicon-credit-card"></span>
+                    <span>Pay</span>
+                </span>
+
+                <span>&#2547; {{totalAmount | number:2}}</span>
+            </button>
+
+            <!-- Action Buttons -->
+            <div style="margin-top:10px; overflow:hidden;">
+                <button type="button"
+                        class="btn btn-danger pull-left"
+                        ng-click="clearOrders()"
+                        ng-disabled="totalAmount <= 0">
+                    <span class="glyphicon glyphicon-remove"></span> Cancel Order
+                </button>
+
+                <button type="button"
+                        class="btn hold-btn pull-right"
+                        ng-click="holdOrder()"
+                        ng-disabled="totalAmount <= 0">
+                    <span class="glyphicon glyphicon-pause"></span> Hold Order
+                </button>
             </div>
-
-        </div>
-
-        <button class="btn btn-block pay-btn"
-                style="display:flex; justify-content:space-between; align-items:center; color:white;"
-                ng-click="openPaymentModal()"
-                ng-disabled="totalAmount <= 0">
-
-            <span style="display:flex; align-items:center; gap:5px;">
-                <span class="glyphicon glyphicon-credit-card"></span>
-                <span>Pay</span>
-            </span>
-
-            <span>&#2547; {{totalAmount | number:2}}</span>
-        </button>
-
-        <!-- Action Buttons -->
-        <div style="margin-top:10px; overflow:hidden;">
-            <button type="button"
-                    class="btn btn-danger btn-sm pull-left"
-                    ng-click="clearOrders()"
-                    ng-disabled="totalAmount <= 0">
-                <span class="glyphicon glyphicon-remove"></span> Cancel Order
-            </button>
-
-            <button type="button"
-                    class="btn btn-sm hold-btn pull-right"
-                    ng-click="holdOrder()"
-                    ng-disabled="totalAmount <= 0">
-                <span class="glyphicon glyphicon-pause"></span> Hold Order
-            </button>
-        </div>
     </div>
+
+
+
 </div>
 
 
@@ -262,6 +268,5 @@
 
 
 <!-- Scripts -->
-<script src="pos_form.controller.js"></script>
 </body>
 </html>

@@ -3,14 +3,19 @@ package com.rony.erpsoft.sales.service;
 import com.rony.erpsoft.application_common.service.GeneralInfoCommonService;
 import com.rony.erpsoft.application_common.service.TransactionNumberConfigService;
 import com.rony.erpsoft.configuration.AppResponse;
+import com.rony.erpsoft.inventory.inventorymovement.service.SalesPostingService;
+import com.rony.erpsoft.sales.dto.OrderItemDetailsDTO;
 import com.rony.erpsoft.sales.dto.OrderItemRequestDTO;
+import com.rony.erpsoft.sales.dto.OrderItemResponseDTO;
+import com.rony.erpsoft.sales.dto.OrderItemSummaryDTO;
 import com.rony.erpsoft.sales.dto.OrderRequestDTO;
 import com.rony.erpsoft.sales.dto.OrderResponseDTO;
 import com.rony.erpsoft.sales.dto.OrderSearchDTO;
-import com.rony.erpsoft.sales.dto.SalesByItemReportDTO;
+import com.rony.erpsoft.sales.dto.SalesProfitReportDTO;
 import com.rony.erpsoft.sales.mapper.OrderMapper;
 import com.rony.erpsoft.sales.model.Order;
 import com.rony.erpsoft.sales.model.enums.OrderStatus;
+import com.rony.erpsoft.sales.model.enums.POSTransactionType;
 import com.rony.erpsoft.sales.repository.OrderRepository;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.ModelValidator;
@@ -22,10 +27,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.rony.erpsoft.utils.ApplicationConstants.MODULE_SALES;
@@ -38,6 +48,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final TransactionNumberConfigService transactionNumberConfigService;
+    private final TransactionService transactionService;
+    private final SalesPostingService salesPostingService;
 
     public AppResponse createAndUpdate(OrderRequestDTO orderRequest) {
         try {
@@ -57,6 +69,8 @@ public class OrderService {
 
             if (saved.getId() != null && saved.getId() > 0) {
                 OrderResponseDTO responseDTO = orderMapper.entityToDto(saved);
+                salesPostingService.salesPostingToInventory(responseDTO);
+
                 return AppResponse.build(HttpStatus.OK).body(responseDTO);
             }
 
@@ -133,16 +147,6 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + transactionId));
     }
 
-    /*public List<OrderResponseDTO> getByStatus(OrderStatus status) {
-        return orderRepository.findByStatusOrderByTimestampDesc(status);
-    }*/
-
-/*    public OrderResponseDTO updateStatus(Long id, OrderStatus status) {
-        Order order = orderMapper.dtoToEntity(getById(id));
-        order.setStatus(status);
-        return orderMapper.entityToDto(orderRepository.save(order));
-    }*/
-
     public AppResponse<OrderResponseDTO> updateStatus(Long id, OrderStatus status) {
         try {
             Order order = orderMapper.dtoToEntity(getById(id));
@@ -173,9 +177,171 @@ public class OrderService {
 
     /* Report */
 
-    public List<SalesByItemReportDTO> getSalesByItem(String startDate, String endDate) {
-        LocalDateTime from = LocalDate.parse(startDate).atStartOfDay();
-        LocalDateTime to = LocalDate.parse(endDate).atTime(23, 59, 59);
-        return orderRepository.getSalesByItemReport(from, to);
+    public List<OrderItemDetailsDTO> getAllOrder(String startDate, String endDate) {
+        LocalDateTime fromDate = LocalDate.parse(startDate).atStartOfDay();
+        LocalDateTime toDate = LocalDate.parse(endDate).atTime(23, 59, 59);
+        List<OrderItemDetailsDTO> itemDetailsDTOS = new ArrayList<>();
+
+        List<OrderResponseDTO> orderDTOs = orderRepository.findByTransactionDateBetweenAndStatusInOrderByIdDesc(
+                        fromDate, toDate,
+                        Arrays.asList(OrderStatus.COMPLETED, OrderStatus.RETURNED))
+                .stream()
+                .map(orderMapper::entityToDto)
+                .toList();
+        for (OrderResponseDTO orderDTO : orderDTOs) {
+            itemDetailsDTOS.addAll(getOrderItemDetails(orderDTO));
+        }
+
+        return itemDetailsDTOS;
+    }
+
+    public List<OrderItemDetailsDTO> getOrderItemDetails(OrderResponseDTO orderDTO) {
+
+        List<OrderItemDetailsDTO> itemDetailsDTOS = new ArrayList<>();
+        int i = 0;
+        BigDecimal runningTotalDiscount = BigDecimal.ZERO;
+        BigDecimal runningTotalVat = BigDecimal.ZERO;
+
+        for (OrderItemResponseDTO item : orderDTO.getItems()) {
+            BigDecimal itemDiscount = BigDecimal.ZERO;
+            BigDecimal itemVat = BigDecimal.ZERO;
+            OrderItemDetailsDTO itemDetailsDTO = new OrderItemDetailsDTO();
+
+            itemDetailsDTO.setId(item.getId());
+            itemDetailsDTO.setOrganizationId(orderDTO.getOrganizationId());
+            itemDetailsDTO.setTransactionId(orderDTO.getTransactionId());
+            itemDetailsDTO.setTransactionDate(orderDTO.getTransactionDate());
+            itemDetailsDTO.setStatus(orderDTO.getStatus());
+            itemDetailsDTO.setItemCode(item.getItemCode());
+            itemDetailsDTO.setItemName(item.getItemName());
+            itemDetailsDTO.setCostPrice(item.getCostPrice());
+            itemDetailsDTO.setQuantity(item.getQuantity());
+            itemDetailsDTO.setPrice(item.getPrice());
+            itemDetailsDTO.setCostPrice(item.getCostPrice());
+
+            if (orderDTO.getVatAmount().compareTo(BigDecimal.ZERO) > 0
+                    || orderDTO.getDiscountValue().compareTo(BigDecimal.ZERO) > 0) {
+                if (i < orderDTO.getItems().size() - 1) {
+                    // ratio = itemTotal / grossAmount
+                    BigDecimal ratio = item.getTotal()
+                            .divide(orderDTO.getGrossAmount(), 6, RoundingMode.HALF_UP);
+
+                    // proportional discount = discountValue * ratio
+                    if (orderDTO.getDiscountValue().compareTo(BigDecimal.ZERO) > 0) {
+                        itemDiscount = orderDTO.getDiscountValue()
+                                .multiply(ratio)
+                                .setScale(2, RoundingMode.HALF_UP); // round to 2 decimals
+                    }
+                    if (orderDTO.getVatAmount().compareTo(BigDecimal.ZERO) > 0) {
+                        itemVat = orderDTO.getVatAmount()
+                                .multiply(ratio)
+                                .setScale(2, RoundingMode.HALF_UP); // round to 2 decimals
+                    }
+                    runningTotalDiscount = runningTotalDiscount.add(itemDiscount);
+                    runningTotalVat = runningTotalVat.add(itemVat);
+
+                } else {
+                    // last item gets the remainder
+                    if (orderDTO.getDiscountValue().compareTo(BigDecimal.ZERO) > 0) {
+                        itemDiscount = orderDTO.getDiscountValue()
+                                .subtract(runningTotalDiscount)
+                                .setScale(2, RoundingMode.HALF_UP);
+                    }
+                    if (orderDTO.getVatAmount().compareTo(BigDecimal.ZERO) > 0) {
+                        itemVat = orderDTO.getVatAmount()
+                                .subtract(runningTotalVat)
+                                .setScale(2, RoundingMode.HALF_UP);
+                    }
+                }
+            }
+
+            itemDetailsDTO.setGrossAmount(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            itemDetailsDTO.setDiscountAmount(itemDiscount);
+            itemDetailsDTO.setNetAmount(itemDetailsDTO.getGrossAmount().subtract(itemDiscount));
+            itemDetailsDTO.setVatAmount(itemVat);
+            itemDetailsDTO.setTotalAmount(itemDetailsDTO.getNetAmount().add(itemVat));
+            itemDetailsDTOS.add(itemDetailsDTO);
+
+            i++;
+        }
+        return itemDetailsDTOS;
+    }
+
+    public List<OrderItemSummaryDTO> getSalesByItem(String startDate, String endDate) {
+        return getAllOrder(startDate, endDate).stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.COMPLETED))
+                .collect(Collectors.groupingBy(OrderItemDetailsDTO::getItemName))
+                .entrySet().stream()
+                .map(entry -> {
+                    String itemName = entry.getKey();
+
+                    List<OrderItemDetailsDTO> items = entry.getValue();
+
+                    int totalQuantity = items.stream().mapToInt(OrderItemDetailsDTO::getQuantity).sum();
+                    BigDecimal price = items.stream()
+                            .map(OrderItemDetailsDTO::getPrice)
+                            .findFirst()
+                            .orElse(BigDecimal.ZERO);
+                    BigDecimal totalGrossAmount = items.stream()
+                            .map(OrderItemDetailsDTO::getGrossAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalDiscountAmount = items.stream()
+                            .map(OrderItemDetailsDTO::getDiscountAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalNetAmount = items.stream()
+                            .map(OrderItemDetailsDTO::getNetAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalVatAmount = items.stream()
+                            .map(OrderItemDetailsDTO::getVatAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalAmount = items.stream()
+                            .map(OrderItemDetailsDTO::getTotalAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    return new OrderItemSummaryDTO(itemName, totalQuantity, price, totalGrossAmount,
+                            totalDiscountAmount, totalNetAmount, totalVatAmount, totalAmount);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public SalesProfitReportDTO calculateProfitReport(String startDate, String endDate) {
+
+        List<OrderItemDetailsDTO> items = getAllOrder(startDate, endDate);
+        Map<POSTransactionType, BigDecimal> summary = transactionService.transactionSummary(startDate, endDate);
+
+        BigDecimal income = summary.getOrDefault(POSTransactionType.INCOME, BigDecimal.ZERO);
+
+        // total sales = sum of totalAmount
+        BigDecimal totalSales = items.stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.COMPLETED))
+                .map(OrderItemDetailsDTO::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        totalSales = totalSales.add(income);    //Income from transaction
+
+        // purchase cost = sum of (costPrice × quantity)
+        BigDecimal purchaseCost = items.stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.COMPLETED))
+                .map(i -> i.getCostPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        //gross profit = totalSales - purchaseCost
+        BigDecimal grossProfit = totalSales.subtract(purchaseCost);
+
+        // sales return = sum of totalAmount which status is 'RETURNED'
+        BigDecimal salesReturns = items.stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.RETURNED))
+                .map(OrderItemDetailsDTO::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal expenses = summary.getOrDefault(POSTransactionType.EXPENSES, BigDecimal.ZERO);
+
+        // profit = totalSales - purchaseCost - expenses - salesReturn
+        BigDecimal profit = totalSales
+                .subtract(purchaseCost)
+                .subtract(expenses)
+                .subtract(salesReturns);
+
+        return new SalesProfitReportDTO(totalSales, purchaseCost, grossProfit, expenses, salesReturns, profit);
     }
 }

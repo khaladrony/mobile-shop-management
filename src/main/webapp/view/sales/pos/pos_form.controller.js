@@ -2,41 +2,63 @@ app.controller('PosFormCtrl', function ($scope, $http, $state, $timeout,
                 $q, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService,
                 DialogBox, encrypt, Communication,$filter,growl, ItemService,
                 ToasterMessageQueueService, DateHelperService, CustomerService,
-                NotificationService, CustomerService, PaymentService, OrderService, ReturnService
+                NotificationService, CustomerService, PaymentService, OrderService,
+                ReturnService, DefaultSetupService
                 ) {
 
     // Initialize data
     $scope.orderItems = [];
-    $scope.menuItems = {
+    /*$scope.menuItems = {
         coffee: [
-            {id: 15, name: 'Espresso', price: 300.00, image: _STATIC_RES_ + '/images/product/coffee_01.jpg'},
-            {id: 16, name: 'Cappuccino', price: 450.00, image: '/res/images/product/coffee_01.jpg'},
-            {id: 17, name: 'Double Espresso', price: 350.00, image: '/res/images/product/coffee_01.jpg'},
-            {id: 18, name: 'Americaon', price: 500.00, image: '/res/images/product/coffee_01.jpg'},
-            {id: 19, name: 'Flat White', price: 400.00, image: '/res/images/product/coffee_01.jpg'},
-            {id: 20, name: 'Ice Coffee', price: 200.00, image: '/res/images/product/coffee_01.jpg'}
+            {id: 15, name: 'Espresso', price: 300.00, costPrice: 250.00, image: _STATIC_RES_ + '/images/product/coffee_01.jpg'},
+            {id: 16, name: 'Cappuccino', price: 450.00, costPrice: 400.00, image: '/res/images/product/coffee_01.jpg'},
+            {id: 17, name: 'Double Espresso', price: 350.00, costPrice: 300.00, image: '/res/images/product/coffee_01.jpg'},
+            {id: 18, name: 'Americaon', price: 500.00, costPrice: 450.00, image: '/res/images/product/coffee_01.jpg'},
+            {id: 19, name: 'Flat White', price: 400.00, costPrice: 350.00, image: '/res/images/product/coffee_01.jpg'},
+            {id: 20, name: 'Ice Coffee', price: 200.00, costPrice: 180.00, image: '/res/images/product/coffee_01.jpg'}
         ],
         milkTea: [
-            {id: 21, name: 'Milk Tea Classic', price: 100.00, image: _STATIC_RES_ + '/images/product/milktea_01.jpeg'},
-            {id: 22, name: 'Pearl Milk Tea', price: 150.00, image: _STATIC_RES_ + '/images/product/milktea_02.jpeg'}
+            {id: 21, name: 'Milk Tea Classic', price: 100.00, costPrice: 90.00, image: _STATIC_RES_ + '/images/product/milktea_01.jpeg'},
+            {id: 22, name: 'Pearl Milk Tea', price: 150.00, costPrice: 120.00, image: _STATIC_RES_ + '/images/product/milktea_02.jpeg'}
         ],
         fruitTea: [
-            {id: 23, name: 'Black Tea', price: 50.00, image: _STATIC_RES_ + '/images/product/fruittea_01.jpeg'},
-            {id: 24, name: 'Peach Tea', price: 70.00, image: _STATIC_RES_ + '/images/product/fruittea_02.jpeg'},
-            {id: 25, name: 'Lemon Tea', price: 20.00, image: _STATIC_RES_ + '/images/product/fruittea_01.jpeg'},
-            {id: 26, name: 'Winter Melon Tea', price: 100.00, image: _STATIC_RES_ + '/images/product/fruittea_02.jpeg'}
+            {id: 23, name: 'Black Tea', price: 50.00, costPrice: 30.00, image: _STATIC_RES_ + '/images/product/fruittea_01.jpeg'},
+            {id: 24, name: 'Peach Tea', price: 70.00, costPrice: 50.00, image: _STATIC_RES_ + '/images/product/fruittea_02.jpeg'},
+            {id: 25, name: 'Lemon Tea', price: 20.00, costPrice: 10.00, image: _STATIC_RES_ + '/images/product/fruittea_01.jpeg'},
+            {id: 26, name: 'Winter Melon Tea', price: 100.00, costPrice: 50.00, image: _STATIC_RES_ + '/images/product/fruittea_02.jpeg'}
         ]
-    };
+    };*/
 
+    $scope.posDefault = null;
     $scope.activeTab = 'coffee';
     $scope.searchQuery = '';
-    $scope.vatRate = 0.1; // 10% VAT
+    $scope.vatRate = 0; // 10% VAT
     $scope.id = null;
     $scope.mobilePattern = /^\d{11}$/;
 
-// Set active tab
-    $scope.setActiveTab = function(tab) {
-        $scope.activeTab = tab;
+    /*$scope.getPosDefault = function () {
+        PosService.getPosDefault().then(function(data) {
+            $scope.setPosDefault(data);
+        });
+    };
+*/
+    DefaultSetupService.get('posDefault').then(function(data) {
+        $scope.posSetup = data;
+        console.log("POS Default loaded", data);
+        $scope.vatRate  = data.vatRate/100;
+    });
+
+    $scope.loadMenuItems = function () {
+        ItemService.getMenuItems().then(function(data) {
+            $scope.menuItems = data.itemsByBrand;
+            $scope.brands = data.brands;
+            $scope.activeTab = $scope.brands[0];
+        });
+    };
+
+    // Set active tab
+    $scope.setActiveTab = function(brand) {
+        $scope.activeTab = brand;
     };
 
     // Filter items by search query
@@ -46,18 +68,6 @@ app.controller('PosFormCtrl', function ($scope, $http, $state, $timeout,
             return item.name.toLowerCase().includes($scope.searchQuery.toLowerCase());
         });
     };
-
-    // Load menu items from backend (optional)
-    $scope.loadMenuItems = function() {
-        $http.get('/api/menu-items')
-            .then(function(response) {
-                $scope.menuItems = response.data;
-            })
-            .catch(function(error) {
-                console.log('Using default menu items');
-            });
-    };
-
 
 // Add item to order
     $scope.addOrder = function(item) {
@@ -72,6 +82,7 @@ app.controller('PosFormCtrl', function ($scope, $http, $state, $timeout,
 //                id: item.id,
                 name: item.name,
                 price: item.price,
+                costPrice: item.costPrice,
                 quantity: 1,
                 total: item.price,
                 itemMasterId: item.id,
@@ -182,6 +193,7 @@ app.controller('PosFormCtrl', function ($scope, $http, $state, $timeout,
     $scope.getDataList = function (page, size) {
         OrderService.getDataList(page, size).then(function(data) {
             $scope.data = data;
+            $scope.currentPage = page;
         });
     };
 
@@ -338,7 +350,11 @@ app.controller('PosFormCtrl', function ($scope, $http, $state, $timeout,
     });
 
 
-// Initialize
-    $scope.calculateTotals();
-    //    $scope.loadMenuItems();
+    // Initialize
+    $scope.init = function () {
+        $scope.calculateTotals();
+        $scope.loadMenuItems();
+    };
+
+    $scope.init();
 });

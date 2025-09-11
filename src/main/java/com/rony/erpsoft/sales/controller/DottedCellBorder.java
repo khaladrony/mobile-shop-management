@@ -18,8 +18,8 @@ public class DottedCellBorder implements PdfPCellEvent {
     @Override
     public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvases) {
         PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-        cb.setLineWidth(0.8f);
-        cb.setLineDash(3f, 3f); // dotted line
+        cb.setLineWidth(0.5f);
+        cb.setLineDash(2f, 2f); // dotted line
         cb.setColorStroke(lineColor); // set line color
 
         // Draw all 4 sides

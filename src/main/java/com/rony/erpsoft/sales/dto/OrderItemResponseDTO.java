@@ -19,6 +19,7 @@ public class OrderItemResponseDTO {
     private Long itemMasterId;
     private String itemCode;
     private String itemName;
+    private BigDecimal costPrice;
     private Integer quantity;
     private BigDecimal price;
     private BigDecimal total;

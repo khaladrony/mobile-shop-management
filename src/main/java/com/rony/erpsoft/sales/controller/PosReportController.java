@@ -3,16 +3,20 @@ package com.rony.erpsoft.sales.controller;
 import com.lowagie.text.DocumentException;
 import com.rony.erpsoft.configuration.AppProperty;
 import com.rony.erpsoft.configuration.AppResponse;
+import com.rony.erpsoft.inventory.inventorymovement.service.InventoryTransactionService;
 import com.rony.erpsoft.sales.repository.OrderRepository;
 import com.rony.erpsoft.sales.service.ExcelReportService;
 import com.rony.erpsoft.sales.service.OrderService;
 import com.rony.erpsoft.sales.service.PdfReportService;
+import com.rony.erpsoft.sales.service.PosReceiptService;
 import com.rony.erpsoft.utils.AppUtil;
 import com.rony.erpsoft.utils.KEY;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +40,8 @@ public class PosReportController extends AppProperty {
     private final OrderRepository orderRepository;
     private final ExcelReportService excelReportService;
     private final PdfReportService pdfReportService;
+    private final PosReceiptService posReceiptService;
+    private final InventoryTransactionService inventoryTransactionService;
 
     @GetMapping(value = VIEW)
     public ModelAndView view() {
@@ -48,11 +54,11 @@ public class PosReportController extends AppProperty {
 
     @GetMapping(value = "/daily-sales")
     public AppResponse<Object> getDailySalesReport(
-            @RequestParam("date") String date // format: yyyy-MM-dd
-    ) {
-        LocalDate localDate = LocalDate.parse(date);
-        LocalDateTime startOfDay = localDate.atStartOfDay();
-        LocalDateTime endOfDay = localDate.atTime(23, 59, 59);
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        LocalDateTime startOfDay = LocalDate.parse(startDate).atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.parse(endDate).atTime(23, 59, 59);
 
         return AppResponse.build(HttpStatus.OK).body(orderRepository.findDailySalesReport(startOfDay, endOfDay));
     }
@@ -91,5 +97,34 @@ public class PosReportController extends AppProperty {
     ) throws IOException, DocumentException {
 
         pdfReportService.generateSalesByItemPdf(startDate, endDate, response);
+    }
+
+    @GetMapping("/all-items")
+    public AppResponse<Object> getAllItems(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        return AppResponse.build(HttpStatus.OK).body(orderService.getAllOrder(startDate, endDate));
+    }
+
+    @GetMapping("/sales-profit")
+    public AppResponse<Object> getSalesProfit(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        return AppResponse.build(HttpStatus.OK).body(orderService.calculateProfitReport(startDate, endDate));
+    }
+
+    @GetMapping(value = "/stock-summary", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppResponse<Object> getStockSummary(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        return AppResponse.build(HttpStatus.OK).body(inventoryTransactionService.getStockSummary(startDate, endDate));
+    }
+
+    @GetMapping(value = "/receipt/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AppResponse<Object> getPosReceipt(@PathVariable("id") long id) {
+        return AppResponse.build(HttpStatus.OK).body(posReceiptService.getPosReceipt(id));
     }
 }

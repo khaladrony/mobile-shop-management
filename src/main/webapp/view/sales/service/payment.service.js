@@ -19,6 +19,11 @@ app.service("PaymentService", function($q, $rootScope, Communication, DateHelper
         value: 0
     };
 
+    service.openInvoiceTab = function(invoiceId) {
+        var url = '#!/'+ JCOMPONENT.invoice_view + '/' + invoiceId;  // if using ngRoute
+        window.open(url, '_blank');
+    };
+
     // Reset discount
     service.resetDiscount = function () {
         service.discount.type = SALES_KEY.DISCOUNT_TYPE.PERCENT;
@@ -62,6 +67,7 @@ app.service("PaymentService", function($q, $rootScope, Communication, DateHelper
 
                 if (status === SALES_KEY.STATUS.COMPLETED) {
                     $scope.showMessage('success', 'Payment successful!', 3500);
+                    service.openInvoiceTab(resp.body.id);
                 } else {
                     $scope.showMessage('success', 'Order ' + status.toLowerCase() + ' successful!', 3500);
                 }

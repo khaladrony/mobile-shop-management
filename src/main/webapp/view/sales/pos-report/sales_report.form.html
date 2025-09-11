@@ -1,0 +1,309 @@
+<style>
+    html {
+        overflow-y: scroll !important;
+    }
+
+</style>
+
+<div class="container mt-4" style="width: 1300px;">
+    <h2 class="text-center">Daily Sales Report</h2>
+
+    <div class="card" style="padding: 25px;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <input type="date" ng-model="reportFDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <input type="date" ng-model="reportTDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" ng-click="loadReport()">Load Report</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success btn-sm" ng-click="exportExcel()">Export Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" ng-click="exportPdf()">Export PDF</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table table-bordered table-striped report-table daily-sales">
+                <thead class="table-dark">
+                <tr>
+                    <th>Payment Type</th>
+                    <th>No. of Invoices</th>
+                    <th>Quantity</th>
+                    <th>Gross</th>
+                    <th>Discount</th>
+                    <th>Net Amount</th>
+                    <th>VAT</th>
+                    <th>Total Sales</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="r in salesReport">
+                    <td>{{ r.paymentType }}</td>
+                    <td>{{ r.numberOfInvoices }}</td>
+                    <td>{{ r.totalQuantity }}</td>
+                    <td>{{ r.grossAmount | currency:"৳ ":2 }}</td>
+                    <td>{{ r.discountValue | currency:"৳ ":2 }}</td>
+                    <td>{{ r.netAmount | currency:"৳ ":2 }}</td>
+                    <td>{{ r.vatAmount | currency:"৳ ":2 }}</td>
+                    <td>{{ r.totalSales | currency:"৳ ":2 }}</td>
+                </tr>
+                </tbody>
+                <tfoot class="table-secondary fw-bold">
+                <tr>
+                    <td class="text-end">TOTAL</td>
+                    <td>{{ getTotalInvoices() }}</td>
+                    <td>{{ getTotalQuantity() }}</td>
+                    <td>{{ getTotalGross() | currency:"৳ ":2 }}</td>
+                    <td>{{ getTotalDiscount() | currency:"৳ ":2 }}</td>
+                    <td>{{ getTotalNetAmount() | currency:"৳ ":2 }}</td>
+                    <td>{{ getTotalVatAmount() | currency:"৳ ":2 }}</td>
+                    <td>{{ getTotalSales() | currency:"৳ ":2 }}</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container mt-4" style="width: 1300px;">
+    <h2 class="text-center">Sales by Item/Product Report</h2>
+    <div class="card" style="padding: 25px;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <input type="date" ng-model="fromDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <input type="date" ng-model="toDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" ng-click="loadSalesByItem()">Load Report</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success btn-sm" ng-click="exportExcelSalesByItem()">Export Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" ng-click="exportPdfSalesByItem()">Export PDF</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-bordered table-hover report-table item-sales">
+                <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Gross</th>
+                    <th>Discount</th>
+                    <th>Net Amount</th>
+                    <th>VAT</th>
+                    <th>Total Sales</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in salesByItem">
+                    <td style="text-align: left;">{{item.itemName}}</td>
+                    <td>{{item.totalQuantity}}</td>
+                    <td style="text-align: right;">{{item.totalGrossAmount | currency:"৳ ":2}}</td>
+                    <td style="text-align: right;">{{item.totalDiscountAmount | currency:"৳ ":2}}</td>
+                    <td style="text-align: right;">{{item.totalNetAmount | currency:"৳ ":2}}</td>
+                    <td style="text-align: right;">{{item.totalVatAmount | currency:"৳ ":2}}</td>
+                    <td style="text-align: right;">{{item.totalAmount | currency:"৳ ":2}}</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="table-secondary fw-bold">
+                    <td colspan="1" class="text-end">TOTAL</td>
+                    <td>{{ getTotalItemQuantity() }}</td>
+                    <td style="text-align: right;">{{ getItemGross() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getItemDiscount() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getItemNetAmount() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getItemVat() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getTotalItemSales() | currency:"৳ ":2 }}</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" style="width: 1300px;">
+    <h2 class="text-center">All Orders By Date Report</h2>
+    <div class="card" style="padding: 25px;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <input type="date" ng-model="fDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <input type="date" ng-model="tDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" ng-click="loadOrdersByDate()">Load Report</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success btn-sm" ng-click="exportExcelSalesByItem()">Export Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" ng-click="exportPdfSalesByItem()">Export PDF</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table table-bordered table-hover report-table orders-report">
+                <thead>
+                <tr>
+                    <th>Order No</th>
+                    <th>Date</th>
+                    <th>Item Name</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Gross</th>
+                    <th>Discount</th>
+                    <th>Net Amount</th>
+                    <th>VAT</th>
+                    <th>Total Sales</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in allOrders track by $index">
+                    <td rowspan-cell data="item.transactionId"
+                                    list="allOrders"
+                                    index="$index"
+                                    key="transactionId"></td>
+                    <!--<td>{{item.transactionDate | date: 'dd-MM-yyyy HH:mm:ss'}}</td>-->
+                    <td rowspan-cell data="item.transactionDate"
+                        list="allOrders"
+                        index="$index"
+                        key="transactionDate"
+                        format="dd-MM-yyyy HH:mm:ss"></td>
+                    <td style="text-align: left;">{{item.itemName}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td style="text-align: right;">{{item.price}}</td>
+                    <td style="text-align: right;">{{item.grossAmount}}</td>
+                    <td style="text-align: right;">{{item.discountAmount}}</td>
+                    <td style="text-align: right;">{{item.netAmount}}</td>
+                    <td style="text-align: right;">{{item.vatAmount}}</td>
+                    <td style="text-align: right;">{{item.totalAmount | currency:"৳ ":2}}</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="table-secondary fw-bold">
+                    <td colspan="3" class="text-end">TOTAL</td>
+                    <td>{{ getOrdersQty() }}</td>
+                    <td></td>
+                    <td style="text-align: right;">{{ getOrdersGross() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getOrdersDiscount() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getOrdersNetAmount() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getOrdersVatAmount() | currency:"৳ ":2 }}</td>
+                    <td style="text-align: right;">{{ getOrdersTotalAmount() | currency:"৳ ":2 }}</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SALES PROFIT REPORT -->
+
+<div class="container mt-4" style="width: 1300px;">
+    <h2 class="text-center">Profit Report</h2>
+    <div class="card" style="padding: 25px;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <input type="date" ng-model="pFromDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <input type="date" ng-model="pToDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" ng-click="loadSalesProfitByDate()">Load Report</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success btn-sm" ng-click="exportExcelSalesByItem()">Export Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" ng-click="exportPdfSalesByItem()">Export PDF</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-bordered table-hover report-table profit-report">
+                <thead>
+                <tr>
+                    <th>Sales</th>
+                    <th>Purchase Cost</th>
+                    <th>Gross Profit</th>
+                    <th>Expenses</th>
+                    <th>Sales Return</th>
+                    <th>Net Profit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{salesProfit.totalSales | currency:"৳ ":2}}</td>
+                    <td>{{salesProfit.purchaseCost | currency:"৳ ":2}}</td>
+                    <td>{{salesProfit.grossProfit | currency:"৳ ":2}}</td>
+                    <td>{{salesProfit.expenses | currency:"৳ ":2}}</td>
+                    <td>{{salesProfit.salesReturns | currency:"৳ ":2}}</td>
+                    <td ng-style="{'color': salesProfit.netProfit < 0 ? 'red' : 'green'}">
+                        {{salesProfit.netProfit | currency:"৳ ":2}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- STOCK SUMMARY REPORT -->
+
+<div class="container mt-4" style="width: 1300px;">
+    <h2 class="text-center">Stock Summary Report</h2>
+    <div class="card" style="padding: 25px;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <input type="date" ng-model="fStockDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <input type="date" ng-model="tStockDate" class="form-control" style="padding: 6px 6px;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" ng-click="loadStockSummaryByDate()">Load Report</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success btn-sm" ng-click="exportExcelSalesByItem()">Export Excel</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-danger btn-sm" ng-click="exportPdfSalesByItem()">Export PDF</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table table-bordered table-hover report-table orders-report">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Item Name</th>
+                    <th>Opening Qty</th>
+                    <th>Purchase Qty</th>
+                    <th>Sales Qty</th>
+                    <th>Closing Qty</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="stock in stockSummary track by $index">
+                    <td>{{ $index + 1 }}</td>
+                    <td style="text-align: left;">{{stock.itemName}}</td>
+                    <td style="text-align: center;">{{stock.openingQty}}</td>
+                    <td style="text-align: center;">{{stock.receiptQty}}</td>
+                    <td style="text-align: center;">{{stock.issueQty}}</td>
+                    <td style="text-align: center;">{{stock.closingQty}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

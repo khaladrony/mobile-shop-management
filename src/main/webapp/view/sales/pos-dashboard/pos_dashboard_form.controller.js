@@ -5,11 +5,11 @@ app.controller("PosDashboardFormCtrl", function(
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
 
-
+/*
     // Today summary
     $scope.todaySummary = [
         { title: "TODAY SOLD", value: 408919, class: "sold" },
-        { title: "TODAY SOLD - PURCHASE COST", value: 385053, class: "purchase" },
+        { title: "TODAY PURCHASE", value: 385053, class: "purchase" },
         { title: "TODAY EXPENSE", value: 4, class: "expense" },
         { title: "TODAY SELL PROFIT", value: 23865, class: "profit" }
     ];
@@ -21,7 +21,16 @@ app.controller("PosDashboardFormCtrl", function(
         { title: "EXPENSE IN AUGUST 2025", value: 4, class: "month-expense" },
         { title: "RETURNED IN AUGUST 2025", value: 9000, class: "month-return" },
         { title: "PROFIT MAY 2025", value: 23861, class: "month-profit" }
-    ];
+    ];*/
 
+    // Daily summary
+    Communication.request("GET", API.DAILY_SUMMARY).then(function (res) {
+        $scope.todaySummary = res.body;
+    });
+
+    // Monthly summary
+    Communication.request("GET", API.MONTHLY_SUMMARY).then(function (res) {
+        $scope.monthSummary = res.body;
+    });
 
 });

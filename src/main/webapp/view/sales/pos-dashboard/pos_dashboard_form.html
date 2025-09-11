@@ -2,7 +2,7 @@
 <div class="summary-section">
     <h4>Today Summary</h4>
     <div class="summary-row">
-        <div class="summary-card" ng-repeat="card in todaySummary" ng-class="card.class">
+        <div class="summary-card" ng-repeat="card in todaySummary" ng-class="card.cssClass">
             <h5>{{card.title}}</h5>
             <p>৳ {{card.value | number}}</p>
         </div>
@@ -13,7 +13,7 @@
 <div class="summary-section">
     <h4>Current Month Summary</h4>
     <div class="summary-row">
-        <div class="summary-card" ng-repeat="card in monthSummary" ng-class="card.class">
+        <div class="summary-card" ng-repeat="card in monthSummary" ng-class="card.cssClass">
             <h5>{{card.title}}</h5>
             <p>৳ {{card.value | number}}</p>
         </div>
