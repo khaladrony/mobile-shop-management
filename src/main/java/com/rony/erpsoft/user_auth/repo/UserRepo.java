@@ -59,7 +59,7 @@ public class UserRepo implements ModelRepo<UserInfo> {
         String lastName = AppUtil.toString(params.get("last_name")).trim().toLowerCase();
         
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT ui.user_id, ui.lan_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.phone, ui.address, ui.country_id, ui.active, sr.role_name ");
+        sql.append(" SELECT ui.user_id, ui.lan_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.phone, ui.address, ui.country_id, ui.branch_code, ui.active, sr.role_name ");
         sql.append(" FROM user_info ui ");
         sql.append(" JOIN user_role ur ON (ui.user_id=ur.user_id) ");
         sql.append(" JOIN system_role sr ON (ur.role_id=sr.role_id) ");
@@ -149,7 +149,7 @@ public class UserRepo implements ModelRepo<UserInfo> {
     @Override
     public UserInfo findById(long id) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT ui.user_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.lan_id, ui.phone, ui.address, ui.country_id, ui.active, sr.role_name, sr.role_id  ");
+        sql.append(" SELECT ui.user_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.lan_id, ui.phone, ui.address, ui.country_id, ui.active, ui.branch_code, sr.role_name, sr.role_id  ");
         sql.append(" FROM user_info ui  ");
         sql.append(" join user_role ur on ui.user_id = ur.user_id ");
         sql.append(" join system_role sr on sr.role_id=ur.role_id and sr.active=true ");
@@ -200,10 +200,10 @@ public class UserRepo implements ModelRepo<UserInfo> {
         StringBuilder sql = new StringBuilder();
         sql.append(" INSERT INTO user_info( ");
         sql.append(" user_id, first_name, last_name, user_code, usremail, lan_id, usrpkey, pkey_last_change, phone, address, country_id, ");
-        sql.append(" created_by, created_on) ");
+        sql.append(" organization_id, branch_code, created_by, created_on) ");
         sql.append(" VALUES ( ");
         sql.append(" :user_id, :first_name, :last_name, :user_code, :usremail, :lan_id, :usrpkey, now(), :phone, :address, :country_id, ");
-        sql.append(" :created_by, now()) ");
+        sql.append(" :organization_id, :branch_code, :created_by, now()) ");
         SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(model);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         nDb.update(sql.toString(), namedParameters, keyHolder);
@@ -224,6 +224,7 @@ public class UserRepo implements ModelRepo<UserInfo> {
         sql.append(" lan_id=:lan_id, ");
         sql.append(" phone=:phone, ");
         sql.append(" address=:address, ");
+        sql.append(" branch_code=:branch_code, ");
         sql.append(" updated_by=:updated_by, ");
         sql.append(" updated_on=:updated_on, ");
         sql.append(" active=:active ");

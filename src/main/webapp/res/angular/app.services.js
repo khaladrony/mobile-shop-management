@@ -606,8 +606,9 @@ function log(tag,messaage) {
 }
 
 //Cache itemList[]
-app.factory('ItemService', function ($http, $q) {
+app.factory('ItemService', function ($http, $q, CacheUtils) {
     var cache = null;
+    var menuCache = null;
 
     return {
         getItemList: function () {
@@ -618,6 +619,7 @@ app.factory('ItemService', function ($http, $q) {
             return $http.get(COMMON_API.items).then(function (resp) {
                 if (resp.data.code === 200) {
                     cache = resp.data.body || [];
+                    console.log("ITEM :: Fetched from API, cache size:", CacheUtils.getObjectSizeFormatted(cache));
                     return cache;
                 } else {
                     return $q.reject("Failed to load items");
@@ -625,8 +627,27 @@ app.factory('ItemService', function ($http, $q) {
             });
         },
 
+        // fetch menu items
+        getMenuItems: function () {
+            if (menuCache) {
+                return $q.resolve(menuCache); // return cached
+            }
+
+            return $http.get(COMMON_API.menu_items).then(function (resp) {
+                if (resp.data.code === 200) {
+                    menuCache = resp.data.body || [];
+                    console.log("MENU ITEM:: fetched, cache size:", CacheUtils.getObjectSizeFormatted(menuCache));
+                    return menuCache;
+                } else {
+                    return $q.reject("Failed to load menu items");
+                }
+            });
+        },
+
         clearCache: function () {
             cache = null;
+            menuCache = null;
+            console.log("Item cache cleared");
         }
     };
 });
@@ -797,5 +818,233 @@ app.factory('NotificationService', function($timeout) {
                 messages.splice(i, 1);
             }
         }
+    };
+});
+
+app.factory('CacheUtils', function() {
+    return {
+        getSizeInBytes: function(obj) {
+            return new Blob([JSON.stringify(obj)]).size;
+        },
+        formatSize: function(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+            else return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+        },
+        getObjectSizeFormatted: function(obj) {
+            return this.formatSize(this.getSizeInBytes(obj));
+        }
+    };
+});
+
+app.factory('SupplierService', function($http, $q, CacheUtils) {
+    var cache = null;
+
+    return {
+        getSupplierList: function () {
+            if (cache) {
+                return $q.resolve(cache); // return cached data
+            }
+
+            return $http.get(COMMON_API.suppliers).then(function (resp) {
+                if (resp.data.code === 200) {
+                    cache = resp.data.body || [];
+                    console.log("SUPPLIER :: Fetched from API, cache size:", CacheUtils.getObjectSizeFormatted(cache));
+                    return cache;
+                } else {
+                    return $q.reject("Failed to load supplier");
+                }
+            });
+        },
+
+        clearCache: function () {
+            cache = null;
+            console.log("Supplier cache cleared");
+        }
+    };
+});
+
+app.factory('PosService', function($http, $q, CacheUtils) {
+    var cache = null;
+
+    return {
+        getPosDefault: function () {
+            if (cache) {
+                return $q.resolve(cache);
+            }
+
+            return $http.get(COMMON_API.pos_default).then(function (resp) {
+                if (resp.data.code === 200) {
+                    cache = resp.data.body || [];
+                    console.log("POS DEFAULT :: Fetched from API, cache size:", CacheUtils.getObjectSizeFormatted(cache));
+                    return cache;
+                } else {
+                    return $q.reject("Failed to load pos default");
+                }
+            });
+        },
+        clearCache: function() {
+            cache = null;
+            console.log("POS default cache cleared");
+        }
+    };
+});
+
+/*
+Reusable CacheService:
+
+In-memory cache (super fast, per session).
+LocalStorage (persistent across reloads).
+TTL (time-to-live) → so stale data auto-expires.
+Clear by key or clear all.
+*/
+app.factory('CacheService', function($q) {
+    var memoryCache = {}; // in-memory cache
+    var DEFAULT_TTL = 60 * 60 * 1000; // 60 minutes
+
+    function now() {
+        return new Date().getTime();
+    }
+
+    return {
+        set: function(key, value, ttlMs) {
+            var expiry = now() + (ttlMs || DEFAULT_TTL);
+
+            // Store in memory
+            memoryCache[key] = { value: value, expiry: expiry };
+
+            // Store in localStorage
+            var obj = { value: value, expiry: expiry };
+            localStorage.setItem(key, JSON.stringify(obj));
+        },
+
+        get: function(key) {
+            // 1. Check in-memory cache
+            if (memoryCache[key] && memoryCache[key].expiry > now()) {
+                return $q.resolve(memoryCache[key].value);
+            }
+
+            // 2. Check localStorage
+            var str = localStorage.getItem(key);
+            if (str) {
+                try {
+                    var obj = JSON.parse(str);
+                    if (obj.expiry > now()) {
+                        memoryCache[key] = obj; // refresh memory
+                        return $q.resolve(obj.value);
+                    } else {
+                        // expired
+                        this.remove(key);
+                    }
+                } catch (e) {
+                    console.warn("Invalid JSON in localStorage for", key);
+                    this.remove(key);
+                }
+            }
+
+            // 3. Nothing found
+            return $q.resolve(null);
+        },
+
+        remove: function(key) {
+            delete memoryCache[key];
+            localStorage.removeItem(key);
+        },
+
+        clearAll: function() {
+            memoryCache = {};
+            localStorage.clear();
+        }
+    };
+});
+
+/*
+Fully reusable, lazy-load defaults service:
+
+POS default, Inventory default, or any other defaults
+Lazy-load on demand (no need to fetch at login)
+Memory cache + localStorage (fast + persistent)
+TTL / expiry
+Force refresh if needed
+One-line fetch per default in controllers
+*/
+
+app.factory('DefaultSetupService', function($http, $q, CacheService) {
+
+    // Map keys to API endpoints
+    var DEFAULT_APIS = {
+        posDefault: COMMON_API.pos_default,
+        inventoryDefault: COMMON_API.inventory_default
+        // add more defaults here
+    };
+
+    return {
+
+        /**
+         * Fetch default setup by key
+         * @param {string} key - 'posDefault', 'inventoryDefault', etc.
+         * @param {boolean} forceRefresh - bypass cache/localStorage if true
+         */
+        get: function(key, forceRefresh) {
+            if (!DEFAULT_APIS[key]) {
+                return $q.reject("No API configured for key: " + key);
+            }
+
+            if (forceRefresh) {
+                CacheService.remove(key);
+            }
+
+            return CacheService.get(key).then(function(cachedData) {
+                if (cachedData) {
+                    return cachedData;
+                } else {
+                    // Fetch from API
+                    return $http.get(DEFAULT_APIS[key]).then(function(resp) {
+                        if (resp.data.code === 200) {
+                            var setup = resp.data.body || [];
+                            CacheService.set(key, setup); // save to cache + localStorage
+                            return setup;
+                        } else {
+                            return $q.reject("Failed to load " + key);
+                        }
+                    });
+                }
+            });
+        },
+
+        /**
+         * Clear a specific default
+         */
+        clear: function(key) {
+            CacheService.remove(key);
+        },
+
+        /**
+         * Clear all defaults
+         */
+        clearAll: function() {
+            CacheService.clearAll();
+        }
+    };
+});
+
+/* Generic Key–Value Store object Service */
+app.factory('StoreService', function() {
+    let store = {};
+
+    return {
+        /**
+         * Save any object by key
+         */
+        set: function(key, value) {
+            store[key] = value;
+        },
+
+        /**
+         * Get object by key
+         */
+        get: function(key) {
+            return store[key] || null;
+        },
     };
 });

@@ -57,6 +57,7 @@ public class AppProperty {
             model.addAttribute("ROLE_NAME", ui.getRole_name());
             model.addAttribute("USER_ID", ui.getUser_id());
             model.addAttribute("USER_CODE", ui.getUser_code());
+            model.addAttribute("BRANCH_CODE", ui.getBranch_code());
 
             Map<String, Object> sets = appeSettingService.getUsrSettings();
 

@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -22,6 +24,7 @@ public class InventoryMovementItemRequestDTO implements Serializable {
     private BigDecimal value;
     private BigDecimal quantityConfirm;
     private Long InventoryTransactionId;
+    private List<ImeiDTO> imeiNumbers = new ArrayList<>();
     private Long createdBy;
     private Long updatedBy;
 }

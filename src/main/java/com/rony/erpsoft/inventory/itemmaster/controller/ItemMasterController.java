@@ -153,4 +153,17 @@ public class ItemMasterController extends AppProperty {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/menu-item")
+    public AppResponse<Object> getMenuItem() {
+        try {
+            return AppResponse
+                    .build(HttpStatus.OK)
+                    .body(itemMasterService.getMenuItem());
+        } catch (Exception e) {
+            return AppResponse
+                    .build(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message(e.getMessage());
+        }
+    }
 }

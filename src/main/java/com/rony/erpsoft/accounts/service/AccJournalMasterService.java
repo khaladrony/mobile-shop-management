@@ -186,8 +186,9 @@ public class AccJournalMasterService implements IAccJournalMasterService {
             params.put("status", status);
         }
 
-        sql.append(" AND created_by = :createdBy ");
-        params.put("createdBy", sessionService.getUserId());
+        /* User wise voucher show */
+        /*sql.append(" AND created_by = :createdBy ");
+        params.put("createdBy", sessionService.getUserId());*/
 
         return sql;
     }

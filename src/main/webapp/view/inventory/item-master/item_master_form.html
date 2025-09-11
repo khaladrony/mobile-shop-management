@@ -79,9 +79,15 @@
                                 </div>
 
                                 <div class="col-xs-12 col-md-6">
-                                    <label>Price </label>
+                                    <label>Selling Price </label>
                                     <input class="form-control" type="tel" id="price" ng-model="module.price"
                                            ng-pattern-restrict="^[0-9]*$" placeholder="Price"/>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+                                    <label>Purchase Price </label>
+                                    <input class="form-control" type="tel" id="purchasePrice" ng-model="module.purchasePrice"
+                                           ng-pattern-restrict="^[0-9]*$" placeholder="Purchase Price"/>
                                 </div>
 
                                 <div class="col-xs-12 col-md-6">
@@ -91,21 +97,28 @@
                                            placeholder="Standard Price"/>
                                 </div>
 
-                                <!--<div class="col-xs-12 col-md-6">
-                                    <label>IMEI </label>
-                                    <input class="form-control" type="tel" id="imei" ng-model="module.imei"
-                                           placeholder="imei"/>
-                                </div>-->
+                                <div class="col-xs-12 col-md-6">
+                                    <label for="trackingType">Tracking Type</label>
+                                    <select id="trackingType"
+                                            ng-model="module.trackingType"
+                                            ng-options="type.key as type.value for type in trackingTypes"
+                                            class="form-control">
+                                    </select>
+                                </div>
 
-                                <div class="col-12 col-md-6">
+                                <div class="col-md-12 col-md-6">
+                                    <label>Status</label><br>
+                                    <label class="switch">
+                                        <input type="checkbox" ng-model="module.active">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="col-12 col-md-12">
                                     <div class="card shadow-sm border-0">
                                         <div class="card-body">
-                                            <!--<h5 class="card-title mb-3 text-primary">
-                                                <i class="bi bi-upload me-2"></i> Upload Image
-                                            </h5>-->
-
                                             <!-- File input with better styling -->
-                                            <div class="mb-3" style="padding-bottom: 10px;">
+                                            <div class="mb-3" style="padding-bottom: 10px;width: 365px;">
                                                 <label class="form-label">Choose an image</label>
                                                 <input type="file"
                                                        class="form-control"
@@ -120,12 +133,6 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-
-
-                                <div class="col-md-12 col-md-6">
-                                    <label>Status </label><br>
-                                    <input type="checkbox" ng-model="module.active">
                                 </div>
 
                                 <div class="col-md-12">

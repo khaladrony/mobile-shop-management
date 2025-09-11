@@ -9,6 +9,7 @@ app.controller('UserFormCtrl', function ($scope, $http, $state, $timeout, $state
     $scope.isReadonly = false;
 
     $scope.roleList = [];
+    $scope.branches = [];
     $scope.selected_role_id = "";
     $scope.email_cnt = -1;
     $scope.valid_email = -1;
@@ -25,7 +26,8 @@ app.controller('UserFormCtrl', function ($scope, $http, $state, $timeout, $state
         address: "",
         country_id: 1,
         role_id:"",
-        role_name:""
+        role_name:"",
+        branch_code:""
     };
 
 
@@ -177,8 +179,6 @@ app.controller('UserFormCtrl', function ($scope, $http, $state, $timeout, $state
         $scope.module.role_id = id;
         var sl = document.getElementById("role_id");
         $scope.module.role_name = sl.options[sl.selectedIndex].text;
-
-        console.log(JSON.stringify($scope.module));
     };
 
     $scope.checkEmail = function(mail_txt){
@@ -226,4 +226,43 @@ app.controller('UserFormCtrl', function ($scope, $http, $state, $timeout, $state
         $scope.lan_id_cnt = -1;
     };
 
+    $scope.getBranches = function () {
+        var req = Communication.request("GET", API.BRANCHES, {});
+        req.then(function (resp) {
+            if (resp.code === 200) {
+                $scope.branches = resp.body.filter((it) => it.active);
+            }
+        }, function (err) {
+            log("role list error", JSON.stringify(err));
+        });
+    };
+
+    $scope.init = function () {
+        $scope.getRoleList();
+        $scope.getBranches();
+    };
+
+    $scope.init();
+
+    /* Local storage size check */
+    //
+    function getLocalStorageSize() {
+        var total = 0;
+        for (var key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                var value = localStorage.getItem(key);
+                total += key.length + value.length;
+            }
+        }
+        // approximate size in KB
+        return (total * 2) / 1024; // multiply by 2 because JS uses 2 bytes per character
+    }
+    console.log("Approximate localStorage size: " + getLocalStorageSize().toFixed(2) + " KB");
+
+    function getKeySize(key) {
+        var value = localStorage.getItem(key) || "";
+        var size = (key.length + value.length) * 2; // bytes
+        return (size / 1024).toFixed(2) + " KB";
+    }
+    console.log("KEY wise localStorage size: " + getKeySize("inventoryDefault"));
 });

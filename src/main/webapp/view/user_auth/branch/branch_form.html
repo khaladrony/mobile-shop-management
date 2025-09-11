@@ -1,0 +1,138 @@
+<div growl style="position: fixed; float: right; top:50px; right: 10px;"></div>
+
+<div class="row">
+
+    <div class="col-sm-1 col-md-1 col-lg-1" >&nbsp;</div>
+    
+    <div class="col-sm-4 col-md-4 col-lg-4">
+        
+        <div class="card">
+            <div class="card-header row">
+                <div class="col-sm-10">
+                    <h4 class="card-title">
+                        {{page_name}}
+                    </h4>
+                    <p class="subtitle">Branch setup</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-main">
+                    <form ng-submit="saveModule()">
+                        <div class="row" style="padding-left: 40px; padding-right: 40px;">
+
+                            <div class="form-group">
+                                <label>Branch Code </label>
+                                <input class="form-control" type="text" ng-model="module.code" placeholder="Branch Code"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Branch Name </label>
+                                <input class="form-control" type="text" ng-model="module.name" placeholder="Branch Name"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Phone </label>
+                                <input class="form-control" type="text" ng-model="module.phone" placeholder="Phone"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Manager Name </label>
+                                <input class="form-control" type="text" ng-model="module.managerName" placeholder="Manager Name"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" ng-model="module.address" placeholder="Address"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label><br>
+                                <label class="switch">
+                                    <input type="checkbox" ng-model="module.active">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-actions pull-right">
+
+                                    <button type="button" ui-sref="{{JCOMPONENT.branch_add_view}}" ng-show="true" class="btn btn-sm btn-danger" ng-click="resetModule()">
+                                        <i class="ace-icon fa fa-close"></i>Cancel
+                                    </button>
+
+                                    <span class="btn-divider" ng-show="current_state === JCOMPONENT.branch_add_view"></span>
+
+                                    <button type="reset" ng-show="current_state === JCOMPONENT.branch_add_view" class="btn btn-sm btn-warning" ng-click="resetModule()">
+                                        <i class="ace-icon fa fa-recycle"></i>Reset
+                                    </button>
+
+                                    <span class="btn-divider"></span>
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-check-circle"></i>
+                                        <span ng-if="current_state === JCOMPONENT.branch_add_view" >Save</span>
+                                        <span ng-if="current_state === JCOMPONENT.branch_update_view" >Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Branch List</h3>
+                <span class="card-toolbar"></span>
+            </div>
+            <div class="card-body">
+                <div class="card-main">
+
+
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <table id="simple-table" class="table  table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Branch Code</th>
+                                    <th>Branch Name</th>
+                                    <th>Phone</th>
+                                    <th>Manager</th>
+                                    <th>Address</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="obj in data.items" ng-click="editRow(obj, $event)">
+                                    <td style="width: 100px;">{{obj.code}}</td>
+                                    <td style="width: 200px;">{{obj.name}}</td>
+                                    <td style="width: 150px;">{{obj.phone}}</td>
+                                    <td style="width: 150px;">{{obj.managerName}}</td>
+                                    <td> {{obj.address}} </td>
+                                    <td class="text-center">
+                                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
+                                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
+                                    </td>
+                                </tr>
+
+                                <tr ng-if="data.items.length===0">
+                                    <td colspan="7" class="text-center"><h3>No transaction found!!!</h3></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div sarker-pagination item-count="data.itemCount" item-per-page="itemPerPage" selected-page="currentPage" get-items="getDataList(pageNumber, itemPerPage)"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/res/css/custom-pos.css">

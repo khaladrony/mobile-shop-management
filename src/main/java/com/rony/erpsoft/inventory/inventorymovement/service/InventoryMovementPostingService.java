@@ -152,7 +152,7 @@ public class InventoryMovementPostingService {
         return inventoryTransaction;
     }
 
-    private String generateNextTransactionId(InventoryAction action, String lastTransactionId) {
+    public String generateNextTransactionId(InventoryAction action, String lastTransactionId) {
         String prefix = setPrefix(action);
         int length = 6;
 

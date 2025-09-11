@@ -17,12 +17,20 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
         storage: "",
         unit: null,
         price: "",
+        purchasePrice: "",
         standardPrice: "",
         standardCost: "",
         imei: "",
         active: true,
-        fileName: ""
+        fileName: "",
+        trackingType: "NONE"
     };
+
+    $scope.trackingTypes = [
+      { key: 'NONE', value: 'NONE' },
+      { key: 'IMEI', value: 'IMEI' },
+      { key: 'SERIAL', value: 'Serial' }
+    ];
 
     if($state.current.name === JCOMPONENT.item_master_update_view) {
         var req = Communication.request("GET", API.ITEM_MASTER_GET + '/' + $stateParams.id, $scope.module);
@@ -58,6 +66,7 @@ app.controller('ItemMasterFormCtrl', function ($scope, $http, $state, $timeout,
                 growl.success('Successfully saved',{title: 'Success!'});
                 $scope.module = resp.body;
                 $rootScope.toastSuccess("Successfully saved");
+
                 //Item cache clear
                 ItemService.clearCache();
 

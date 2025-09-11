@@ -5,6 +5,7 @@
  */
 package com.rony.erpsoft.user_auth.service;
 
+import com.rony.erpsoft.user_auth.model.Branch;
 import com.rony.erpsoft.user_auth.model.Organization;
 import com.rony.erpsoft.user_auth.model.UserInfo;
 import com.rony.erpsoft.user_auth.repo.AuthRepo;
@@ -31,8 +32,13 @@ public class SessionService {
     public UserInfo getUser() {
         return (UserInfo) session.getAttribute(KEY.USER);
     }
+
     public Organization getOrganization() {
         return (Organization) session.getAttribute(KEY.ORGANIZATION);
+    }
+
+    public Branch getBranch() {
+        return (Branch) session.getAttribute(KEY.BRANCH);
     }
     
     public String getSessionId() {

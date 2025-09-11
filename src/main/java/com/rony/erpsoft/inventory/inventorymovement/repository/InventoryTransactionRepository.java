@@ -1,6 +1,7 @@
 package com.rony.erpsoft.inventory.inventorymovement.repository;
 
 import com.rony.erpsoft.inventory.inventorymovement.dto.ItemLedgerProjection;
+import com.rony.erpsoft.inventory.inventorymovement.dto.StockSummaryDTO;
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -179,4 +180,28 @@ public interface InventoryTransactionRepository extends JpaRepository<InventoryT
             @Param("warehouse") String warehouse,
             @Param("itemCode") String itemCode
     );
+
+    @Query("SELECT new com.rony.erpsoft.inventory.inventorymovement.dto.StockSummaryDTO(" +
+            " t.itemCode, i.itemName, null as unit, null as warehouse, " +
+
+            // Opening Qty: all movements strictly before fromDate
+            " SUM(CASE WHEN t.transactionDate < :fromDate THEN t.quantity ELSE 0 END), " +
+
+            // Receipts within the period
+            " SUM(CASE WHEN t.transactionDate BETWEEN :fromDate AND :toDate AND t.sign = 1 THEN t.quantity ELSE 0 END), " +
+
+            // Issues within the period
+            " SUM(CASE WHEN t.transactionDate BETWEEN :fromDate AND :toDate AND t.sign = -1 THEN t.quantity ELSE 0 END), " +
+
+            // Placeholder for closingQty
+            " CAST(0 AS bigdecimal) " +
+
+            ") " +
+
+            "FROM InventoryTransaction t " +
+            "JOIN ItemMaster i ON i.itemCode = t.itemCode " +
+            "GROUP BY t.itemCode, i.itemName")
+    List<StockSummaryDTO> getStockSummary(@Param("fromDate") LocalDateTime fromDate,
+                                          @Param("toDate") LocalDateTime toDate);
+
 }

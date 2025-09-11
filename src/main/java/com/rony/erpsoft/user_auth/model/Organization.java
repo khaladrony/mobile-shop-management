@@ -30,27 +30,37 @@ public class Organization implements Serializable {
     @NotNull(message = "Organization name cannot be null")
     @Size(min=1, max=150, message = "Area name should be 1 to 150 chars")
     @Column(name="name")
-    String name;
+    private String name;
+
     @Column(name="title")
-    String title;
-    @Column(name="shortName")
-    String shortName;
+    private String title;
+
+    @Column(name="short_name")
+    private String shortName;
+
     @Column(name="address1")
-    String address1;
+    private String address1;
+
     @Column(name="address2")
-    String address2;
-    @Column(name="webUrl")
-    String webUrl;
+    private String address2;
+
+    @Column(name="web_url")
+    private String webUrl;
+
     @Column(name="email")
-    String email;
-    @Column(name="contactName")
-    String contactName;
-    @Column(name="contactPhone")
-    String contactPhone;
+    private String email;
+
+    @Column(name="contact_name")
+    private String contactName;
+
+    @Column(name="contact_phone")
+    private String contactPhone;
+
     @Column(name="logo")
-    String logo;
-    @Column(name="isActive")
-    boolean isActive;
+    private String logo;
+
+    @Column(name="active")
+    private boolean active;
 
 
     @Column(name="created_by")

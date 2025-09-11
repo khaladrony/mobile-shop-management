@@ -29,7 +29,7 @@
                     <li class="active" id="page_name"></li>
                 </ul><!-- /.breadcrumb -->
 
-                <div class="nav-search" id="nav-search" >
+                <!-- <div class="nav-search" id="nav-search" >
                     <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
                         
                         <a class="btn btn-sm btn-primary" ui-sref="{{JCOMPONENT.feature_add_view}}" ng-if="hasPermission(JMODULE_NAME,  JCOMPONENT.feature_add_view)">
@@ -57,7 +57,7 @@
                         </a>
                     </div>
 
-                </div><!-- /.nav-search -->
+                </div> --> <!-- /.nav-search -->
             </div>
 
             <div class="page-content">
@@ -105,6 +105,9 @@
 <script src="${NG_SRC}/user_auth/role/role_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/user_auth/role/role_list.controller.js?v=${SCRIPT_VERSION}"></script>
 <script src="${NG_SRC}/user_auth/role/role_feature.controller.js?v=${SCRIPT_VERSION}"></script>
+
+<script src="${NG_SRC}/user_auth/branch/branch_form.controller.js?v=${SCRIPT_VERSION}"></script>
+<script src="${NG_SRC}/user_auth/organization/organization_form.controller.js?v=${SCRIPT_VERSION}"></script>
 <!-- include here rest of your ng app controller -->
 
 <%@include file="../common/close_page.jsp" %>

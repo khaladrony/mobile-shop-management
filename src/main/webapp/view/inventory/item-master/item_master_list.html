@@ -18,9 +18,11 @@
                 <tr>
                     <th>Item Code</th>
                     <th>Item Name</th>
-                    <th>Price</th>
-                    <th>Standard Price</th>
+                    <th>Image</th>
                     <th>Category</th>
+                    <th>Brand</th>
+                    <th style="text-align:right">Selling Price</th>
+                    <th style="text-align:right">Purchase Price</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Action</th>
                 </tr>
@@ -29,9 +31,19 @@
                 <tr ng-repeat="obj in data.items">
                     <td>{{obj.itemCode}}</td>
                     <td>{{obj.itemName}}</td>
-                    <td>{{obj.price}}</td>
-                    <td>{{obj.standardPrice}}</td>
+                    <td style="width: 50px;">
+                        <div class="img-wrapper">
+                            <img ng-src="{{obj.fileName ? '/uploads/inventory/' + obj.fileName : '/res/images/no-image.png'}}"
+                                 alt="{{obj.name}}" class="table-img">
+                            <div class="img-preview">
+                                <img ng-src="{{obj.fileName ? '/uploads/inventory/' + obj.fileName : '/res/images/no-image.png'}}" alt="{{obj.name}}">
+                            </div>
+                        </div>
+                    </td>
                     <td>{{obj.category}}</td>
+                    <td>{{obj.brand}}</td>
+                    <td style="text-align:right">{{obj.price}}</td>
+                    <td style="text-align:right">{{obj.purchasePrice}}</td>
                     <td class="text-center">
                         <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
                         <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
@@ -42,7 +54,7 @@
                     </td>
                 </tr>
                 <tr ng-if="data.items.length < 1">
-                    <td colspan="8"><h5>No data found!!!</h5></td>
+                    <td colspan="9"><h5>No data found!!!</h5></td>
                 </tr>
             </tbody>
         </table>

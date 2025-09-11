@@ -1,14 +1,19 @@
 package com.rony.erpsoft.inventory.inventorymovement.model;
 
 import com.rony.erpsoft.application_common.model.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +48,10 @@ public class InventoryMovementItem extends BaseEntity {
 
     @Column(name = "inventory_transaction_id")
     private Long inventoryTransactionId;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "inventory_movement_item_id") // parent owns FK
+    private List<Imei> imeiNumbers = new ArrayList<>();
 
     @Column(name = "document_id")
     private Long documentId;

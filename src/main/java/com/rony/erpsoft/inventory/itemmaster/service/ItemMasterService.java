@@ -5,6 +5,8 @@ import com.rony.erpsoft.configuration.AppResponse;
 import com.rony.erpsoft.exception.ResourceNotFoundException;
 import com.rony.erpsoft.inventory.itemmaster.dto.ItemMasterRequestDTO;
 import com.rony.erpsoft.inventory.itemmaster.dto.ItemMasterResponseDTO;
+import com.rony.erpsoft.inventory.itemmaster.dto.MenuItemDTO;
+import com.rony.erpsoft.inventory.itemmaster.dto.MenuItemResponse;
 import com.rony.erpsoft.inventory.itemmaster.mapper.ItemMasterMapper;
 import com.rony.erpsoft.inventory.itemmaster.model.ItemMaster;
 import com.rony.erpsoft.inventory.itemmaster.repository.ItemMasterRepository;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -96,4 +98,29 @@ public class ItemMasterService {
     public List<Map<String, Object>> findActiveItemsForDropDown() {
         return itemMasterRepository.findActiveItemsForDropDown();
     }
+
+    public MenuItemResponse getMenuItem() {
+        List<ItemMaster> activeItems = itemMasterRepository.findByActiveTrue();
+        List<String> categories = itemMasterRepository.findDistinctCategories();
+        List<String> brands = itemMasterRepository.findDistinctBrands()
+                .stream()
+                .sorted()
+                .toList();
+
+        Map<String, List<MenuItemDTO>> itemsByBrand =
+                activeItems.stream()
+                        .map(itemMasterMapper::entityToMenuDTO)
+                        .collect(Collectors.groupingBy(
+                                item -> item.getBrand() != null ? item.getBrand() : "Unknown"
+                        ));
+        return MenuItemResponse.builder()
+                .itemsByBrand(itemsByBrand)
+                .categories(categories)
+                .brands(brands)
+                .build();
+
+
+
+    }
+
 }

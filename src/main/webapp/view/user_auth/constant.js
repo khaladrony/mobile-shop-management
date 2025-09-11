@@ -3,7 +3,9 @@ var JCONTROLLER = {
     role:"role",
     user:"user",
     feature:"feature",
-    PROFILE:"profile"
+    PROFILE:"profile",
+    BRANCHES:"branches",
+    ORGANIZATIONS:"organizations"
 };
 var JCOMPONENT = {
     role_add_view:"role_add_view",
@@ -26,7 +28,13 @@ var JCOMPONENT = {
     feature_show:"feature_show",
     feature_update:"feature_update",
     feature_active_inactive:"feature_active_inactive",
-    feature_add_view:"feature_add_view"
+    feature_add_view:"feature_add_view",
+
+    branch_add_view:"branch_add_view",
+    branch_update_view:"branch_update_view",
+
+    organization_add_view:"organization_add_view",
+    organization_update_view:"organization_update_view"
     
 };
 
@@ -62,5 +70,16 @@ var API = {
     ALL_USER_FILTER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.user + "/downloadAllUserList",
     SHOW_PROFILE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.PROFILE + "/show",
     CHANGE_UPAWRD: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.PROFILE + "/change-urpawrd",
-    RESET_UPAWRD: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.user + "/reset-urpawrd"
+    RESET_UPAWRD: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.user + "/reset-urpawrd",
+
+    BRANCH_SAVE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.BRANCHES + "/save",
+    BRANCH_UPDATE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.BRANCHES + "/update",
+    BRANCH_FILTER: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.BRANCHES + "/filter",
+    BRANCH_GET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.BRANCHES + "/transactions/id",
+    BRANCHES: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.BRANCHES + "/all",
+
+    ORGANIZATIONS_SAVE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ORGANIZATIONS + "/save",
+    ORGANIZATIONS_UPDATE: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ORGANIZATIONS + "/update",
+    ORGANIZATIONS_GET_BY_ID: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ORGANIZATIONS + "/id",
+    ORGANIZATIONS_GET: _baseurl_ + JMODULE_NAME + "/" + JCONTROLLER.ORGANIZATIONS
 };

@@ -75,4 +75,7 @@ public class InventoryTransaction extends BaseEntity {
 
     @Column(name = "document_row")
     private int documentRow;    //InventoryMovementItem => lineNumber
+
+    @Column(name = "branch_code")
+    private String branchCode;
 }

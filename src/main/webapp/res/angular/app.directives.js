@@ -293,48 +293,84 @@ app.directive('fileModel', ['$parse', function ($parse) {
         };
     }]);
 
+//appcode-dropdown
 app.directive('appcodeDropdown', function () {
     return {
         restrict: 'E',
         scope: {
-            type: '@',
+            type: '=?',      // can be expression or string
             model: '=',
             placeholder: '@',
-            exclude: '=?'
+            exclude: '=?',
+            onChange: '&?'
         },
         template: `
             <select class="form-control" ng-model="model"
-                    ng-options="option for option in filteredOptions">
+                    ng-options="option for option in filteredOptions"
+                    ng-change="onChange({value: model})">
                 <option value="">
-                    -- {{ placeholder ? placeholder : 'Select ' + type }} --
+                    -- {{ placeholder ? placeholder : 'Select ' + (resolvedType || '') }} --
                 </option>
             </select>
         `,
-        controller: function ($scope, $http) {
+        controller: function ($scope, $http, $attrs) {
             $scope.options = [];
+            $scope.filteredOptions = [];
+            $scope.resolvedType = null;
 
-            $http.get(COMMON_API.app_codes).then(function (resp) {
-                if (resp.data.code === 200) {
-                    const list = resp.data.body || [];
-
-                    $scope.options = [...new Set(
-                        list
-                            .filter(item => item.xtype === $scope.type)
-                            .map(item => item.xcode)
-                    )];
+            function resolveType(val) {
+                // If type is undefined but attr was a string, use attr
+                if (angular.isUndefined(val) && $attrs.type) {
+                    return $attrs.type;
                 }
-            }, function (err) {
-                console.error("App codes error", err);
-            });
+                return val;
+            }
+
+            function loadOptions(newType) {
+                $scope.resolvedType = resolveType(newType);
+
+                if (!$scope.resolvedType) {
+                    $scope.options = [];
+                    $scope.filteredOptions = [];
+                    $scope.model = '';
+                    return;
+                }
+
+                $http.get(COMMON_API.app_codes).then(function (resp) {
+                    if (resp.data.code === 200) {
+                        const list = resp.data.body || [];
+
+                        $scope.options = [...new Set(
+                            list
+                                .filter(item => item.xtype === $scope.resolvedType)
+                                .map(item => item.xcode)
+                        )];
+
+                        updateFiltered();
+                    }
+                }, function (err) {
+                    console.error("App codes error", err);
+                });
+            }
 
             function updateFiltered() {
+                let opts = $scope.options.slice();
                 if ($scope.exclude) {
-                    $scope.filteredOptions = $scope.options.filter(opt => opt !== $scope.exclude);
-                } else {
-                    $scope.filteredOptions = $scope.options.slice();
+                    opts = opts.filter(opt => opt !== $scope.exclude);
                 }
+                $scope.filteredOptions = opts;
             }
-            $scope.$watchGroup(['options', 'exclude'], updateFiltered);
+
+            $scope.reloadOptions = function () {
+                loadOptions($scope.resolvedType);
+            };
+
+            // Watch type changes (works for both string & expression)
+            $scope.$watch('type', loadOptions);
+            $scope.$watch('exclude', updateFiltered);
+
+            // Initial load
+            loadOptions($scope.type);
         }
     };
 });
@@ -755,7 +791,7 @@ app.directive('autocompleteInput', function () {
     };
 });
 
-app.directive('dropdownInput', function () {
+/*app.directive('dropdownInput', function () {
     return {
         restrict: 'E',
         scope: {
@@ -770,6 +806,54 @@ app.directive('dropdownInput', function () {
                 </appcode-dropdown>
             </div>
         `
+    };
+});*/
+
+app.directive('dropdownInput', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            type: '@',
+            model: '=',
+            placeholder: '@',
+            exclude: '=?'
+        },
+        template: `
+            <div class="input-group width110" style="float: left; margin-right: 8px;">
+                <select class="form-control" ng-model="model"
+                        ng-options="option for option in filteredOptions">
+                    <option value="">
+                        -- {{ placeholder ? placeholder : 'Select ' + type }} --
+                    </option>
+                </select>
+            </div>
+        `,
+        controller: function ($scope, $http) {
+            $scope.options = [];
+
+            $http.get(COMMON_API.app_codes).then(function (resp) {
+                if (resp.data.code === 200) {
+                    const list = resp.data.body || [];
+
+                    $scope.options = [...new Set(
+                        list
+                            .filter(item => item.xtype === $scope.type)
+                            .map(item => item.xcode)
+                    )];
+                }
+            }, function (err) {
+                console.error("App codes error", err);
+            });
+
+            function updateFiltered() {
+                if ($scope.exclude) {
+                    $scope.filteredOptions = $scope.options.filter(opt => opt !== $scope.exclude);
+                } else {
+                    $scope.filteredOptions = $scope.options.slice();
+                }
+            }
+            $scope.$watchGroup(['options', 'exclude'], updateFiltered);
+        }
     };
 });
 
@@ -937,5 +1021,74 @@ app.directive('ngEnter', function() {
                 event.preventDefault(); // stop form submit
             }
         });
+    };
+});
+
+
+app.directive('rowspanCell', function($filter) {
+    return {
+        restrict: 'A',
+        scope: {
+            data: '=',
+            list: '=',
+            index: '=',
+            key: '@',
+            format: '@?' // optional date format
+        },
+        template: `
+          <td ng-if="show" rowspan="{{span}}">
+            {{ displayValue }}
+          </td>
+        `,
+        link: function(scope) {
+            // Apply date filter if format is provided
+            scope.displayValue = scope.format
+                ? $filter('date')(scope.data, scope.format)
+                : scope.data;
+
+            // Determine if this cell should be shown and calculate rowspan
+            if (scope.index === 0 || scope.data !== scope.list[scope.index - 1][scope.key]) {
+                scope.show = true;
+                scope.span = 1;
+
+                for (let j = scope.index + 1; j < scope.list.length; j++) {
+                    if (scope.list[j][scope.key] === scope.data) {
+                        scope.span++;
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                scope.show = false; // skip rendering for merged cells
+            }
+        }
+    };
+});
+
+app.directive('modalBase', function ($timeout) {
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            modalId: '@',
+            modalSize: '@?',
+            onHide: '&?' // callback when modal closes
+        },
+        template: `
+          <div class="modal fade" id="{{modalId}}" tabindex="-1" role="dialog">
+            <div class="modal-dialog {{modalSize || ''}}" role="document">
+              <div class="modal-content" ng-transclude></div>
+            </div>
+          </div>
+        `,
+        link: function (scope, element, attrs) {
+            $(element).on('hidden.bs.modal', function () {
+                if (scope.onHide) {
+                    $timeout(function () {
+                        scope.onHide();
+                    }, 0);
+                }
+            });
+        }
     };
 });

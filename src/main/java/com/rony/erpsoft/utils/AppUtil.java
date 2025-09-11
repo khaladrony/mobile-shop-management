@@ -45,6 +45,8 @@ public class AppUtil {
     @Value("${app.upload.dir}")
     private String UPLOAD_DIR;
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 
     @Autowired
     SessionService sessionService;
@@ -268,7 +270,7 @@ public class AppUtil {
         return new Date();
     }
 
-    public static String getDateString() {
+    public static String getCurrentDateString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             return sdf.format(new Date());
@@ -277,6 +279,20 @@ public class AppUtil {
         }
 
         return null;
+    }
+
+    // Get first day of the current month as String
+    public static String getFirstDayOfCurrentMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDay = today.withDayOfMonth(1);
+        return firstDay.format(FORMATTER);
+    }
+
+    // Get last day of the current month as String
+    public static String getLastDayOfCurrentMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate lastDay = today.withDayOfMonth(today.lengthOfMonth());
+        return lastDay.format(FORMATTER);
     }
 
     public static boolean isStrongPassword(String _str) throws Exception {

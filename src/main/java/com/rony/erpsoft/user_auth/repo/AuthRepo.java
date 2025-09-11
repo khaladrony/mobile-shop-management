@@ -61,7 +61,7 @@ public class AuthRepo {
 
     public UserInfo findUserByLanId(String lanId) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT ui.user_id, ui.organization_id, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.lan_id, ui.phone, ui.address, ui.country_id, ui.active, sr.role_name, sr.role_code, sr.role_id  ");
+        sql.append(" SELECT ui.user_id, ui.organization_id, ui.branch_code, ui.first_name, ui.last_name, ui.user_code, ui.usremail, ui.lan_id, ui.phone, ui.address, ui.country_id, ui.active, sr.role_name, sr.role_code, sr.role_id  ");
         sql.append(" FROM user_info ui  ");
         sql.append(" join user_role ur on ui.user_id = ur.user_id ");
         sql.append(" join system_role sr on sr.role_id=ur.role_id and sr.active=true ");

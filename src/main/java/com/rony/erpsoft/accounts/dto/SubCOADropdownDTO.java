@@ -8,6 +8,7 @@ import lombok.Data;
 public class SubCOADropdownDTO {
     private Long id;
     private String name;
+    private String code;
     private String subLabel;
     private Long chartOfAccountsId;
 }

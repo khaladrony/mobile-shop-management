@@ -136,7 +136,7 @@ public class AuthController extends AppProperty {
     }
 
 
-    @RequestMapping(value = {"/auth/login"}, method = {RequestMethod.POST})
+    /*@RequestMapping(value = {"/auth/login"}, method = {RequestMethod.POST})
     public ModelAndView doLogin(@RequestParam("lanId") String lanId,
                                 @RequestParam("usrpkeycnv") String usrpkeycnv) {
 
@@ -152,9 +152,9 @@ public class AuthController extends AppProperty {
             return new ModelAndView("login_page").addObject("status", "Enter valid user id!");
         }
 
-        /*if(!authService.licenseKeyCheck()){
+        *//*if(!authService.licenseKeyCheck()){
             return new ModelAndView("login_page").addObject("status", "Please contact your vendor. You have a licence problem!!!");
-        }*/
+        }*//*
 
         String plainStr = appUtil.retrievePaswd(usrpkeycnv);
 
@@ -179,7 +179,7 @@ public class AuthController extends AppProperty {
             logger.info("LOGIN: " + e.getMessage());
         }
         return new ModelAndView("login_page").addObject("status", "Invalid username/password");
-    }
+    }*/
 
     @RequestMapping(value = {"/auth/forget-upward"}, method = {RequestMethod.POST})
     public ModelAndView forgetPassword(@RequestParam("usremail") String usremail) {

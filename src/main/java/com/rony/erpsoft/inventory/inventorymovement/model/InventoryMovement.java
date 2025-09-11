@@ -76,6 +76,9 @@ public class InventoryMovement extends BaseEntity {
     @Column(name = "customer_code")
     String customerCode;    // CustomerInfo => customerCode
 
+    @Column(name = "branch_code")
+    private String branchCode;
+
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "inventory_movement_id")

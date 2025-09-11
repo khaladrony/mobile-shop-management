@@ -46,10 +46,11 @@
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Phone</th>
+                    <th>Branch</th>
                     <th>Remarks</th>
                     <th>Role</th>
-                    <th class="text-center">Status</th>
                     <th class="text-center">Lock</th>
+                    <th class="text-center">Status</th>
                     <th class="text-center">Action</th>
                 </tr>
             </thead>
@@ -60,14 +61,15 @@
                     <td>{{obj.first_name}}</td>
                     <td>{{obj.last_name}}</td>
                     <td>{{obj.phone}}</td>
+                    <td>{{obj.branch_code}}</td>
                     <td>{{obj.remarks}}</td>
                     <td>{{obj.role_name}}</td>
                     <td class="text-center">
-                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
-                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
+                        <label ng-if="obj.account_non_locked===false || obj.account_non_locked===0" class="label label-danger">Lock</label>
                     </td>
                     <td class="text-center">
-                        <label ng-if="obj.account_non_locked===false || obj.account_non_locked===0" class="label label-danger">Lock</label>
+                        <label ng-if="obj.active===false || obj.active===0" class="label label-danger">Inactive</label>
+                        <label ng-if="obj.active===true || obj.active===1" class="label label-success">Active</label>
                     </td>
                     <td class="text-center">
                         <button class="btn btn-sm btn-default" title="Clear DB session for further login" ng-click="clearSession(obj)" ng-if="hasPermission(JMODULE_NAME, JCOMPONENT.clear_user_session)" > <i class="ace-icon fa fa-close"></i> Session</button>
@@ -78,7 +80,7 @@
                     </td>
                 </tr>
                 <tr ng-if="data.items.length < 1">
-                    <td colspan="8"><h5>No data found!!!</h5></td>
+                    <td colspan="9"><h5>No data found!!!</h5></td>
                 </tr>
             </tbody>
         </table>

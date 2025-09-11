@@ -3,6 +3,7 @@ package com.rony.erpsoft.inventory.inventorymovement.service;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryTransactionDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.InventoryTransactionSearchDTO;
 import com.rony.erpsoft.inventory.inventorymovement.dto.ItemLedgerProjection;
+import com.rony.erpsoft.inventory.inventorymovement.dto.StockSummaryDTO;
 import com.rony.erpsoft.inventory.inventorymovement.mapper.InventoryTransactionMapper;
 import com.rony.erpsoft.inventory.inventorymovement.model.InventoryTransaction;
 import com.rony.erpsoft.inventory.inventorymovement.repository.InventoryTransactionRepository;
@@ -10,6 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,4 +49,22 @@ public class InventoryTransactionService {
                 searchDTO.getItemCode()
         );
     }
+
+    // For POS system. Stock summary report
+    public List<StockSummaryDTO> getStockSummary(String startDate, String endDate) {
+        LocalDateTime fromDate = LocalDate.parse(startDate).atStartOfDay();
+        LocalDateTime toDate = LocalDate.parse(endDate).atTime(23, 59, 59);
+
+        List<StockSummaryDTO> list = inventoryTransactionRepository.getStockSummary(fromDate, toDate);
+
+        for (StockSummaryDTO dto : list) {
+            BigDecimal closingQty = dto.getOpeningQty()
+                    .add(dto.getReceiptQty())
+                    .subtract(dto.getIssueQty());
+            dto.setClosingQty(closingQty);
+        }
+
+        return list;
+    }
+
 }

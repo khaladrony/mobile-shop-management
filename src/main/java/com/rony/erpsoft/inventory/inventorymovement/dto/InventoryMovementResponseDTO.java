@@ -28,8 +28,8 @@ public class InventoryMovementResponseDTO {
     private int month;
     private InventoryStatus status;
     private String remarks;
-    String supplierCode;
-    String customerCode;
+    private String supplierCode;
+    private String customerCode;
     private Long createdBy;
     private Long updatedBy;
 

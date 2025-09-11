@@ -13,7 +13,7 @@ app.controller('InventoryMovementListCtrl', function ($scope, $http, $state, $ti
         transactionId: "",
         status: INVENTORY_KEY.STATUS.OPEN,
         action: INVENTORY_KEY.ACTION.RECEIPT,
-        sortField: "transactionDate",
+        sortField: "id",
         sortDirection: "desc"
     };
 

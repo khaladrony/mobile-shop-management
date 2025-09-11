@@ -1,7 +1,6 @@
 <%-- 
     Document   : headblock_topmenu
     Created on : 22 May, 2018, 3:41:24 PM
-    Author     : sarker
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -89,9 +88,13 @@
                         <li class="light-blue dropdown-modal">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                                 <img class="nav-user-photo" src="${STATIC_RES}/images/avatars/avatar2.png" alt="${fn:escapeXml(USER.role_name)}" />
-                                <span class="user-info">
-                                    <small>${fn:escapeXml(USER.last_name)},</small>
-                                    ${fn:escapeXml(USER.role_name)}
+                                <div class="user-info" style="display:inline-block; margin-right: 10px;">
+                                    <strong>${fn:escapeXml(USER.last_name)}</strong>
+                                    <small class="text-muted">(${fn:escapeXml(USER.role_name)})</small>
+                                </div>
+
+                                <span class="badge badge-info" style="margin-left: 8px;">
+                                    <i class="fa fa-code-fork"></i> ${fn:escapeXml(BRANCH_CODE)}
                                 </span>
 
                                 <i class="ace-icon fa fa-caret-down"></i>

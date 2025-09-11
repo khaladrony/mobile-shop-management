@@ -23,6 +23,7 @@ app.controller('ItemMasterListCtrl', function ($scope, $http, $state, $timeout, 
         $scope.data = {};
         $scope.data.items = [];
         $scope.data.itemCount = 0;
+        $scope.currentPage = currentPage;
 
         var url = API.ITEM_MASTER_FILTER + '?page=' + (currentPage - 1) + '&size=' + itemPerPage;
 

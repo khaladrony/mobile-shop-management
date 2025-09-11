@@ -3,6 +3,8 @@ package com.rony.erpsoft.inventory.itemmaster.model;
 import com.rony.erpsoft.application_common.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,18 +51,22 @@ public class ItemMaster extends BaseEntity {
     @Column(name="price")
     private BigDecimal price;
 
+    @Column(name="purchase_price")
+    private BigDecimal purchasePrice;
+
     @Column(name="standard_price")
     private BigDecimal standardPrice;
 
     @Column(name="standard_cost")
     private BigDecimal standardCost;
 
-    @Column(name="imei")
-    private String imei;
-
     @Column(name="active")
     private boolean active;
 
     @Column(name="file_name")
     private String fileName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="tracking_type")
+    private TrackingType trackingType;  // NONE / IMEI / SERIAL
 }

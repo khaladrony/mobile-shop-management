@@ -39,6 +39,7 @@ public class SupplierInfoService implements ISupplierInfoService {
                 .map(supplier -> SubCOADropdownDTO.builder()
                         .id(supplier.getId())
                         .name(supplier.getSupplierName() + " [" + supplier.getSupplierCode() + "]")
+                        .code(supplier.getSupplierCode())
                         .chartOfAccountsId(supplier.getChartOfAccountsId())
                         .build())
                 .collect(Collectors.toList());

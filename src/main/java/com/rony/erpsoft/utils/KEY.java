@@ -13,6 +13,7 @@ public class KEY {
     public static final String AES_SECRET="sKey43Sx5@cRetk4";
     public static final String USER="USER";
     public static final String ORGANIZATION="ORGANIZATION";
+    public static final String BRANCH="BRANCH";
     public static final String APSTNGS="APSTNGS";
     public static final String USRTNGS="USRTNGS";
     

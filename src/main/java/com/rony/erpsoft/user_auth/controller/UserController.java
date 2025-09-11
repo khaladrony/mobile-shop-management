@@ -22,10 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author sarker
- */
 @RestController
 @RequestMapping("user_auth/user")
 public class UserController extends AppProperty {

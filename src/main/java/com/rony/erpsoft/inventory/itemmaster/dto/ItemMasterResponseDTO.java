@@ -1,5 +1,6 @@
 package com.rony.erpsoft.inventory.itemmaster.dto;
 
+import com.rony.erpsoft.inventory.itemmaster.model.TrackingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,10 +26,12 @@ public class ItemMasterResponseDTO {
     private String storage; // e.g., "64GB", "128GB"
     private String unit;
     private BigDecimal price;
+    private BigDecimal purchasePrice;
     private BigDecimal standardPrice;
     private BigDecimal standardCost;
     private String imei;
     private boolean active;
     private Long createdBy;
     private String fileName;
+    private TrackingType trackingType;
 }

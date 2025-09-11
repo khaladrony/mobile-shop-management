@@ -94,6 +94,30 @@ var app = angular.module('UserAuthManagementApp', ['rt.select2', 'ngPatternRestr
             cache: false,
             templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/user/user_profile.html',
             controller: 'UserProfileCtrl'
+        })
+
+        .state(JCOMPONENT.branch_add_view, {
+            url: '/branch_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/branch/branch_form.html',
+            controller: 'BranchFormCtrl'
+        }).state(JCOMPONENT.branch_update_view, {
+            url: '/branch_update_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/branch/branch_form.html',
+            controller: 'BranchFormCtrl'
+        })
+
+        .state(JCOMPONENT.organization_add_view, {
+            url: '/organization_add_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/organization/organization_form.html',
+            controller: 'OrganizationFormCtrl'
+        }).state(JCOMPONENT.organization_update_view, {
+            url: '/organization_update_view',
+            cache: false,
+            templateUrl: _NG_SRC_ + '/' + JMODULE_NAME + '/organization/organization_form.html',
+            controller: 'OrganizationFormCtrl'
         });
         
         $urlRouterProvider.otherwise('/' + JCOMPONENT.user_profile_view);

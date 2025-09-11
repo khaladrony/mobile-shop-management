@@ -1,4 +1,8 @@
-app.controller('SupplierInfoFormCtrl', function ($scope, $http, $state, $timeout, $stateParams, $rootScope, $sce, $mdDialog, $interval, ClientService, DialogBox, encrypt, Communication) {
+app.controller('SupplierInfoFormCtrl', function (
+            $scope, $http, $state, $timeout, $stateParams, $rootScope,
+            $sce, $mdDialog, $interval, ClientService, DialogBox, encrypt,
+            Communication, SupplierService
+            ) {
 
     $rootScope.setPageName(JMODULE_NAME,$state.current.name);
     $scope.current_state = $state.current.name;
@@ -47,6 +51,9 @@ app.controller('SupplierInfoFormCtrl', function ($scope, $http, $state, $timeout
                 $scope.module = resp.body;
                 $rootScope.toastSuccess("Successfully saved");
                 $state.go(JCOMPONENT.supplier_info_list_view);
+
+                //Supplier cache clear
+                SupplierService.clearCache()
             } else{
                 $rootScope.toastError(resp.message);
             }

@@ -92,8 +92,13 @@ var CORE_API = {
 var COMMON_API = {
     login_url: _baseurl_ + "auth/login",
     items: _baseurl_ + "inventory/item-master/items",
+    menu_items: _baseurl_ + "inventory/item-master/menu-item",
     app_codes: _baseurl_ + "application_common/app_codes",
+    app_codes_save: _baseurl_ + "application_common/app_codes/save",
     save_customer: _baseurl_ + "application_common/customer_info/save",
-    search_customer: _baseurl_ + "application_common/customer_info/customers/search"
+    search_customer: _baseurl_ + "application_common/customer_info/customers/search",
+    suppliers: _baseurl_ + "application_common/supplier_info/get/list",
+    pos_default: _baseurl_ + "sales/pos-default/branchCode",
+    inventory_default: _baseurl_ + "inventory/default-setup/branchCode"
 };
 

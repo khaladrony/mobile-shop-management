@@ -2,6 +2,7 @@ package com.rony.erpsoft.configuration.security;
 
 import com.rony.erpsoft.user_auth.model.UserInfo;
 import com.rony.erpsoft.user_auth.repo.AuthRepo;
+import com.rony.erpsoft.user_auth.repo.BranchRepo;
 import com.rony.erpsoft.user_auth.repo.OrganizationRepo;
 import com.rony.erpsoft.user_auth.service.AuthService;
 import com.rony.erpsoft.utils.AppUtil;
@@ -27,6 +28,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final AppUtil appUtil;
     private final OrganizationRepo organizationRepo;
     private final AuthService authService;
+    private final BranchRepo branchRepo;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -64,6 +66,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute(KEY.USER, user);
             session.setAttribute(KEY.ORGANIZATION, organizationRepo.findById(user.getOrganization_id()));
             session.setMaxInactiveInterval(appUtil.getSessionTimeout());
+            session.setAttribute(KEY.BRANCH, branchRepo.findByCode(user.getBranch_code()));
         }
 
         // Redirect to success page
