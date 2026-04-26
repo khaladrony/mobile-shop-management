@@ -224,7 +224,11 @@ app.directive('voucherDetailsForm', function ($rootScope) {
             </div>
         `,
         link: function(scope) {
-            scope.isRequired = $rootScope.commonSetup.detailParticularRequired;
+            scope.$watch(() => $rootScope.commonSetup, function(val) {
+                if (val) {
+                    scope.isRequired = val.detailParticularRequired;
+                }
+            });
         }
     };
 });
@@ -246,7 +250,11 @@ app.directive('particularsField', function($rootScope) {
                  placeholder="Particulars" />
         `,
         link: function(scope) {
-            scope.isRequired = $rootScope.commonSetup.masterParticularRequired;
+            scope.$watch(() => $rootScope.commonSetup, function(val) {
+                if (val) {
+                    scope.isRequired = val.masterParticularRequired;
+                }
+            });
         }
     };
 });

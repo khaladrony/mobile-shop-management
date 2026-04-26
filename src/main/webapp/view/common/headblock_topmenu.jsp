@@ -59,8 +59,12 @@
                     <a href="${APP}/auth/launcher" class="navbar-brand">
                         <small>
                             <div class="top-bar">
-                                <div class="organization-name">${fn:escapeXml(ORGANIZATION_NAME)}</div>
-                                <span class="separator">|</span>
+                                <c:if test="${not empty ORGANIZATION_NAME}">
+                                    <div class="organization-name">
+                                        ${fn:escapeXml(ORGANIZATION_NAME)}
+                                    </div>
+                                    <span class="separator">|</span>
+                                </c:if>
                                 <div class="current-date">${fn:escapeXml(CURRENT_DATE)}</div>
                             </div>
                         </small>
@@ -93,9 +97,11 @@
                                     <small class="text-muted">(${fn:escapeXml(USER.role_name)})</small>
                                 </div>
 
-                                <span class="badge badge-info" style="margin-left: 8px;">
-                                    <i class="fa fa-code-fork"></i> ${fn:escapeXml(BRANCH_CODE)}
-                                </span>
+                                <c:if test="${not empty fn:trim(BRANCH_CODE)}">
+                                    <span class="badge badge-info" style="margin-left: 8px;">
+                                        <i class="fa fa-code-fork"></i> ${fn:escapeXml(BRANCH_CODE)}
+                                    </span>
+                                </c:if>
 
                                 <i class="ace-icon fa fa-caret-down"></i>
                             </a>

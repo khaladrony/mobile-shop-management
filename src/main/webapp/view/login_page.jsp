@@ -122,9 +122,9 @@
 
                         $(function () {
                             // Keep encryption updated on user input
-                            $("#lanId, #usrpkeytxt").on("keyup", updateEncryptedValue);
-                            $("body").on("mouseenter", updateEncryptedValue);
-                            $("#loginButton").on("mouseenter", updateEncryptedValue);
+//                            $("#lanId, #usrpkeytxt").on("keyup", updateEncryptedValue);
+//                            $("body").on("mouseenter", updateEncryptedValue);
+//                            $("#loginButton").on("mouseenter", updateEncryptedValue);
 
                             // Final encryption before submit
                             $("#usrLoginForm").on("submit", function () {
